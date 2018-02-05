@@ -1,0 +1,15 @@
+{% extends 'reader/_base_settings.html' %}
+{% load bulma_tags i18n %}
+
+{% block settings_content %}
+
+  <form action="" method="post">
+     {% csrf_token %}
+     {{ form | bulma }}
+     <div class="field">
+       <button type="submit" class="button is-primary">Save</button>
+     </div>
+     <input type="hidden" name="next" value="{{ next }}"/>
+  </form>
+
+{% endblock %}

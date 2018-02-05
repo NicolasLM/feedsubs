@@ -1,0 +1,14 @@
+{% extends 'reader/_base_settings.html' %}
+{% load i18n bulma_tags %}
+
+{% block settings_content %}
+
+  <h2 class="title">{% trans "Change Password" %}</h2>
+
+  <form method="POST" action="" class="password_change">
+    {% csrf_token %}
+    {{ form | bulma }}
+    <button class="button is-warning" type="submit" name="action">{% trans "Change Password" %}</button>
+  </form>
+
+{% endblock %}

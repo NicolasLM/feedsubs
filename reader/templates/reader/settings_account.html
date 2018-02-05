@@ -1,0 +1,27 @@
+{% extends 'reader/_base_settings.html' %}
+{% load i18n bulma_tags %}
+
+{% block settings_content %}
+
+  <ul class="">
+    <li>Username: {{ user.username }}</li>
+    <li>
+      Email address: {{ user.email }}
+      <a class="button is-small is-primary" href="{% url 'reader:settings-email' %}">
+              <span class="icon is-small">
+                  <i class="fas fa-envelope"></i>
+              </span>
+        <span>{% trans "Change" %}</span>
+      </a>
+    </li>
+  </ul>
+
+  <h2 class="title">{% trans "Delete account" %}</h2>
+
+  <form method="POST" action="">
+    {% csrf_token %}
+    {{ form | bulma }}
+    <button class="button is-danger" type="submit" name="action">{% trans "Delete account" %}</button>
+  </form>
+
+{% endblock %}

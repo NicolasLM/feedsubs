@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load bulma_tags i18n %}
+
+{% block title %}{{ current_settings | title }} Settings{% endblock %}
+
+{% block content %}
+
+  <div class="columns">
+    <div class="column is-one-quarter">
+      <nav class="panel">
+        <p class="panel-heading">
+          Settings
+        </p>
+        <a class="panel-block {% if current_settings == 'account' %}is-active{% endif %}" href="{% url 'reader:settings-account' %}">
+          <span class="panel-icon">
+            <i class="far fa-user"></i>
+          </span>
+          Account
+        </a>
+        <a class="panel-block {% if current_settings == 'interface' %}is-active{% endif %}" href="{% url 'reader:settings-interface' %}">
+          <span class="panel-icon">
+            <i class="fas fa-desktop"></i>
+          </span>
+          Interface
+        </a>
+        <a class="panel-block {% if current_settings == 'email' %}is-active{% endif %}" href="{% url 'reader:settings-email' %}">
+          <span class="panel-icon">
+            <i class="far fa-envelope"></i>
+          </span>
+          Email
+        </a>
+        <a class="panel-block {% if current_settings == 'security' %}is-active{% endif %}" href="{% url 'reader:settings-security' %}">
+          <span class="panel-icon">
+            <i class="fas fa-unlock-alt"></i>
+          </span>
+          Security
+        </a>
+      </nav>
+    </div>
+
+    <div class="column">
+      <div class="box">
+
+        <h1 class="title">{{ current_settings | title }}</h1>
+
+        {% block settings_content %}
+        {% endblock %}
+
+      </div>
+    </div>
+
+  </div>
+
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Feed" %} {{ feed.name }}{% endblock %}
+
+{% block content %}
+
+  <div class="columns">
+    <div class="column">
+      <h1 class="title">{% trans "Feed" %} {{ feed.name }}</h1>
+    </div>
+    <div class="column is-narrow">
+      <a class="button is-danger is-outlined" data-id="{{ feed.id }}" data-type="feeds" data-action="unsubscribe">
+        <span class="icon is-small">
+            <i class="fas fa-times"></i>
+        </span>
+        <span>{% trans "Unsubscribe" %}</span>
+      </a>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-body">
+
+      <nav class="level is-mobile">
+        <div class="level-item has-text-centered">
+          <div>
+            <p class="heading">Articles</p>
+            <p class="title">{{ feed.article_set.count }}</p>
+          </div>
+        </div>
+        <div class="level-item has-text-centered">
+          <div>
+            <p class="heading">Subscribers</p>
+            <p class="title">{{ feed.subscribers.count }}</p>
+          </div>
+        </div>
+        <div class="level-item has-text-centered">
+          <div>
+            <p class="heading">Frequency</p>
+            <p class="title">1/day</p>
+          </div>
+        </div>
+        <div class="level-item has-text-centered">
+          <div>
+            <p class="heading">Content</p>
+            <p class="title">full</p>
+          </div>
+        </div>
+      </nav>
+
+    </div>
+  </section>
+
+  {% include 'reader/_articles.html' %}
+
+{% endblock %}
