@@ -31,6 +31,7 @@ accounts_urlpatterns = [u for u in accounts_urlpatterns
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include(accounts_urlpatterns)),
+    path('', include('um.urls')),
     path('', include('reader.urls')),
 ]
 

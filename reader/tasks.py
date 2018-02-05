@@ -1,11 +1,10 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 import hashlib
 from logging import getLogger
 from typing import Optional, Tuple
 
 import atoma
 import bs4
-from django.contrib.auth import get_user_model
 from django.utils.timezone import now
 from django.utils.http import http_date
 import bleach
@@ -124,20 +123,3 @@ def shift_title(soup: bs4.BeautifulSoup, shift_by: int):
         title_tag_name = 'h{}'.format(i)
         for tag in soup.find_all(title_tag_name):
             tag.name = 'h{}'.format(i + shift_by)
-
-
-@tasks.task(name='delete_user')
-def delete_user(user_id: int):
-    user = get_user_model().objects.get(pk=user_id)
-
-    if not user.profile.deletion_pending:
-        logger.info('Not deleting user %s: deletion not pending', user)
-        return
-
-    if user.last_login > now() - timedelta(hours=24):
-        logger.info('Not deleting user %s: last login %s',
-                    user, user.last_login)
-        return
-
-    logger.info('Deleting user %s', user)
-    user.delete()

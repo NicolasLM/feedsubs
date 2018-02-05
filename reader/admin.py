@@ -21,6 +21,6 @@ class ArticleAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(models.Profile)
+@admin.register(models.ReaderProfile)
 class ProfileAdmin(admin.ModelAdmin):
     pass

@@ -35,14 +35,13 @@ class Article(models.Model):
         return 'Article {}: {}'.format(self.title, self.feed.name)
 
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+class ReaderProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE,
+                                related_name='reader_profile')
     feeds = models.ManyToManyField(Feed, related_name='subscribers', blank=True)
     stars = models.ManyToManyField(Article, related_name='stared_by',
                                    blank=True)
     read = models.ManyToManyField(Article, related_name='read_by', blank=True)
-    night_mode = models.BooleanField(default=False)
-    deletion_pending = models.BooleanField(default=False)
 
     def __str__(self):
-        return 'Profile of {}'.format(self.user)
+        return 'ReadProfile of {}'.format(self.user)

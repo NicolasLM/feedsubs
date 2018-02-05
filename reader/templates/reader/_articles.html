@@ -19,7 +19,7 @@
           <div class="field has-addons">
 
             <p class="control">
-              {% if user.profile in article.stared_by.all %}
+              {% if user.reader_profile in article.stared_by.all %}
                 <a class="button is-warning is-selected" data-id="{{ article.id }}" data-type="articles" data-action="unstar">
               {% else %}
                 <a class="button" data-id="{{ article.id }}" data-type="articles" data-action="star">
@@ -31,7 +31,7 @@
             </p>
 
             <p class="control">
-              {% if user.profile in article.read_by.all %}
+              {% if user.reader_profile in article.read_by.all %}
                 <a class="button is-success is-selected" data-id="{{ article.id }}" data-type="articles" data-action="unread">
               {% else %}
                 <a class="button" data-id="{{ article.id }}" data-type="articles" data-action="read">

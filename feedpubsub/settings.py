@@ -45,8 +45,10 @@ INSTALLED_APPS = [
     'allauth.account',
     'debug_toolbar',
 
-    'reader.apps.ReaderConfig',
     'spinachd.apps.SpinachdConfig',
+
+    'reader.apps.ReaderConfig',
+    'um.apps.UMConfig',
 ]
 
 
@@ -59,7 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'reader.middleware.logout_deletion_pending'
+    'um.middleware.logout_deletion_pending'
 ]
 
 ROOT_URLCONF = 'feedpubsub.urls'
@@ -159,38 +161,36 @@ ACCOUNT_PRESERVE_USERNAME_CASING = False
 ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_USERNAME_MIN_LENGTH = 3
 
-FORCE_LOGOUT_CALLBACK = lambda u: u.profile.force_logout
-
-# LOGGING_CONFIG = None
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'formatters': {
-#         'default': {
-#             'format': '[{asctime} {levelname} {name}] {message}',
-#             'style': '{',
-#         }
-#     },
-#     'handlers': {
-#         'console': {
-#             'level': 'DEBUG',
-#             'class': 'logging.StreamHandler',
-#             'formatter': 'default',
-#         },
-#     },
-#     'loggers': {
-#         '': {
-#             'handlers': ['console'],
-#             'level': 'DEBUG',
-#         },
-#         'django': {
-#             'level': 'INFO',
-#         },
-#         'spinach': {
-#             'level': 'INFO',
-#         },
-#     }
-# }
+LOGGING_CONFIG = None
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'default': {
+            'format': '[{asctime} {levelname} {name}] {message}',
+            'style': '{',
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'default',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+        'django': {
+            'level': 'INFO',
+        },
+        'spinach': {
+            'level': 'INFO',
+        },
+    }
+}
 
 from spinach import RedisBroker
 

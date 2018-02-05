@@ -18,14 +18,5 @@ urlpatterns = [
     path('articles/<int:pk>/unread', views.UnreadArticleView.as_view(),
          name='unread-article'),
 
-    path('settings/account', views.AccountSettings.as_view(),
-         name='settings-account'),
-    path('settings/interface', views.InterfaceSettings.as_view(),
-         name='settings-interface'),
-    path('settings/email', views.EmailSettings.as_view(),
-         name='settings-email'),
-    path('settings/security', views.SecuritySettings.as_view(),
-         name='settings-security'),
-
     path('', views.Home.as_view(), name='home'),
 ]

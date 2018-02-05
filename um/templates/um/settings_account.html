@@ -1,4 +1,4 @@
-{% extends 'reader/_base_settings.html' %}
+{% extends 'um/_base_settings.html' %}
 {% load i18n bulma_tags %}
 
 {% block settings_content %}
@@ -7,7 +7,7 @@
     <li>Username: {{ user.username }}</li>
     <li>
       Email address: {{ user.email }}
-      <a class="button is-small is-primary" href="{% url 'reader:settings-email' %}">
+      <a class="button is-small is-primary" href="{% url 'um:settings-email' %}">
               <span class="icon is-small">
                   <i class="fas fa-envelope"></i>
               </span>
