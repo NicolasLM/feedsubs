@@ -36,7 +36,11 @@
         <div class="navbar-end">
 
           <a class="navbar-item is-hidden-touch" href="https://github.com/NicolasLM/feedpubsub">
-            <span class="icon" style="color: #333;">
+            {% if user.is_authenticated and user.um_profile.night_mode %}
+              <span class="icon" style="color: #BBB;">
+            {% else %}
+              <span class="icon" style="color: #333;">
+            {% endif %}
               <i class="fab fa-lg fa-github"></i>
             </span>
           </a>
