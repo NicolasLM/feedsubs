@@ -1,9 +1,10 @@
-from datetime import timedelta
 from logging import getLogger
 from django.contrib.auth import get_user_model
 from django.db.models import ObjectDoesNotExist
 from django.utils.timezone import now
 from spinach import Tasks
+
+from .settings import UM_DELETE_ACCOUNT_AFTER
 
 tasks = Tasks()
 logger = getLogger(__name__)
@@ -21,7 +22,7 @@ def delete_user(user_id: int):
         logger.info('Not deleting user %s: deletion not pending', user)
         return
 
-    if user.last_login > now() - timedelta(hours=24):
+    if user.last_login > now() - UM_DELETE_ACCOUNT_AFTER:
         logger.info('Not deleting user %s: last login %s',
                     user, user.last_login)
         return

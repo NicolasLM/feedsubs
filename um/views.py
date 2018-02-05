@@ -10,6 +10,7 @@ from django.views.generic.edit import FormView
 from django.utils.timezone import now
 
 from . import models, forms, tasks
+from .settings import UM_DELETE_ACCOUNT_AFTER
 
 
 class CurrentPageSettings:
@@ -28,8 +29,10 @@ class AccountSettings(CurrentPageSettings, LoginRequiredMixin,
     form_class = forms.DeleteUserForm
     success_url = reverse_lazy('reader:home')
     success_message = (
-        'The account will be permanently deleted in 24 hours, sign in again '
-        'to reactivate it.'
+        'The account will be permanently deleted in {} hours, sign in again '
+        'to reactivate it.'.format(
+            int(UM_DELETE_ACCOUNT_AFTER.total_seconds() / 3600)
+        )
     )
 
     def get_form_kwargs(self):
@@ -42,8 +45,11 @@ class AccountSettings(CurrentPageSettings, LoginRequiredMixin,
     def form_valid(self, form):
         self.request.user.um_profile.deletion_pending = True
         self.request.user.um_profile.save()
-        tasks.tasks.schedule_at('um:delete_user', now() + timedelta(hours=24),
-                                self.request.user.id)
+        tasks.tasks.schedule_at(
+            'um:delete_user',
+            now() + UM_DELETE_ACCOUNT_AFTER,
+            self.request.user.id
+        )
         logout(self.request)
         return super().form_valid(form)
 
