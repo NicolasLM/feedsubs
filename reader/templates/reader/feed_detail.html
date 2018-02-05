@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load i18n reader %}
 
 {% block title %}{% trans "Feed" %} {{ feed.name }}{% endblock %}
 
@@ -38,13 +38,7 @@
         <div class="level-item has-text-centered">
           <div>
             <p class="heading">Frequency</p>
-            <p class="title">1/day</p>
-          </div>
-        </div>
-        <div class="level-item has-text-centered">
-          <div>
-            <p class="heading">Content</p>
-            <p class="title">full</p>
+            <p class="title">{{ feed.frequency_per_year | humanize_yearly_frequency }}</p>
           </div>
         </div>
       </nav>

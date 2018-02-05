@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import hashlib
 from logging import getLogger
 from typing import Optional, Tuple
@@ -64,7 +64,24 @@ def synchronize_feed(feed_id: int):
 
     feed.last_fetched_at = task_start_date
     feed.last_hash = current_hash
+    feed.frequency_per_year = calculate_frequency_per_year(feed)
     feed.save()
+
+
+def calculate_frequency_per_year(feed: models.Feed) -> Optional[int]:
+    last_year = now() - timedelta(days=365)
+    num_articles_over_year = (
+        feed.article_set.filter(published_at__gt=last_year).count()
+    )
+    oldest_article = (
+        feed.article_set.filter(published_at__gt=last_year)
+        .order_by('published_at').first()
+    )
+    if oldest_article is None:
+        return None
+
+    yearly_ratio = 365 / (now() - oldest_article.published_at).days
+    return int(num_articles_over_year * yearly_ratio)
 
 
 def retrieve_feed(uri: str, last_fetched_at: Optional[datetime],

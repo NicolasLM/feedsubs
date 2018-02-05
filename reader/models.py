@@ -7,6 +7,7 @@ class Feed(models.Model):
     uri = models.URLField(unique=True)
     last_fetched_at = models.DateTimeField(null=True, blank=True)
     last_hash = models.BinaryField(max_length=20, null=True, blank=True)
+    frequency_per_year = models.IntegerField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
