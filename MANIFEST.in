@@ -1,0 +1,6 @@
+include LICENSE
+include README.rst
+
+recursive-include feedpubsub *
+recursive-include reader *
+recursive-include um *
