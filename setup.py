@@ -40,13 +40,18 @@ setup(
 
     packages=find_packages(),
     include_package_data=True,
-    scripts=['manage.py'],
+    entry_points={
+        'console_scripts': [
+            'manage.py = feedpubsub.manage:main'
+        ]
+    },
 
     install_requires=[
         'django',
         'django-allauth',
         'django-bulma',
         'atoma',
+        'bleach'
         'beautifulsoup4',
         'psycopg2',
         'requests',
@@ -54,12 +59,4 @@ setup(
         'waitress'
     ],
 
-    extras_require={
-        'tests': [
-            'pytest',
-            'pytest-cov',
-            'python-coveralls',
-            'pycodestyle'
-        ]
-    }
 )

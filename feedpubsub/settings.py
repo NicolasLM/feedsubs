@@ -95,7 +95,7 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'OhnaiYeR8Ya7Ahr',
-        'HOST': '127.0.0.1',
+        'HOST': 'postgres',
         'PORT': '5432',
     }
 }
@@ -146,6 +146,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(PROJECT_DIR, "static"),
 ]
+STATIC_ROOT = '/opt/static'
 
 SITE_ID = 1
 
@@ -194,9 +195,10 @@ LOGGING = {
 }
 
 from spinach import RedisBroker
+from redis import StrictRedis
 
 SPINACH_SPIN = {
-    'broker': RedisBroker(),
+    'broker': RedisBroker(redis=StrictRedis(host='redis')),
     'namespace': 'feedpubsub'
 }
 
