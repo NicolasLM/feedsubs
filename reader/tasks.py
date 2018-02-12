@@ -3,7 +3,7 @@ import hashlib
 from logging import getLogger
 from typing import Optional, Tuple
 
-import atoma
+from atoma.simple import simple_parse_bytes
 import bs4
 from django.utils.timezone import now
 from django.utils.http import http_date
@@ -37,30 +37,26 @@ def synchronize_feed(feed_id: int):
         return
 
     feed_content, current_hash = feed_request
-    parsed_feed = atoma.parse_atom_bytes(feed_content)
-    for entry in parsed_feed.entries:
-        content = entry.content or entry.summary
-        content = content.value if content else ''
-        content = bleach.clean(content, tags=ALLOWED_TAGS,
+    parsed_feed = simple_parse_bytes(feed_content)
+    for parsed_article in parsed_feed.articles:
+        content = bleach.clean(parsed_article.content, tags=ALLOWED_TAGS,
                                attributes=ALLOWED_ATTRIBUTES, strip=True)
         content = unify_style(content)
 
-        published_at, updated_at = get_article_dates(entry)
-
         article, created = models.Article.objects.update_or_create(
-            id_in_feed=entry.id_, feed=feed,
+            id_in_feed=parsed_article.id, feed=feed,
             defaults={
-                'uri': entry.links[0].href,
-                'title': entry.title.value,
+                'uri': parsed_article.link,
+                'title': parsed_article.title,
                 'content': content,
-                'published_at': published_at,
-                'updated_at': updated_at
+                'published_at': parsed_article.published_at,
+                'updated_at': parsed_article.updated_at
             }
         )
         if created:
-            logger.info('Created article %s', entry.id_)
+            logger.info('Created article %s', parsed_article.id)
         else:
-            logger.info('Updated article %s', entry.id_)
+            logger.info('Updated article %s', parsed_article.id)
 
     feed.last_fetched_at = task_start_date
     feed.last_hash = current_hash
@@ -105,20 +101,6 @@ def retrieve_feed(uri: str, last_fetched_at: Optional[datetime],
         return None
 
     return r.content, current_hash
-
-
-def get_article_dates(entry: atoma.AtomEntry
-                      ) -> Tuple[Optional[datetime], Optional[datetime]]:
-    if entry.published and entry.updated:
-        return entry.published, entry.updated
-
-    if entry.updated:
-        return entry.updated, None
-
-    if entry.published:
-        return entry.published, None
-
-    raise ValueError('Entry does not have proper dates')
 
 
 def unify_style(content: str) -> str:

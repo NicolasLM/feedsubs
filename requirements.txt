@@ -1,4 +1,4 @@
-atoma==0.0.1
+atoma==0.0.2.dev1
 attrs==17.4.0
 beautifulsoup4==4.6.0
 bleach==2.1.2
