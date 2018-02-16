@@ -5,3 +5,5 @@ build
 dist
 feedpubsub.egg-info
 .coverage
+.env
+ignored*

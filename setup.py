@@ -50,13 +50,15 @@ setup(
         'django',
         'django-allauth',
         'django-bulma',
+        'django-xff',
         'atoma',
-        'bleach'
+        'bleach',
         'beautifulsoup4',
         'psycopg2',
         'requests',
         'spinach',
-        'waitress'
+        'waitress',
+        'python-decouple',
     ],
 
 )
