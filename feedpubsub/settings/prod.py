@@ -1,4 +1,7 @@
+import pkg_resources
+
 from .base import *
+
 
 # Production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
@@ -12,6 +15,13 @@ from .base import *
 # - Clean and insert X-Forwarded-For in requests
 # - Add all standard security headers to responses
 
+INSTALLED_APPS += ['raven.contrib.django.raven_compat']
+MIDDLEWARE = (
+        ['xff.middleware.XForwardedForMiddleware'] +
+        MIDDLEWARE +
+        ['raven.contrib.django.raven_compat.middleware.SentryResponseErrorIdMiddleware']
+)
+
 STATIC_ROOT = '/opt/static'
 ALLOWED_HOSTS = ['feedpubsub.com']
 
@@ -22,7 +32,6 @@ SECURE_PROXY_SSL_HEADER = ('X-Forwarded-Proto', 'https')
 USE_X_FORWARDED_HOST = True
 
 
-MIDDLEWARE = ['xff.middleware.XForwardedForMiddleware'] + MIDDLEWARE
 XFF_TRUSTED_PROXY_DEPTH = 1
 XFF_STRICT = True
 
@@ -36,3 +45,7 @@ EMAIL_HOST_USER = 'hello@feedpubsub.com'
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 EMAIL_TIMEOUT = 120
+
+RAVEN_CONFIG = {
+    'release': pkg_resources.require("feedpubsub")[0].version,
+}

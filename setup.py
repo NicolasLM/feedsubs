@@ -59,6 +59,7 @@ setup(
         'spinach',
         'waitress',
         'python-decouple',
+        'raven'
     ],
 
 )
