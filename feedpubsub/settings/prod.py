@@ -15,11 +15,11 @@ from .base import *
 # - Clean and insert X-Forwarded-For in requests
 # - Add all standard security headers to responses
 
-INSTALLED_APPS += ['raven.contrib.django.raven_compat']
+INSTALLED_APPS += ['raven.contrib.django']
 MIDDLEWARE = (
         ['xff.middleware.XForwardedForMiddleware'] +
         MIDDLEWARE +
-        ['raven.contrib.django.raven_compat.middleware.SentryResponseErrorIdMiddleware']
+        ['raven.contrib.django.middleware.SentryResponseErrorIdMiddleware']
 )
 
 STATIC_ROOT = '/opt/static'
@@ -47,5 +47,6 @@ EMAIL_USE_TLS = True
 EMAIL_TIMEOUT = 120
 
 RAVEN_CONFIG = {
+    'dsn': config('SENTRY_DSN'),
     'release': pkg_resources.require("feedpubsub")[0].version,
 }
