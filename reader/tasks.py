@@ -4,19 +4,14 @@ from logging import getLogger
 from typing import Optional, Tuple
 
 from atoma.simple import simple_parse_bytes
-import bs4
+import bleach
 from django.utils.timezone import now
 from django.utils.http import http_date
-import bleach
 import requests
 from spinach import Tasks
 
 from . import models
 
-ALLOWED_TAGS = bleach.ALLOWED_TAGS + ['p', 'pre', 'img', 'h1', 'h2',
-                                      'h3', 'h4', 'h5', 'h6']
-ALLOWED_ATTRIBUTES = {'img': ['src', 'title', 'alt']}
-ALLOWED_ATTRIBUTES.update(bleach.ALLOWED_ATTRIBUTES)
 
 tasks = Tasks()
 logger = getLogger(__name__)
@@ -39,16 +34,15 @@ def synchronize_feed(feed_id: int):
     feed_content, current_hash = feed_request
     parsed_feed = simple_parse_bytes(feed_content)
     for parsed_article in parsed_feed.articles:
-        content = bleach.clean(parsed_article.content, tags=ALLOWED_TAGS,
-                               attributes=ALLOWED_ATTRIBUTES, strip=True)
-        content = unify_style(content)
 
+        title = bleach.clean(parsed_article.title, tags=[], strip=True)
         article, created = models.Article.objects.update_or_create(
-            id_in_feed=parsed_article.id, feed=feed,
+            id_in_feed=parsed_article.id,
+            feed=feed,
             defaults={
                 'uri': parsed_article.link,
-                'title': parsed_article.title,
-                'content': content,
+                'title': title,
+                'content': parsed_article.content,
                 'published_at': parsed_article.published_at,
                 'updated_at': parsed_article.updated_at
             }
@@ -101,24 +95,3 @@ def retrieve_feed(uri: str, last_fetched_at: Optional[datetime],
         return None
 
     return r.content, current_hash
-
-
-def unify_style(content: str) -> str:
-    soup = bs4.BeautifulSoup(content, 'html.parser')
-    shift_title(soup, 2)
-    return soup.prettify()
-
-
-def shift_title(soup: bs4.BeautifulSoup, shift_by: int):
-    highest_title = 1
-    for i in range(10, 0, -1):
-        title_tag_name = 'h{}'.format(i)
-        if soup.find(title_tag_name):
-            highest_title = i
-
-    shift_by = shift_by - highest_title + 1
-
-    for i in range(10, 0, -1):
-        title_tag_name = 'h{}'.format(i)
-        for tag in soup.find_all(title_tag_name):
-            tag.name = 'h{}'.format(i + shift_by)
