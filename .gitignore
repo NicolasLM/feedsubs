@@ -3,7 +3,7 @@ __pycache__
 .cache
 build
 dist
-feedpubsub.egg-info
+feedsubs.egg-info
 .coverage
 .env
 ignored*

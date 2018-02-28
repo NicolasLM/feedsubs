@@ -1,7 +1,7 @@
 {% extends 'bulma/base.html' %}
 {% load static %}
 
-{% block title %}FeedPubSub{% endblock %}
+{% block title %}FeedSubs{% endblock %}
 
 {% block css %}
   <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
@@ -12,7 +12,7 @@
   {% endif %}
 
   <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js" defer></script>
-  <script type="text/javascript" src="{% static 'feedpubsub/feedpubsub.js' %}" defer></script>
+  <script type="text/javascript" src="{% static 'feedsubs/feedsubs.js' %}" defer></script>
 {% endblock %}
 
 {% block header %}
@@ -35,7 +35,7 @@
       <div id="navMenuExample" class="navbar-menu">
         <div class="navbar-end">
 
-          <a class="navbar-item is-hidden-touch" href="https://github.com/NicolasLM/feedpubsub">
+          <a class="navbar-item is-hidden-touch" href="https://github.com/NicolasLM/feedsubs">
             {% if user.is_authenticated and user.um_profile.night_mode %}
               <span class="icon" style="color: #BBB;">
             {% else %}

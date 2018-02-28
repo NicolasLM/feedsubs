@@ -23,7 +23,7 @@ MIDDLEWARE = (
 )
 
 STATIC_ROOT = '/opt/static'
-ALLOWED_HOSTS = ['feedpubsub.com']
+ALLOWED_HOSTS = ['feedsubs.com']
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
@@ -37,16 +37,16 @@ XFF_STRICT = True
 
 ADMINS = [('Nicolas', 'nicolas@lemanchet.fr')]
 MANAGERS = [('Nicolas', 'nicolas@lemanchet.fr')]
-DEFAULT_FROM_EMAIL = 'hello@feedpubsub.com'
-SERVER_EMAIL = 'hello@feedpubsub.com'
+DEFAULT_FROM_EMAIL = 'hello@feedsubs.com'
+SERVER_EMAIL = 'hello@feedsubs.com'
 EMAIL_HOST = 'smtp.mailgun.org'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'hello@feedpubsub.com'
+EMAIL_HOST_USER = 'hello@feedsubs.com'
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 EMAIL_TIMEOUT = 120
 
 RAVEN_CONFIG = {
     'dsn': config('SENTRY_DSN'),
-    'release': pkg_resources.require("feedpubsub")[0].version,
+    'release': pkg_resources.require("feedsubs")[0].version,
 }

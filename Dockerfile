@@ -1,7 +1,7 @@
 FROM python:3.6-stretch
 
 ENTRYPOINT ["manage.py"]
-ENV DJANGO_SETTINGS_MODULE=feedpubsub.settings.prod
+ENV DJANGO_SETTINGS_MODULE=feedsubs.settings.prod
 
 RUN mkdir /opt/code /opt/static
 

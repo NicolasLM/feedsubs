@@ -11,11 +11,11 @@ with open(path.join(here, 'LICENSE'), encoding='utf-8') as f:
     long_description += f.read()
 
 setup(
-    name='feedpubsub',
+    name='feedsubs',
     version='0.0.1',
     description='RSS and Atom feeds reader for Python 3',
     long_description=long_description,
-    url='https://github.com/NicolasLM/feedpubsub',
+    url='https://github.com/NicolasLM/feedsubs',
     author='Nicolas Le Manchet',
     author_email='nicolas@lemanchet.fr',
     license='MIT',
@@ -42,7 +42,7 @@ setup(
     include_package_data=True,
     entry_points={
         'console_scripts': [
-            'manage.py = feedpubsub.manage:main'
+            'manage.py = feedsubs.manage:main'
         ]
     },
 

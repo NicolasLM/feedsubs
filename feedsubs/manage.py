@@ -3,11 +3,11 @@ import os
 import sys
 
 # This manage.py is not in the root of the repository like other Django
-# projects to allow adding it to the feedpubsub package to ship it as a wheel.
+# projects to allow adding it to the feedsubs package to ship it as a wheel.
 
 
 def main():
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "feedpubsub.settings.dev")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "feedsubs.settings.dev")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

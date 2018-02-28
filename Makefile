@@ -3,8 +3,8 @@ publish:
 	python setup.py sdist
 	python setup.py bdist_wheel
 	twine upload dist/*
-	rm -fr build dist feedpubsub.egg-info
+	rm -fr build dist feedsubs.egg-info
 
 clean:
-	rm -fr build dist feedpubsub.egg-info
+	rm -fr build dist feedsubs.egg-info
 
