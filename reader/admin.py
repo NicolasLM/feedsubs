@@ -1,4 +1,5 @@
 from django.contrib import admin
+from spinach import Batch
 
 from . import models
 from .tasks import tasks
@@ -10,8 +11,10 @@ class FeedAdmin(admin.ModelAdmin):
     actions = ['sync']
 
     def sync(self, request, queryset):
+        batch = Batch()
         for feed in queryset:
-            tasks.schedule('synchronize_feed', str(feed.id))
+            batch.schedule('synchronize_feed', str(feed.id))
+        tasks.schedule_batch(batch)
 
     sync.short_description = 'Synchronize feed'
 
