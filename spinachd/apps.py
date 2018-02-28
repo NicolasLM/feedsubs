@@ -2,11 +2,11 @@ import importlib
 
 from django.apps import AppConfig
 from django.utils.module_loading import module_has_submodule
-from spinach import Tasks, Spinach
+from spinach import Tasks, Engine
 
-from .settings import SPINACH_SPIN
+from .settings import SPINACH_ENGINE
 
-spin = Spinach(**SPINACH_SPIN)
+spin = Engine(**SPINACH_ENGINE)
 
 
 class SpinachdConfig(AppConfig):
