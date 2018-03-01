@@ -153,8 +153,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'default': {
-            'format': '[{asctime} {levelname} {name}] {message}',
-            'style': '{',
+            'format': '[%(asctime)s %(levelname)-5.5s %(threadName)s %(name)s] %(message)s',
         }
     },
     'handlers': {
