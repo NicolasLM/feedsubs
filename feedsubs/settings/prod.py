@@ -50,3 +50,28 @@ RAVEN_CONFIG = {
     'dsn': config('SENTRY_DSN'),
     'release': pkg_resources.require("feedsubs")[0].version,
 }
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
+        'TIMEOUT': 24 * 60 * 60,  # keys expire by default after 1 day
+        'LOCATION': config('MEMCACHED', default='memcached:11211'),
+        'OPTIONS': {
+            'binary': True,
+            'behaviors': {
+                'no_block': True,
+                'tcp_nodelay': True,
+                'tcp_keepalive': True,
+                'connect_timeout': 2000,  # ms
+                'send_timeout': 750 * 1000,  # us
+                'receive_timeout': 750 * 1000,  # us
+                '_poll_timeout': 2000,  # ms
+                # Better failover
+                'ketama': True,
+                'remove_failed': 1,
+                'retry_timeout': 2,
+                'dead_timeout': 30,
+            }
+        }
+    }
+}

@@ -50,16 +50,25 @@ setup(
         'django',
         'django-allauth',
         'django-bulma',
-        'django-xff',
         'atoma',
         'bleach',
         'beautifulsoup4',
         'psycopg2',
         'requests',
         'spinach',
-        'waitress',
         'python-decouple',
-        'raven'
     ],
+
+    extras_require={
+        'prod': [
+            'django-xff',
+            'waitress',
+            'raven',
+            'pylibmc',
+        ],
+        'dev': [
+            'django-debug-toolbar',
+        ],
+    },
 
 )
