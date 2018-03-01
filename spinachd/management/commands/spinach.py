@@ -1,5 +1,6 @@
 import copy
 import logging.config
+import signal
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -33,5 +34,10 @@ class Command(BaseCommand):
         kwargs = copy.copy(SPINACH_WORKER)
         if options['queue']:
             kwargs['queue'] = options['queue']
+
+        def handle_sigterm(*args):
+            raise KeyboardInterrupt()
+
+        signal.signal(signal.SIGTERM, handle_sigterm)
 
         spin.start_workers(**kwargs)
