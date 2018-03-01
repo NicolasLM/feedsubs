@@ -15,15 +15,19 @@ from .base import *
 # - Clean and insert X-Forwarded-For in requests
 # - Add all standard security headers to responses
 
-INSTALLED_APPS += ['raven.contrib.django']
+INSTALLED_APPS += [
+    'raven.contrib.django',
+    'waitressd.apps.WaitressdConfig'
+]
 MIDDLEWARE = (
         ['xff.middleware.XForwardedForMiddleware'] +
+        ['waitressd.middleware.access_log'] +
         MIDDLEWARE +
         ['raven.contrib.django.middleware.SentryResponseErrorIdMiddleware']
 )
 
 STATIC_ROOT = '/opt/static'
-ALLOWED_HOSTS = ['feedsubs.com']
+ALLOWED_HOSTS = ['feedsubs.com', '127.0.0.1']
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
@@ -74,4 +78,10 @@ CACHES = {
             }
         }
     }
+}
+
+WAITRESS = {
+    'port': config('WAITRESS_PORT', default=8000, cast=int),
+    'asyncore_use_poll': True,
+    'threads': config('WAITRESS_THREADS', default=16, cast=int)
 }
