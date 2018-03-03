@@ -1,4 +1,4 @@
-atoma==0.0.2.dev1
+atoma==0.0.2
 attrs==17.4.0
 beautifulsoup4==4.6.0
 bleach==2.1.2
@@ -25,7 +25,7 @@ redis==2.10.6
 requests==2.18.4
 requests-oauthlib==0.8.0
 six==1.11.0
-spinach==0.0.4.dev1
+spinach==0.0.4
 sqlparse==0.2.4
 urllib3==1.22
 waitress==1.1.0
