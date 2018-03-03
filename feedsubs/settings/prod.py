@@ -11,7 +11,6 @@ from .base import *
 # - Redirect HTTP -> HTTPS
 # - Redirect www. -> naked domain
 # - Clean and insert X-Forwarded-Proto in requests
-# - Clean and insert X-Forwarded-Host in requests
 # - Clean and insert X-Forwarded-For in requests
 # - Add all standard security headers to responses
 
@@ -27,13 +26,11 @@ MIDDLEWARE = (
 )
 
 STATIC_ROOT = '/opt/static'
-ALLOWED_HOSTS = ['feedsubs.com', '127.0.0.1']
+ALLOWED_HOSTS = [config('ALLOWED_HOST', default='feedsubs.com')]
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
-SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ('X-Forwarded-Proto', 'https')
-USE_X_FORWARDED_HOST = True
 
 
 XFF_TRUSTED_PROXY_DEPTH = 1
