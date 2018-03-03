@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 import os
 
 from decouple import config
+from spinach.brokers.redis import RedisBroker, recommended_socket_opts
+from redis import StrictRedis
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -177,14 +180,17 @@ LOGGING = {
     }
 }
 
-from spinach import RedisBroker
-from redis import StrictRedis
-
-SPINACH_SPIN = {
-    'broker': RedisBroker(redis=StrictRedis(host='redis')),
+SPINACH_ENGINE = {
+    'broker': RedisBroker(redis=StrictRedis(
+        host=config('REDIS_HOST', default='redis'),
+        port=config('REDIS_PORT', default=6379, cast=int),
+        db=config('REDIS_DB', default=0, cast=int),
+        password=config('REDIS_PASSWORD', default=None),
+        **recommended_socket_opts
+    )),
     'namespace': 'feedsubs'
 }
 
 SPINACH_WORKER = {
-    'number': 2
+    'number': config('SPINACH_WORKER_NUMBER', default=5, cast=int)
 }
