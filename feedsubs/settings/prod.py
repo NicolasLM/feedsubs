@@ -31,10 +31,9 @@ ALLOWED_HOSTS = [config('ALLOWED_HOST', default='feedsubs.com')]
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_PROXY_SSL_HEADER = ('X-Forwarded-Proto', 'https')
-
-
 XFF_TRUSTED_PROXY_DEPTH = 1
 XFF_STRICT = True
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 
 ADMINS = [('Nicolas', 'nicolas@lemanchet.fr')]
 MANAGERS = [('Nicolas', 'nicolas@lemanchet.fr')]
