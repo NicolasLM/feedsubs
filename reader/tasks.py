@@ -8,13 +8,21 @@ import bleach
 from django.utils.timezone import now
 from django.utils.http import http_date
 import requests
-from spinach import Tasks
+from spinach import Tasks, Batch
 
 from . import models
 
 
 tasks = Tasks()
 logger = getLogger(__name__)
+
+
+@tasks.task(name='synchronize_all_feeds', periodicity=timedelta(minutes=30))
+def synchronize_all_feeds():
+    batch = Batch()
+    for feed in models.Feed.objects.all():
+        batch.schedule('synchronize_feed', str(feed.id))
+    tasks.schedule_batch(batch)
 
 
 @tasks.task(name='synchronize_feed')
