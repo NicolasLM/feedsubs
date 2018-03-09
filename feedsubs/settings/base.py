@@ -181,11 +181,8 @@ LOGGING = {
 }
 
 SPINACH_ENGINE = {
-    'broker': RedisBroker(redis=StrictRedis(
-        host=config('REDIS_HOST', default='redis'),
-        port=config('REDIS_PORT', default=6379, cast=int),
-        db=config('REDIS_DB', default=0, cast=int),
-        password=config('REDIS_PASSWORD', default=None),
+    'broker': RedisBroker(redis=StrictRedis.from_url(
+        config('REDIS_SPINACH_URL', default='redis://'),
         **recommended_socket_opts
     )),
     'namespace': 'feedsubs'

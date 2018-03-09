@@ -53,28 +53,18 @@ RAVEN_CONFIG = {
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
         'TIMEOUT': 24 * 60 * 60,  # keys expire by default after 1 day
-        'LOCATION': config('MEMCACHED', default='memcached:11211'),
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': config('REDIS_CACHE_URL', default='redis://'),
         'OPTIONS': {
-            'binary': True,
-            'behaviors': {
-                'no_block': True,
-                'tcp_nodelay': True,
-                'tcp_keepalive': True,
-                'connect_timeout': 2000,  # ms
-                'send_timeout': 750 * 1000,  # us
-                'receive_timeout': 750 * 1000,  # us
-                '_poll_timeout': 2000,  # ms
-                # Better failover
-                'ketama': True,
-                'remove_failed': 1,
-                'retry_timeout': 2,
-                'dead_timeout': 30,
-            }
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'SOCKET_CONNECT_TIMEOUT': 5,
+            'SOCKET_TIMEOUT': 5,
+            'IGNORE_EXCEPTIONS': True,
         }
     }
 }
+DJANGO_REDIS_LOG_IGNORED_EXCEPTIONS = True
 
 WAITRESS = {
     'port': config('WAITRESS_PORT', default=8000, cast=int),

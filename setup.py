@@ -62,9 +62,9 @@ setup(
     extras_require={
         'prod': [
             'django-xff',
+            'django-redis',
             'waitress',
             'raven',
-            'pylibmc',
         ],
         'dev': [
             'django-debug-toolbar',

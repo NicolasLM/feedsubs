@@ -5,9 +5,6 @@ ENV DJANGO_SETTINGS_MODULE=feedsubs.settings.prod
 
 RUN mkdir /opt/code /opt/static
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends libmemcached-dev && \
-    rm -rf /var/lib/apt/lists/*
 COPY requirements.txt /opt/code/
 RUN pip install -U pip setuptools && pip install -r /opt/code/requirements.txt
 

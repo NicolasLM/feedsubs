@@ -10,12 +10,12 @@ Django==2.0.3
 django-allauth==0.35.0
 django-bulma==0.4.0
 django-debug-toolbar==1.9.1
+django-redis==4.9.0
 django-xff==1.2.0
 html5lib==1.0.1
 idna==2.6
 oauthlib==2.0.6
 psycopg2==2.7.4
-pylibmc==1.5.2
 python-dateutil==2.6.1
 python-decouple==3.1
 python3-openid==3.1.0
