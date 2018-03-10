@@ -28,6 +28,10 @@ accounts_urlpatterns = [u for u in accounts_urlpatterns
                         if u.name in accounts_urlpatterns_to_keep]
 
 
+# Custom admin name
+admin.site.site_header = 'Feedsubs'
+admin.site.site_title = 'Feedsubs'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include(accounts_urlpatterns)),
