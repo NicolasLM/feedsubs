@@ -13,7 +13,6 @@ from . import models
 
 
 class Home(TemplateView):
-    template_name = 'reader/home.html'
 
     @method_decorator(ensure_csrf_cookie)
     def dispatch(self, request, *args, **kwargs):
@@ -27,9 +26,12 @@ class Home(TemplateView):
                 .filter(feed__in=self.request.user.reader_profile.feeds.all())
                 .prefetch_related('read_by', 'stared_by', 'feed')
             )
-        else:
-            context['articles'] = models.Article.objects.all()[:20]
         return context
+
+    def get_template_names(self):
+        if self.request.user.is_authenticated:
+            return ['reader/home_authenticated.html']
+        return ['reader/home.html']
 
 
 class FeedList(LoginRequiredMixin, ListView):
