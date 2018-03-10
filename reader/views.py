@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import (
@@ -12,26 +13,26 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from . import models
 
 
-class Home(TemplateView):
+class Home(LoginRequiredMixin, ListView):
+    model = models.Article
+    template_name = 'reader/home_authenticated.html'
+    context_object_name = 'articles'
+    paginate_by = 15
 
     @method_decorator(ensure_csrf_cookie)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if self.request.user.is_authenticated:
-            context['articles'] = (
-                models.Article.objects
-                .filter(feed__in=self.request.user.reader_profile.feeds.all())
-                .prefetch_related('read_by', 'stared_by', 'feed')
-            )
-        return context
+    def get_queryset(self):
+        return (
+            super().get_queryset()
+            .filter(feed__in=self.request.user.reader_profile.feeds.all())
+            .exclude(id__in=self.request.user.reader_profile.read.all())
+            .prefetch_related('read_by', 'stared_by', 'feed')
+        )
 
-    def get_template_names(self):
-        if self.request.user.is_authenticated:
-            return ['reader/home_authenticated.html']
-        return ['reader/home.html']
+    def handle_no_permission(self):
+        return render(self.request, 'reader/home.html')
 
 
 class FeedList(LoginRequiredMixin, ListView):
@@ -43,26 +44,33 @@ class FeedList(LoginRequiredMixin, ListView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        rv = (
+        return (
             super().get_queryset()
             .filter(subscribers=self.request.user.reader_profile)
         )
-        return rv
 
 
-class FeedDetail(LoginRequiredMixin, DetailView):
-    model = models.Feed
+class FeedDetailList(LoginRequiredMixin, ListView):
+    model = models.Article
+    template_name = 'reader/feed_detail_list.html'
+    context_object_name = 'articles'
+    paginate_by = 15
 
     @method_decorator(ensure_csrf_cookie)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['articles'] = (
-            context['feed'].article_set.all()
+    def get_queryset(self):
+        return (
+            super().get_queryset()
+            .filter(feed=self.kwargs.get('pk'))
             .prefetch_related('read_by', 'stared_by', 'feed')
         )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['feed'] = get_object_or_404(models.Feed,
+                                            pk=self.kwargs.get('pk'))
         return context
 
 
