@@ -54,9 +54,16 @@ function star()
     var type = current.data('type');
     var pk = current.data('id');
     var action = current.data('action');
+    var url;
+
+    if (pk === "") {
+        url = "/" + type + "/" + action;
+    } else {
+        url = "/" + type + "/" + pk + "/" + action;
+    }
 
     $.ajax({
-        url: "/" + type + "/" + pk + "/" + action,
+        url: url,
         type: 'POST',
         statusCode: {
             204: function () {
@@ -74,6 +81,8 @@ function star()
                     current.data("action", "read");
                 } else if (action === "unsubscribe") {
                     current.attr("disabled", true);
+                } else if (action === "read-all") {
+                    current.attr("disabled", true);
                 }
             }
         }
@@ -88,6 +97,7 @@ $(function() {
     $('[data-action="read"]').click(star);
     $('[data-action="unread"]').click(star);
     $('[data-action="unsubscribe"]').click(star);
+    $('[data-action="read-all"]').click(star);
 });
 
 $.ajaxSetup({

@@ -130,3 +130,20 @@ class UnsubscribeView(ToggleView):
     model = models.Feed
     attribute_name = 'subscribers'
     add = False
+
+
+class ReadAllView(LoginRequiredMixin, View):
+
+    def post(self, request, pk=None):
+        query = models.Article.objects
+        if pk:
+            query = query.filter(feed_id=pk)
+        else:
+            query = query.filter(
+                feed__in=self.request.user.reader_profile.feeds.all()
+            )
+        articles = query.exclude(
+            id__in=self.request.user.reader_profile.read.all()
+        )
+        request.user.reader_profile.read.add(*articles)
+        return HttpResponse(status=204)

@@ -6,8 +6,13 @@ app_name = 'reader'
 urlpatterns = [
     path('feeds', views.FeedList.as_view(), name='feed-list'),
     path('feeds/new', views.FeedCreate.as_view(), name='feed-create'),
+    path('feeds/read-all', views.ReadAllView.as_view(),
+         name='feeds-read-all'),
+
     path('feeds/<int:pk>', views.FeedDetailList.as_view(), name='feed-detail'),
     path('feeds/<int:pk>/unsubscribe', views.UnsubscribeView.as_view()),
+    path('feeds/<int:pk>/read-all', views.ReadAllView.as_view(),
+         name='feed-read-all'),
 
     path('articles/<int:pk>/star', views.StarArticleView.as_view(),
          name='star-article'),
