@@ -1,5 +1,3 @@
-from datetime import timedelta
-
 from allauth.account.views import EmailView, PasswordChangeView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import logout
@@ -56,7 +54,7 @@ class AccountSettings(CurrentPageSettings, LoginRequiredMixin,
 
 class InterfaceSettings(CurrentPageSettings, LoginRequiredMixin, UpdateView):
     model = models.UMProfile
-    fields = ['night_mode']
+    fields = ['night_mode', 'items_per_page']
     template_name = 'um/settings_interface.html'
     success_url = reverse_lazy('um:settings-interface')
     current_settings = 'interface'

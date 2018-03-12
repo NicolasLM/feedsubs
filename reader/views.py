@@ -3,9 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import (
-    TemplateView, ListView, CreateView, DetailView
-)
+from django.views.generic import ListView, CreateView
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -17,7 +15,6 @@ class Home(LoginRequiredMixin, ListView):
     model = models.Article
     template_name = 'reader/home_authenticated.html'
     context_object_name = 'articles'
-    paginate_by = 15
 
     @method_decorator(ensure_csrf_cookie)
     def dispatch(self, request, *args, **kwargs):
@@ -33,6 +30,9 @@ class Home(LoginRequiredMixin, ListView):
 
     def handle_no_permission(self):
         return render(self.request, 'reader/home.html')
+
+    def get_paginate_by(self, queryset):
+        return self.request.user.um_profile.items_per_page
 
 
 class FeedList(LoginRequiredMixin, ListView):
@@ -54,7 +54,6 @@ class FeedDetailList(LoginRequiredMixin, ListView):
     model = models.Article
     template_name = 'reader/feed_detail_list.html'
     context_object_name = 'articles'
-    paginate_by = 15
 
     @method_decorator(ensure_csrf_cookie)
     def dispatch(self, request, *args, **kwargs):
@@ -72,6 +71,9 @@ class FeedDetailList(LoginRequiredMixin, ListView):
         context['feed'] = get_object_or_404(models.Feed,
                                             pk=self.kwargs.get('pk'))
         return context
+
+    def get_paginate_by(self, queryset):
+        return self.request.user.um_profile.items_per_page
 
 
 class FeedCreate(LoginRequiredMixin, CreateView):
