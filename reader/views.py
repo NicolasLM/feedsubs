@@ -88,6 +88,26 @@ class FeedCreate(LoginRequiredMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
+class Starred(LoginRequiredMixin, ListView):
+    model = models.Article
+    template_name = 'reader/starred.html'
+    context_object_name = 'articles'
+
+    @method_decorator(ensure_csrf_cookie)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return (
+            super().get_queryset()
+            .filter(stared_by=self.request.user.reader_profile)
+            .prefetch_related('read_by', 'stared_by', 'feed')
+        )
+
+    def get_paginate_by(self, queryset):
+        return self.request.user.um_profile.items_per_page
+
+
 class ToggleView(LoginRequiredMixin, View):
     model = None
     attribute_name = None

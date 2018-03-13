@@ -23,5 +23,7 @@ urlpatterns = [
     path('articles/<int:pk>/unread', views.UnreadArticleView.as_view(),
          name='unread-article'),
 
+    path('starred', views.Starred.as_view(), name='starred'),
+
     path('', views.Home.as_view(), name='home'),
 ]
