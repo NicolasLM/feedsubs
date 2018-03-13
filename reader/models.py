@@ -1,10 +1,17 @@
 from django.contrib.auth.models import User
+from django.core.validators import URLValidator
 from django.db import models
+
+from .validators import http_port_validator
 
 
 class Feed(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    uri = models.URLField(unique=True)
+    uri = models.URLField(
+        unique=True,
+        validators=[URLValidator(schemes=['http', 'https']),
+                    http_port_validator]
+    )
     last_fetched_at = models.DateTimeField(null=True, blank=True)
     last_hash = models.BinaryField(max_length=20, null=True, blank=True)
     frequency_per_year = models.IntegerField(null=True, blank=True)
