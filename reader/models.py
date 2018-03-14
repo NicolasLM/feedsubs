@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.core.validators import URLValidator
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 from .validators import http_port_validator
 
@@ -46,10 +47,25 @@ class Article(models.Model):
 class ReaderProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,
                                 related_name='reader_profile')
-    feeds = models.ManyToManyField(Feed, related_name='subscribers', blank=True)
+    feeds = models.ManyToManyField(Feed, related_name='subscribers', blank=True,
+                                   through='Subscription')
     stars = models.ManyToManyField(Article, related_name='stared_by',
                                    blank=True)
     read = models.ManyToManyField(Article, related_name='read_by', blank=True)
 
     def __str__(self):
         return 'ReadProfile of {}'.format(self.user)
+
+
+class Subscription(models.Model):
+    reader = models.ForeignKey(ReaderProfile, on_delete=models.CASCADE)
+    feed = models.ForeignKey(Feed, on_delete=models.CASCADE)
+    subscribed_at = models.DateTimeField(auto_now_add=True)
+    tags = ArrayField(
+        models.CharField(max_length=40, blank=False, null=False),
+        default=list,
+        size=100,
+    )
+
+    class Meta:
+        unique_together = ('reader', 'feed')

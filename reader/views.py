@@ -83,9 +83,22 @@ class FeedCreate(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         self.object = form.save()
-        self.object.subscribers.add(self.request.user.reader_profile)
-        self.object.save()
+        subscription = models.Subscription(
+            feed=self.object, reader=self.request.user.reader_profile
+        )
+        subscription.save()
         return HttpResponseRedirect(self.get_success_url())
+
+
+class UnsubscribeView(LoginRequiredMixin, View):
+
+    def post(self, request, pk):
+        reader_profile = request.user.reader_profile
+        obj = get_object_or_404(
+            models.Subscription, feed=pk, reader=reader_profile
+        )
+        obj.delete()
+        return HttpResponse(status=204)
 
 
 class Starred(LoginRequiredMixin, ListView):
@@ -145,12 +158,6 @@ class ReadArticleView(ToggleView):
 class UnreadArticleView(ToggleView):
     model = models.Article
     attribute_name = 'read_by'
-    add = False
-
-
-class UnsubscribeView(ToggleView):
-    model = models.Feed
-    attribute_name = 'subscribers'
     add = False
 
 

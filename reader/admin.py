@@ -27,3 +27,8 @@ class ArticleAdmin(admin.ModelAdmin):
 @admin.register(models.ReaderProfile)
 class ProfileAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(models.Subscription)
+class SubscriptionAdmin(admin.ModelAdmin):
+    pass
