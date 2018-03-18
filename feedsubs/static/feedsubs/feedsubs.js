@@ -81,10 +81,15 @@ function star()
                     current.data("action", "read");
                 } else if (action === "unsubscribe") {
                     current.attr("disabled", true);
+                    location.reload(true);
                 } else if (action === "subscribe") {
                     current.attr("disabled", true);
+                    location.reload(true);
                 } else if (action === "read-all") {
                     current.attr("disabled", true);
+                    var all_read_buttons = $('[data-action="read"]');
+                    all_read_buttons.addClass("is-success is-selected");
+                    all_read_buttons.data("action", "unread");
                 }
             }
         }

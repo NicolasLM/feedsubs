@@ -36,8 +36,9 @@ class Home(LoginRequiredMixin, ListView):
 
 
 class FeedList(LoginRequiredMixin, ListView):
-    model = models.Feed
-    ordering = 'created_at'
+    model = models.Subscription
+    ordering = 'subscribed_at'
+    template_name = 'reader/feed_list.html'
 
     @method_decorator(ensure_csrf_cookie)
     def dispatch(self, request, *args, **kwargs):
@@ -46,7 +47,8 @@ class FeedList(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return (
             super().get_queryset()
-            .filter(subscribers=self.request.user.reader_profile)
+            .filter(reader=self.request.user.reader_profile)
+            .select_related('feed')
         )
 
 

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load i18n reader %}
 
 {% block title %}{% trans "Feed subscriptions" %}{% endblock %}
 {% block content_title %}{% endblock content_title %}
@@ -25,18 +25,24 @@
     <thead>
       <tr>
         <th>Name</th>
-        <th>URL</th>
+        <th>Tags</th>
         <th>Actions</th>
       </tr>
     </thead>
 
     <tbody>
-      {% for feed in object_list %}
+      {% for subscription in object_list %}
         <tr>
-          <th><a href="{% url 'reader:feed-detail' feed.id %}">{{ feed.name }}</a></th>
-          <td>{{ feed.uri }}</td>
+          <th><a href="{% url 'reader:feed-detail' subscription.feed.id %}">{{ subscription.feed.name }}</a></th>
           <td>
-            <a class="button is-danger is-small is-outlined" data-id="{{ feed.id }}" data-type="feeds" data-action="unsubscribe">
+            <div class="tags">
+              {% for tag in subscription.tags %}
+                <span class="tag is-small is-{{ tag | tag_color }}">{{ tag }}</span>
+              {% endfor %}
+            </div>
+          </td>
+          <td>
+            <a class="button is-danger is-small is-outlined" data-id="{{ subscription.feed.id }}" data-type="feeds" data-action="unsubscribe">
               <span class="icon is-small">
                   <i class="fas fa-times"></i>
               </span>
