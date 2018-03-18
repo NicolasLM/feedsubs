@@ -1,3 +1,4 @@
+import hashlib
 from typing import Optional
 
 import bleach
@@ -62,3 +63,13 @@ def unify_style(content: str) -> str:
             tag.name = 'h{}'.format(i + shift_by)
 
     return soup.prettify()
+
+
+@register.filter
+def tag_color(tag_name: str) -> str:
+    colors = [
+        'dark', 'primary', 'link', 'info', 'success', 'warning', 'danger',
+        'black', 'white'
+    ]
+    index = int(hashlib.md5(tag_name.encode()).hexdigest(), 16) % (len(colors))
+    return colors[index]

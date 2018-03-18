@@ -3,12 +3,12 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, UpdateView
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
 
-from . import models
+from . import models, forms
 
 
 class Home(LoginRequiredMixin, ListView):
@@ -67,9 +67,22 @@ class FeedDetailList(LoginRequiredMixin, ListView):
         )
 
     def get_context_data(self, **kwargs):
+        from . import forms
         context = super().get_context_data(**kwargs)
         context['feed'] = get_object_or_404(models.Feed,
                                             pk=self.kwargs.get('pk'))
+        try:
+            subscription = models.Subscription.objects.get(
+                feed=self.kwargs.get('pk'),
+                reader=self.request.user.reader_profile
+            )
+            context['subscription'] = subscription
+            context['tag_form'] = forms.SubscriptionTagsForm(
+                instance=subscription
+            )
+        except models.Subscription.DoesNotExist:
+            context['subscription'] = None
+
         return context
 
     def get_paginate_by(self, queryset):
@@ -90,6 +103,17 @@ class FeedCreate(LoginRequiredMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
+class SubscribeView(LoginRequiredMixin, View):
+
+    def post(self, request, pk):
+        feed = get_object_or_404(models.Feed, id=pk)
+        subscription = models.Subscription(
+            feed=feed, reader=self.request.user.reader_profile
+        )
+        subscription.save()
+        return HttpResponse(status=204)
+
+
 class UnsubscribeView(LoginRequiredMixin, View):
 
     def post(self, request, pk):
@@ -99,6 +123,30 @@ class UnsubscribeView(LoginRequiredMixin, View):
         )
         obj.delete()
         return HttpResponse(status=204)
+
+
+class UpdateSubscriptionTagsView(UpdateView):
+    template_name = 'reader/feed_form.html'
+    form_class = forms.SubscriptionTagsForm
+    model = models.Subscription
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(
+            models.Subscription,
+            feed=self.kwargs.get('pk'),
+            reader=self.request.user.reader_profile,
+        )
+
+    def get_form(self, *args, **kwargs):
+        # Hack to remove leading and tailing commas from tags-input
+        post = self.request.POST.copy()
+        post['tags'] = self.request.POST['tags'].strip(',')
+        self.request.POST = post
+        return super().get_form(*args, **kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy('reader:feed-detail',
+                            kwargs={'pk': self.kwargs.get('pk')})
 
 
 class Starred(LoginRequiredMixin, ListView):

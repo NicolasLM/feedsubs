@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n reader %}
+{% load i18n reader bulma_tags %}
 
 {% block title %}{% trans "Feed" %} {{ feed.name }}{% endblock %}
 
@@ -10,18 +10,30 @@
       <h1 class="title">{% trans "Feed" %} {{ feed.name }}</h1>
     </div>
     <div class="column is-narrow">
-      <a class="button is-danger is-outlined" data-id="{{ feed.id }}" data-type="feeds" data-action="unsubscribe">
-        <span class="icon is-small">
-            <i class="fas fa-times"></i>
-        </span>
-        <span>{% trans "Unsubscribe" %}</span>
-      </a>
-      <a class="button is-success is-outlined" data-id="{{ feed.id }}" data-type="feeds" data-action="read-all">
-        <span class="icon is-small">
-            <i class="fas fa-check"></i>
-        </span>
-        <span>{% trans "Mark as read" %}</span>
-      </a>
+
+      {% if subscription %}
+        <a class="button is-danger is-outlined" data-id="{{ feed.id }}" data-type="feeds" data-action="unsubscribe">
+          <span class="icon is-small">
+              <i class="fas fa-times"></i>
+          </span>
+          <span>{% trans "Unsubscribe" %}</span>
+        </a>
+
+        <a class="button is-success is-outlined" data-id="{{ feed.id }}" data-type="feeds" data-action="read-all">
+          <span class="icon is-small">
+              <i class="fas fa-check"></i>
+          </span>
+          <span>{% trans "Mark as read" %}</span>
+        </a>
+      {% else %}
+        <a class="button is-success is-outlined" data-id="{{ feed.id }}" data-type="feeds" data-action="subscribe">
+          <span class="icon is-small">
+              <i class="fas fa-check"></i>
+          </span>
+          <span>{% trans "Subscribe" %}</span>
+        </a>
+      {% endif %}
+
     </div>
   </div>
 
@@ -51,6 +63,69 @@
 
     </div>
   </section>
+
+  {% if subscription %}
+    <div id="show-tags-box" class="box">
+
+      <div class="columns">
+        <div class="column">
+          {% if subscription.tags %}
+          <div class="tags">
+            {% for tag in subscription.tags %}
+              <span class="tag is-medium is-{{ tag | tag_color }}">{{ tag }}</span>
+            {% endfor %}
+          </div>
+          {% else %}
+            Add tags to group feeds together
+          {% endif %}
+        </div>
+
+        <div class="column is-narrow">
+          <div class="field has-addons">
+
+            <p class="control">
+              <a id="edit-tags-button" class="button is-primary is-outlined">
+                <span class="icon is-small">
+                  <i class="fas fa-tag"></i>
+                </span>
+                <span>Edit</span>
+              </a>
+            </p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="edit-tags-box" class="box is-hidden">
+      <form method="POST" action="{% url 'reader:feed-update-tags' feed.id %}">
+        {% csrf_token %}
+        <div class="columns">
+
+          <div class="column">
+            <input name="tags" class="input" type="tags" placeholder="Add Tag"
+                   value="{{ subscription.tags | join:',' }}">
+          </div>
+
+          <div class="column is-narrow">
+            <div class="field has-addons">
+
+              <p class="control">
+                <button class="button is-primary">
+                  <span class="icon is-small">
+                    <i class="far fa-save"></i>
+                  </span>
+                  <span>Save</span>
+                </button>
+              </p>
+
+            </div>
+          </div>
+
+        </div>
+      </form>
+    </div>
+  {% endif %}
 
   {% include 'reader/_articles.html' %}
 

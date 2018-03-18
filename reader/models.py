@@ -64,6 +64,8 @@ class Subscription(models.Model):
     tags = ArrayField(
         models.CharField(max_length=40, blank=False, null=False),
         default=list,
+        blank=True,
+        null=False,
         size=100,
     )
 

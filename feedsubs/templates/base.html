@@ -10,8 +10,10 @@
   {% else %}
     <link rel="stylesheet" href="https://jenil.github.io/bulmaswatch/yeti/bulmaswatch.min.css">
   {% endif %}
+  <link rel="stylesheet" href="{% static 'feedsubs/vendor/bulma-tagsinput.min.css' %}">
 
-  <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js" defer></script>
+  <script type="text/javascript" src="{% static 'feedsubs/vendor/jquery-3.3.1.min.js' %}" defer></script>
+  <script type="text/javascript" src="{% static 'feedsubs/vendor/bulma-tagsinput.min.js' %}" defer></script>
   <script type="text/javascript" src="{% static 'feedsubs/feedsubs.js' %}" defer></script>
 {% endblock %}
 

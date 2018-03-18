@@ -10,7 +10,10 @@ urlpatterns = [
          name='feeds-read-all'),
 
     path('feeds/<int:pk>', views.FeedDetailList.as_view(), name='feed-detail'),
+    path('feeds/<int:pk>/subscribe', views.SubscribeView.as_view()),
     path('feeds/<int:pk>/unsubscribe', views.UnsubscribeView.as_view()),
+    path('feeds/<int:pk>/tags', views.UpdateSubscriptionTagsView.as_view(),
+         name='feed-update-tags'),
     path('feeds/<int:pk>/read-all', views.ReadAllView.as_view(),
          name='feed-read-all'),
 

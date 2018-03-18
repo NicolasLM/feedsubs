@@ -81,6 +81,8 @@ function star()
                     current.data("action", "read");
                 } else if (action === "unsubscribe") {
                     current.attr("disabled", true);
+                } else if (action === "subscribe") {
+                    current.attr("disabled", true);
                 } else if (action === "read-all") {
                     current.attr("disabled", true);
                 }
@@ -91,14 +93,25 @@ function star()
     return false;
 }
 
+
+function showEditTagsBox() {
+    $('#show-tags-box').addClass("is-hidden");
+    $('#edit-tags-box').removeClass("is-hidden");
+
+}
+
 $(function() {
     $('[data-action="star"]').click(star);
     $('[data-action="unstar"]').click(star);
     $('[data-action="read"]').click(star);
     $('[data-action="unread"]').click(star);
     $('[data-action="unsubscribe"]').click(star);
+    $('[data-action="subscribe"]').click(star);
     $('[data-action="read-all"]').click(star);
+
+    $('#edit-tags-button').click(showEditTagsBox);
 });
+
 
 $.ajaxSetup({
     beforeSend: function(xhr, settings) {
