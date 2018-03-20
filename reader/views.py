@@ -52,6 +52,16 @@ class FeedList(LoginRequiredMixin, ListView):
         )
 
 
+class ExportFeedList(FeedList):
+    template_name = 'reader/opml-export.xml'
+    content_type = 'application/xml'
+
+    def render_to_response(self, context, **response_kwargs):
+        rv = super().render_to_response(context, **response_kwargs)
+        rv['Content-Disposition'] = 'attachment; filename="feedsubs-export.xml"'
+        return rv
+
+
 class FeedDetailList(LoginRequiredMixin, ListView):
     model = models.Article
     template_name = 'reader/feed_detail_list.html'

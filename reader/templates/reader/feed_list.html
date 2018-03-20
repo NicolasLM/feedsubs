@@ -11,7 +11,13 @@
       <h1 class="title">{% trans "Feed subscriptions" %}</h1>
     </div>
     <div class="column is-narrow">
-      <a class="button is-link is-pulled-right" href="{% url 'reader:feed-create' %}">
+      <a class="button is-info is-outlined" href="{% url 'reader:feed-export' %}">
+        <span class="icon">
+            <i class="fas fa-upload"></i>
+        </span>
+        <span>{% trans "Export" %}</span>
+      </a>
+      <a class="button is-success is-outlined" href="{% url 'reader:feed-create' %}">
         <span class="icon">
             <i class="fas fa-plus"></i>
         </span>
