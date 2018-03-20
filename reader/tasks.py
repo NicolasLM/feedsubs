@@ -90,7 +90,7 @@ def retrieve_feed(uri: str, last_fetched_at: Optional[datetime],
         request_headers['If-Modified-Since'] = http_date(
             last_fetched_at.timestamp()
         )
-    r = requests.get(uri, headers=request_headers)
+    r = requests.get(uri, headers=request_headers, timeout=(15, 120))
     r.raise_for_status()
 
     if r.status_code == 304:
