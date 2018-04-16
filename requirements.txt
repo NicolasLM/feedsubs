@@ -8,7 +8,7 @@ chardet==3.0.4
 defusedxml==0.5.0
 Django==2.0.3
 django-allauth==0.35.0
-django-bulma==0.4.0
+django-bulma==0.5.0
 django-redis==4.9.0
 django-xff==1.2.0
 html5lib==1.0.1
