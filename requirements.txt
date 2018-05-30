@@ -19,7 +19,7 @@ python-dateutil==2.7.3
 python-decouple==3.1
 python3-openid==3.1.0
 pytz==2018.4
-raven==6.8.0
+raven==6.9.0
 redis==2.10.6
 requests==2.18.4
 requests-oauthlib==0.8.0
