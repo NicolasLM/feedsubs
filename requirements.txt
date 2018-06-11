@@ -12,7 +12,7 @@ django-bulma==0.5.0
 django-redis==4.9.0
 django-xff==1.2.0
 html5lib==1.0.1
-idna==2.6
+idna==2.7
 oauthlib==2.1.0
 psycopg2==2.7.4
 python-dateutil==2.7.3
