@@ -8,11 +8,11 @@ chardet==3.0.4
 defusedxml==0.5.0
 Django==2.0.6
 django-allauth==0.36.0
-django-bulma==0.5.0
+django-bulma==0.5.1
 django-redis==4.9.0
 django-xff==1.2.0
 html5lib==1.0.1
-idna==2.6
+idna==2.7
 oauthlib==2.1.0
 psycopg2==2.7.4
 python-dateutil==2.7.3
@@ -21,7 +21,7 @@ python3-openid==3.1.0
 pytz==2018.4
 raven==6.9.0
 redis==2.10.6
-requests==2.18.4
+requests==2.19.0
 requests-oauthlib==1.0.0
 six==1.11.0
 spinach==0.0.5
