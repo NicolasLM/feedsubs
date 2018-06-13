@@ -43,13 +43,12 @@ def synchronize_feed(feed_id: int):
     parsed_feed = simple_parse_bytes(feed_content)
     for parsed_article in parsed_feed.articles:
 
-        title = bleach.clean(parsed_article.title, tags=[], strip=True)
         article, created = models.Article.objects.update_or_create(
             id_in_feed=parsed_article.id,
             feed=feed,
             defaults={
                 'uri': parsed_article.link,
-                'title': title,
+                'title': parsed_article.title,
                 'content': parsed_article.content,
                 'published_at': parsed_article.published_at,
                 'updated_at': parsed_article.updated_at
