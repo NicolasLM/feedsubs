@@ -3,21 +3,42 @@
 
 {% block content %}
 
-  <div class="columns">
-    <div class="column">
-      <h1 class="title">Articles</h1>
-    </div>
-    <div class="column is-narrow">
-      <a class="button is-success is-outlined" data-id="" data-type="feeds" data-action="read-all">
-        <span class="icon is-small">
-            <i class="fas fa-check"></i>
-        </span>
-        <span>{% trans "Mark as read" %}</span>
-      </a>
-    </div>
-  </div>
+  {% if articles %}
 
-  {% include 'reader/_articles.html' %}
+    <div class="columns">
+      <div class="column">
+        <h1 class="title">Articles</h1>
+      </div>
+      <div class="column is-narrow">
+        <a class="button is-success is-outlined" data-id="" data-type="feeds" data-action="read-all">
+          <span class="icon is-small">
+              <i class="fas fa-check"></i>
+          </span>
+          <span>{% trans "Mark as read" %}</span>
+        </a>
+      </div>
+    </div>
+
+    {% include 'reader/_articles.html' %}
+
+  {% else %}
+
+    <section class="hero is-fullheight">
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <h1 class="title">
+            <span class="icon">
+              <i class="fas fa-2x fa-thumbs-up"></i>
+            </span>
+          </h1>
+          <h2 class="subtitle">
+            <span>{% trans "You're all caught up" %}</span>
+          </h2>
+        </div>
+      </div>
+    </section>
+
+  {% endif %}
 
 
 {% endblock %}
