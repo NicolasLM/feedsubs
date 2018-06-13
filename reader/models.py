@@ -30,7 +30,7 @@ class Article(models.Model):
     id_in_feed = models.CharField(max_length=200)
     uri = models.URLField()
     title = models.TextField()
-    content = models.TextField()
+    content = models.TextField(blank=True, null=False)
     published_at = models.DateTimeField()
     updated_at = models.DateTimeField(null=True, blank=True)
 
