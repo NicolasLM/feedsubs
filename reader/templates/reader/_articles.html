@@ -9,7 +9,11 @@
         <a href="{{ article.uri }}">
           <h2 class="title">{{ article.title }}</h2>
         </a>
-        <span>{{ article.published_at | naturalday | title}}</span>
+        {% if article.published_at %}
+          <span>{{ article.published_at | naturalday | title}}</span>
+        {% else %}
+          <span>{{ article.created_at | naturalday | title}}</span>
+        {% endif %}
         &bull;
         <span><a href="{% url 'reader:feed-detail' article.feed.id %}">{{ article.feed.name }}</a></span>
       </div>

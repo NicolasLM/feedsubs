@@ -5,7 +5,7 @@ import bleach
 import bs4
 from django import template
 
-ALLOWED_TAGS = bleach.ALLOWED_TAGS + ['p', 'pre', 'img', 'h1', 'h2',
+ALLOWED_TAGS = bleach.ALLOWED_TAGS + ['p', 'pre', 'img', 'br', 'h1', 'h2',
                                       'h3', 'h4', 'h5', 'h6']
 ALLOWED_ATTRIBUTES = {'img': ['src', 'title', 'alt']}
 ALLOWED_ATTRIBUTES.update(bleach.ALLOWED_ATTRIBUTES)

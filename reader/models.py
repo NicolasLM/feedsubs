@@ -31,7 +31,7 @@ class Article(models.Model):
     uri = models.URLField()
     title = models.TextField()
     content = models.TextField(blank=True, null=False)
-    published_at = models.DateTimeField()
+    published_at = models.DateTimeField(null=True, blank=True)
     updated_at = models.DateTimeField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

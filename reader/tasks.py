@@ -4,7 +4,6 @@ from logging import getLogger
 from typing import Optional, Tuple
 
 from atoma.simple import simple_parse_bytes
-import bleach
 from django.utils.timezone import now
 from django.utils.http import http_date
 import requests
@@ -41,7 +40,7 @@ def synchronize_feed(feed_id: int):
 
     feed_content, current_hash = feed_request
     parsed_feed = simple_parse_bytes(feed_content)
-    for parsed_article in parsed_feed.articles:
+    for parsed_article in reversed(parsed_feed.articles):
 
         article, created = models.Article.objects.update_or_create(
             id_in_feed=parsed_article.id,
@@ -77,7 +76,12 @@ def calculate_frequency_per_year(feed: models.Feed) -> Optional[int]:
     if oldest_article is None:
         return None
 
-    yearly_ratio = 365 / (now() - oldest_article.published_at).days
+    try:
+        yearly_ratio = 365 / (now() - oldest_article.published_at).days
+    except ZeroDivisionError:
+        # Oldest article has been published today
+        return None
+
     return int(num_articles_over_year * yearly_ratio)
 
 
