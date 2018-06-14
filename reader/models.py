@@ -1,3 +1,5 @@
+from urllib.parse import urlsplit
+
 from django.contrib.auth.models import User
 from django.core.validators import URLValidator
 from django.db import models
@@ -7,7 +9,7 @@ from .validators import http_port_validator
 
 
 class Feed(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
     uri = models.URLField(
         unique=True,
         validators=[URLValidator(schemes=['http', 'https']),
@@ -21,6 +23,13 @@ class Feed(models.Model):
 
     class Meta:
         ordering = ('created_at',)
+
+    @property
+    def domain(self):
+        domain = urlsplit(self.uri).netloc
+        if domain.startswith('www.'):
+            domain = domain[4:]
+        return domain
 
     def __str__(self):
         return 'Feed {}: {}'.format(self.name, self.uri)
@@ -39,6 +48,7 @@ class Article(models.Model):
 
     class Meta:
         ordering = ('-published_at', '-created_at')
+        unique_together = (('feed', 'id_in_feed'),)
 
     def __str__(self):
         return 'Article {}: {}'.format(self.title, self.feed.name)

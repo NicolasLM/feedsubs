@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
 
-from . import models, forms
+from . import models, forms, tasks
 
 
 class Home(LoginRequiredMixin, ListView):
@@ -103,16 +103,22 @@ class FeedDetailList(LoginRequiredMixin, ListView):
 
 class FeedCreate(LoginRequiredMixin, CreateView):
     model = models.Feed
-    fields = ['name', 'uri']
-    success_url = reverse_lazy('reader:feed-list')
+    fields = ['uri']
 
     def form_valid(self, form):
-        self.object = form.save()
-        subscription = models.Subscription(
-            feed=self.object, reader=self.request.user.reader_profile
-        )
-        subscription.save()
+        tasks.tasks.schedule('create_feed', self.request.user.id,
+                             form.cleaned_data['uri'])
         return HttpResponseRedirect(self.get_success_url())
+
+    def get_form(self, form_class=None):
+        # Hack to prevent the form from failing when a feed with the same
+        # uri already exists
+        form = super().get_form(form_class)
+        form.validate_unique = lambda: None
+        return form
+
+    def get_success_url(self):
+        return reverse_lazy('reader:feed-list')
 
 
 class SubscribeView(LoginRequiredMixin, View):

@@ -4,6 +4,9 @@ from logging import getLogger
 from typing import Optional, Tuple
 
 from atoma.simple import simple_parse_bytes
+from django.contrib.auth import get_user_model
+from django.db.models import ObjectDoesNotExist
+from django.db.utils import IntegrityError
 from django.utils.timezone import now
 from django.utils.http import http_date
 import requests
@@ -20,7 +23,7 @@ logger = getLogger(__name__)
 def synchronize_all_feeds():
     batch = Batch()
     for feed in models.Feed.objects.all():
-        batch.schedule('synchronize_feed', str(feed.id))
+        batch.schedule('synchronize_feed', feed.id)
     tasks.schedule_batch(batch)
 
 
@@ -58,10 +61,50 @@ def synchronize_feed(feed_id: int):
         else:
             logger.info('Updated article %s', parsed_article.id)
 
+    if feed.name != parsed_feed.title:
+        logger.info('Renaming feed %d from "%s" to "%s"', feed_id, feed.name,
+                    parsed_feed.title)
+        feed.name = parsed_feed.title
+
     feed.last_fetched_at = task_start_date
     feed.last_hash = current_hash
     feed.frequency_per_year = calculate_frequency_per_year(feed)
     feed.save()
+
+
+@tasks.task(name='create_feed')
+def create_feed(user_id: int, uri: str):
+    try:
+        user = get_user_model().objects.get(pk=user_id)
+    except ObjectDoesNotExist:
+        logger.warning('Not creating feed "%s" as user %d does not exist',
+                       uri, user_id)
+        return
+
+    # Check if the feed already exists
+    try:
+        feed = models.Feed.objects.get(uri=uri)
+    except ObjectDoesNotExist:
+        feed_content, _ = retrieve_feed(uri, None, None)
+        parsed_feed = simple_parse_bytes(feed_content)
+
+        feed = models.Feed.objects.create(
+            name=parsed_feed.title[:100],
+            uri=uri,
+        )
+        logger.info('Created feed %s', feed)
+    else:
+        logger.info('Feed already exists: %s', feed)
+
+    subscription = models.Subscription(
+        feed=feed, reader=user.reader_profile
+    )
+    try:
+        subscription.save()
+    except IntegrityError as e:
+        logger.warning('User probably already subscribed to the feed: %s', e)
+    else:
+        logger.info('User subscribed to feed')
 
 
 def calculate_frequency_per_year(feed: models.Feed) -> Optional[int]:
