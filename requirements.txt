@@ -14,7 +14,7 @@ django-xff==1.2.0
 html5lib==1.0.1
 idna==2.7
 oauthlib==2.1.0
-psycopg2==2.7.4
+psycopg2==2.7.5
 python-dateutil==2.7.3
 python-decouple==3.1
 python3-openid==3.1.0
