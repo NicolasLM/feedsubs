@@ -17,6 +17,12 @@
         </span>
         <span>{% trans "Export" %}</span>
       </a>
+      <a class="button is-info is-outlined" href="{% url 'reader:feed-import' %}">
+        <span class="icon">
+            <i class="fas fa-download"></i>
+        </span>
+        <span>{% trans "Import" %}</span>
+      </a>
       <a class="button is-success is-outlined" href="{% url 'reader:feed-create' %}">
         <span class="icon">
             <i class="fas fa-plus"></i>

@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import ListView, CreateView, UpdateView
+from django.views.generic import ListView, CreateView, UpdateView, FormView
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -60,6 +60,19 @@ class ExportFeedList(FeedList):
         rv = super().render_to_response(context, **response_kwargs)
         rv['Content-Disposition'] = 'attachment; filename="feedsubs-export.xml"'
         return rv
+
+
+class ImportFeedList(LoginRequiredMixin, FormView):
+    template_name = 'reader/opml_import_form.html'
+    form_class = forms.UploadOPMLFileForm
+    success_url = reverse_lazy('reader:feed-list')
+
+    def form_valid(self, form):
+        tasks.import_feeds_from_opml_data(
+            self.request.user.id,
+            self.request.FILES['file'].read()
+        )
+        return super().form_valid(form)
 
 
 class FeedDetailList(LoginRequiredMixin, ListView):

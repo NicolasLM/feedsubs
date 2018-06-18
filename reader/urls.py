@@ -6,6 +6,7 @@ app_name = 'reader'
 urlpatterns = [
     path('feeds', views.FeedList.as_view(), name='feed-list'),
     path('feeds/export', views.ExportFeedList.as_view(), name='feed-export'),
+    path('feeds/import', views.ImportFeedList.as_view(), name='feed-import'),
     path('feeds/new', views.FeedCreate.as_view(), name='feed-create'),
     path('feeds/read-all', views.ReadAllView.as_view(),
          name='feeds-read-all'),
