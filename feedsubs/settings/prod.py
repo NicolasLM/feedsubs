@@ -38,6 +38,7 @@ ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 ADMINS = [('Nicolas', 'nicolas@lemanchet.fr')]
 MANAGERS = [('Nicolas', 'nicolas@lemanchet.fr')]
 DEFAULT_FROM_EMAIL = 'hello@feedsubs.com'
+EMAIL_BACKEND = 'spinachd.mail.BackgroundEmailBackend'
 SERVER_EMAIL = 'hello@feedsubs.com'
 EMAIL_HOST = 'smtp.mailgun.org'
 EMAIL_PORT = 587
