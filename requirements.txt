@@ -3,7 +3,7 @@ attrs==18.1.0
 beautifulsoup4==4.6.3
 bleach==2.1.4
 blinker==1.4
-certifi==2018.8.13
+certifi==2018.8.24
 chardet==3.0.4
 defusedxml==0.5.0
 Django==2.1
