@@ -12,3 +12,9 @@ SPINACH_ACTUAL_EMAIL_BACKEND = getattr(
     'SPINACH_ACTUAL_EMAIL_BACKEND',
     'django.core.mail.backends.smtp.EmailBackend'
 )
+
+SPINACH_CLEAR_SESSIONS_PERIODICITY = getattr(
+    settings,
+    'SPINACH_CLEAR_SESSIONS_PERIODICITY',
+    None
+)

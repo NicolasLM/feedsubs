@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/2.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
-
+from datetime import timedelta
 import os
 
 from decouple import config
@@ -194,3 +194,4 @@ SPINACH_ENGINE = {
 SPINACH_WORKER = {
     'number': config('SPINACH_WORKER_NUMBER', default=5, cast=int)
 }
+SPINACH_CLEAR_SESSIONS_PERIODICITY = timedelta(weeks=1)
