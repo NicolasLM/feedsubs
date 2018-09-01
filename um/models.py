@@ -6,7 +6,6 @@ from django.db import models
 class UMProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,
                                 related_name='um_profile')
-    night_mode = models.BooleanField(default=False)
     items_per_page = models.PositiveSmallIntegerField(
         default=20,
         validators=[MinValueValidator(1), MaxValueValidator(200)]

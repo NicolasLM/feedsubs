@@ -5,12 +5,8 @@
 
 {% block css %}
   <link rel="stylesheet" href="{% static 'feedsubs/vendor/fontawesome/css/all.min.css' %}">
-  {% if user.is_authenticated and user.um_profile.night_mode %}
-    <link rel="stylesheet" href="{% static 'feedsubs/vendor/lato/lato.css' %}">
-    <link rel="stylesheet" href="{% static 'feedsubs/vendor/bulmaswatch/superhero.min.css' %}">
-  {% else %}
-    <link rel="stylesheet" href="{% static 'feedsubs/vendor/bulmaswatch/yeti.min.css' %}">
-  {% endif %}
+  <link rel="stylesheet" href="{% static 'feedsubs/vendor/lato/lato.css' %}">
+  <link rel="stylesheet" href="{% static 'feedsubs/vendor/bulmaswatch/superhero.min.css' %}">
   <link rel="stylesheet" href="{% static 'feedsubs/vendor/bulma-tagsinput.min.css' %}">
 
   <script type="text/javascript" src="{% static 'feedsubs/vendor/jquery-3.3.1.min.js' %}" defer></script>
@@ -39,11 +35,7 @@
         <div class="navbar-end">
 
           <a class="navbar-item is-hidden-touch" href="https://github.com/NicolasLM/feedsubs">
-            {% if user.is_authenticated and user.um_profile.night_mode %}
-              <span class="icon" style="color: #BBB;">
-            {% else %}
-              <span class="icon" style="color: #333;">
-            {% endif %}
+            <span class="icon" style="color: #BBB;">
               <i class="fab fa-lg fa-github"></i>
             </span>
           </a>
