@@ -171,7 +171,7 @@ class UpdateSubscriptionTagsView(UpdateView):
     def get_form(self, *args, **kwargs):
         # Hack to remove leading and tailing commas from tags-input
         post = self.request.POST.copy()
-        post['tags'] = self.request.POST['tags'].strip(',')
+        post['tags'] = self.request.POST['tags'].strip(',').replace(',,', ',')
         self.request.POST = post
         return super().get_form(*args, **kwargs)
 
