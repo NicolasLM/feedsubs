@@ -6,9 +6,10 @@
 {% block css %}
   <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
   {% if user.is_authenticated and user.um_profile.night_mode %}
-    <link rel="stylesheet" href="https://jenil.github.io/bulmaswatch/superhero/bulmaswatch.min.css">
+    <link rel="stylesheet" href="{% static 'feedsubs/vendor/lato/lato.css' %}">
+    <link rel="stylesheet" href="{% static 'feedsubs/vendor/bulmaswatch/superhero.min.css' %}">
   {% else %}
-    <link rel="stylesheet" href="https://jenil.github.io/bulmaswatch/yeti/bulmaswatch.min.css">
+    <link rel="stylesheet" href="{% static 'feedsubs/vendor/bulmaswatch/yeti.min.css' %}">
   {% endif %}
   <link rel="stylesheet" href="{% static 'feedsubs/vendor/bulma-tagsinput.min.css' %}">
 
