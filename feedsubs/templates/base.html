@@ -4,7 +4,7 @@
 {% block title %}FeedSubs{% endblock %}
 
 {% block css %}
-  <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'feedsubs/vendor/fontawesome/css/all.min.css' %}">
   {% if user.is_authenticated and user.um_profile.night_mode %}
     <link rel="stylesheet" href="{% static 'feedsubs/vendor/lato/lato.css' %}">
     <link rel="stylesheet" href="{% static 'feedsubs/vendor/bulmaswatch/superhero.min.css' %}">
