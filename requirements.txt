@@ -1,5 +1,5 @@
 atoma==0.0.7
-attrs==18.1.0
+attrs==18.2.0
 beautifulsoup4==4.6.3
 bleach==2.1.4
 blinker==1.4
