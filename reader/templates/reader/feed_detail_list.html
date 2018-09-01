@@ -1,7 +1,12 @@
 {% extends 'base.html' %}
-{% load i18n reader bulma_tags %}
+{% load i18n reader bulma_tags static %}
 
 {% block title %}{% trans "Feed" %} {{ feed.name }}{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'feedsubs/vendor/bulma-tagsinput.min.css' %}">
+  <script type="text/javascript" src="{% static 'feedsubs/vendor/bulma-tagsinput.min.js' %}" defer></script>
+{% endblock extra_css %}
 
 {% block content %}
 
