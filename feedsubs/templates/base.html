@@ -1,5 +1,5 @@
 {% extends 'bulma/base.html' %}
-{% load static %}
+{% load static bulma_tags %}
 
 {% block title %}FeedSubs{% endblock %}
 
@@ -96,6 +96,22 @@
   </div>
 {% endblock header %}
 
+{% block messages %}
+  {% if messages %}
+    <div class="messages columns is-desktop">
+      <div class="column is-4 is-offset-4">
+        {% for message in messages %}
+
+          <div class="notification{% if message.tags %} is-{{ message.tags|bulma_message_tag }}{% endif %}">
+            <button class="delete"></button>
+            {{ message }}
+          </div>
+
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+{% endblock messages %}
 
 {% block footer %}
 {% endblock footer %}
