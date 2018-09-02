@@ -1,4 +1,3 @@
-import logging.config
 import signal
 
 from django.conf import settings
@@ -11,9 +10,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         from feedsubs.wsgi import application
-
-        if settings.LOGGING_CONFIG is None:
-            logging.config.dictConfig(settings.LOGGING)
 
         def handle_sigterm(*args):
             raise KeyboardInterrupt()

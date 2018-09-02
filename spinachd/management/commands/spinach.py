@@ -1,8 +1,6 @@
 import copy
-import logging.config
 import signal
 
-from django.conf import settings
 from django.core.management.base import BaseCommand
 try:
     from raven.contrib.django.models import client as raven_client
@@ -25,8 +23,6 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        if settings.LOGGING_CONFIG is None:
-            logging.config.dictConfig(settings.LOGGING)
 
         if raven_client is not None:
             register_sentry(raven_client, spin.namespace)

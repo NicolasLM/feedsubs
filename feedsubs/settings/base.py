@@ -151,10 +151,11 @@ ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_USERNAME_MIN_LENGTH = 3
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 
-LOGGING_CONFIG = None
 LOGGING = {
     'version': 1,
+    'incremental': False,
     'disable_existing_loggers': False,
+    'filters': {},
     'formatters': {
         'default': {
             'format': '[%(asctime)s %(levelname)-5.5s %(threadName)s %(name)s] %(message)s',
