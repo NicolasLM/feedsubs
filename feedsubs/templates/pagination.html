@@ -1,0 +1,37 @@
+{% load i18n %}
+
+{% if is_paginated %}
+  <nav class="pagination is-centered">
+
+    {% if page_obj.has_previous %}
+      <a class="pagination-previous" href="?page=1{{ getvars }}{{ hashtag }}">&laquo; {% trans "First" %}</a>
+      <a class="pagination-previous" href="?page={{ page_obj.previous_page_number|stringformat:"d" }}{{ getvars }}{{ hashtag }}">{% trans "Previous" %}</a>
+    {% else %}
+      <a class="pagination-previous" disabled>&laquo; {% trans "First" %}</a>
+      <a class="pagination-previous" disabled>{% trans "Previous" %}</a>
+    {% endif %}
+
+    <ul class="pagination-list">
+      {% for n in page_obj.paginator.page_range %}
+        {% if page_obj.number == n %}
+          <li>
+            <a class="pagination-link is-current" disabled>{{ n|stringformat:"d" }}</a>
+          </li>
+        {% elif n > page_obj.number|add:'-3' and n < page_obj.number|add:'3' %}
+          <li>
+            <a class="pagination-link" href="?page={{ n|stringformat:"d" }}{{ getvars }}{{ hashtag }}">{{ n|stringformat:"d" }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+
+    {% if page_obj.has_next %}
+      <a class="pagination-next" href="?page={{ page_obj.next_page_number|stringformat:"d" }}{{ getvars }}{{ hashtag }}">{% trans "Next" %}</a>
+      <a class="pagination-next" href="?page={{ page_obj.paginator.num_pages|stringformat:"d" }}{{ getvars }}{{ hashtag }}">{% trans "Last" %} &raquo;</a>
+    {% else %}
+      <a class="pagination-next" disabled>{% trans "Next" %}</a>
+      <a class="pagination-next" disabled>{% trans "Last" %} &raquo;</a>
+    {% endif %}
+  
+  </nav>
+{% endif %}
