@@ -11,7 +11,7 @@ from .base import *
 # - Redirect HTTP -> HTTPS
 # - Redirect www. -> naked domain
 # - Clean and insert X-Forwarded-Proto in requests
-# - Clean and insert X-Forwarded-For in requests
+# - Append an X-Forwarded-For IP in requests
 # - Add all standard security headers to responses
 
 INSTALLED_APPS += [
@@ -32,7 +32,6 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_PROXY_SSL_HEADER = ('X-Forwarded-Proto', 'https')
 XFF_TRUSTED_PROXY_DEPTH = 1
-XFF_STRICT = True
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 
 ADMINS = [('Nicolas', 'nicolas@lemanchet.fr')]
