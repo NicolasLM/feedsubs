@@ -5,6 +5,7 @@ from typing import Optional, Tuple
 
 from atoma.simple import simple_parse_bytes
 from django.contrib.auth import get_user_model
+from django.contrib.sites.models import Site
 from django.db.models import ObjectDoesNotExist
 from django.db.utils import IntegrityError
 from django.utils.timezone import now
@@ -33,8 +34,11 @@ def synchronize_feed(feed_id: int):
     feed = models.Feed.objects.get(pk=feed_id)
 
     feed_request = retrieve_feed(
-        feed.uri, feed.last_fetched_at,
-        bytes(feed.last_hash) if feed.last_hash else None
+        feed.uri,
+        feed.last_fetched_at,
+        bytes(feed.last_hash) if feed.last_hash else None,
+        feed.subscribers.count(),  # Todo: possible to make a single query?
+        feed_id
     )
     if feed_request is None:
         feed.last_fetched_at = task_start_date
@@ -91,7 +95,7 @@ def create_feed(user_id: int, uri: str):
         logger.info('Feed already exists: %s', feed)
 
     if creation_needed:
-        feed_content, _ = retrieve_feed(uri, None, None)
+        feed_content, _ = retrieve_feed(uri, None, None, 1, None)
         parsed_feed = simple_parse_bytes(feed_content)
         feed = models.Feed.objects.create(
             name=parsed_feed.title[:100],
@@ -131,10 +135,27 @@ def calculate_frequency_per_year(feed: models.Feed) -> Optional[int]:
     return int(num_articles_over_year * yearly_ratio)
 
 
+def get_user_agent(subscriber_count: int,
+                   feed_id: Optional[int]) -> str:
+    """Generate a user-agent allowing publisher to gather subscribers count.
+
+    See https://support.feed.press/article/66-how-to-be-a-good-feed-fetcher
+    """
+    service_name = Site.objects.get_current().domain
+    help_page = 'https://github.com/NicolasLM/feedsubs'
+    feed_id = '' if feed_id is None else '; feed-id={}'.format(feed_id)
+    return '{}; (+{}; {} subscribers{})'.format(
+        service_name, help_page, subscriber_count, feed_id
+    )
+
+
 def retrieve_feed(uri: str, last_fetched_at: Optional[datetime],
-                  last_hash: Optional[bytes]) -> Optional[Tuple[bytes, bytes]]:
+                  last_hash: Optional[bytes], subscriber_count: int,
+                  feed_id: Optional[int]) -> Optional[Tuple[bytes, bytes]]:
     """Retrieve a new version of the feed via HTTP if available."""
-    request_headers = dict()
+    request_headers = {
+        'User-Agent': get_user_agent(subscriber_count, feed_id)
+    }
     if last_fetched_at:
         request_headers['If-Modified-Since'] = http_date(
             last_fetched_at.timestamp()
