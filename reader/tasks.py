@@ -86,16 +86,19 @@ def create_feed(user_id: int, uri: str):
     try:
         feed = models.Feed.objects.get(uri=uri)
     except ObjectDoesNotExist:
+        creation_needed = True
+    else:
+        creation_needed = False
+        logger.info('Feed already exists: %s', feed)
+
+    if creation_needed:
         feed_content, _ = retrieve_feed(uri, None, None)
         parsed_feed = simple_parse_bytes(feed_content)
-
         feed = models.Feed.objects.create(
             name=parsed_feed.title[:100],
             uri=uri,
         )
         logger.info('Created feed %s', feed)
-    else:
-        logger.info('Feed already exists: %s', feed)
 
     subscription = models.Subscription(
         feed=feed, reader=user.reader_profile
