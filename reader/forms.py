@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 
-from . import models
+from . import models, fields
 
 
 class SubscriptionTagsForm(ModelForm):
@@ -12,4 +12,4 @@ class SubscriptionTagsForm(ModelForm):
 
 
 class UploadOPMLFileForm(forms.Form):
-    file = forms.FileField(max_length=1024*1024)
+    opml_uris = fields.OPMLField(max_length=1024*1024)

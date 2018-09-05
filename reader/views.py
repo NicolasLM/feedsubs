@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -7,6 +8,7 @@ from django.views.generic import ListView, CreateView, UpdateView, FormView
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
+from spinach import Batch
 
 from . import models, forms, tasks
 
@@ -62,17 +64,22 @@ class ExportFeedList(FeedList):
         return rv
 
 
-class ImportFeedList(LoginRequiredMixin, FormView):
+class ImportFeedList(LoginRequiredMixin, SuccessMessageMixin, FormView):
     template_name = 'reader/opml_import_form.html'
     form_class = forms.UploadOPMLFileForm
     success_url = reverse_lazy('reader:feed-list')
+    success_message = ('The %d feeds found in the OPML file are being imported '
+                       'in the background, they will be available shortly.')
 
     def form_valid(self, form):
-        tasks.import_feeds_from_opml_data(
-            self.request.user.id,
-            self.request.FILES['file'].read()
-        )
+        batch = Batch()
+        for uri in form.cleaned_data['opml_uris']:
+            batch.schedule('create_feed', self.request.user.id, uri)
+        tasks.tasks.schedule_batch(batch)
         return super().form_valid(form)
+
+    def get_success_message(self, cleaned_data):
+        return self.success_message % len(cleaned_data['opml_uris'])
 
 
 class FeedDetailList(LoginRequiredMixin, ListView):

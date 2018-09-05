@@ -1,10 +1,9 @@
 from datetime import datetime, timedelta
 import hashlib
 from logging import getLogger
-from typing import Optional, Tuple, List
+from typing import Optional, Tuple
 
 from atoma.simple import simple_parse_bytes
-from atoma.opml import parse_opml_bytes, get_feed_list
 from django.contrib.auth import get_user_model
 from django.db.models import ObjectDoesNotExist
 from django.db.utils import IntegrityError
@@ -153,12 +152,3 @@ def retrieve_feed(uri: str, last_fetched_at: Optional[datetime],
         return None
 
     return r.content, current_hash
-
-
-def import_feeds_from_opml_data(user_id: int, opml_data: bytes):
-    opml = parse_opml_bytes(opml_data)
-    feeds_uri_to_import = get_feed_list(opml)
-    batch = Batch()
-    for uri in feeds_uri_to_import:
-        batch.schedule('create_feed', user_id, uri)
-    tasks.schedule_batch(batch)
