@@ -36,20 +36,35 @@ def synchronize_feed(feed_id: int):
     task_start_date = now()
     feed = models.Feed.objects.get(pk=feed_id)
 
-    feed_request = retrieve_feed(
-        feed.uri,
-        feed.last_fetched_at,
-        bytes(feed.last_hash) if feed.last_hash else None,
-        feed.subscribers.count(),  # Todo: possible to make a single query?
-        feed_id
-    )
-    if feed_request is None:
-        feed.last_fetched_at = task_start_date
+    try:
+        feed_request = retrieve_feed(
+            feed.uri,
+            feed.last_fetched_at,
+            bytes(feed.last_hash) if feed.last_hash else None,
+            feed.subscribers.count(),  # Todo: possible to make a single query?
+            feed_id
+        )
+    except requests.exceptions.RequestException as e:
+        logger.warning('Could not synchronize %s: %s', feed, e)
+        feed.last_failure = repr(e)
         feed.save()
         return
 
-    feed_content, current_hash = feed_request
-    parsed_feed = simple_parse_bytes(feed_content)
+    if feed_request is None:
+        feed.last_fetched_at = task_start_date
+        feed.last_failure = ''
+        feed.save()
+        return
+
+    try:
+        feed_content, current_hash = feed_request
+        parsed_feed = simple_parse_bytes(feed_content)
+    except FeedXMLError as e:
+        logger.warning('Could not synchronize %s: %s', feed, e)
+        feed.last_failure = repr(e)
+        feed.save()
+        return
+
     for parsed_article in reversed(parsed_feed.articles):
 
         article, created = models.Article.objects.update_or_create(
@@ -75,6 +90,7 @@ def synchronize_feed(feed_id: int):
 
     feed.last_fetched_at = task_start_date
     feed.last_hash = current_hash
+    feed.last_failure = ''
     feed.frequency_per_year = calculate_frequency_per_year(feed)
     feed.save()
 
