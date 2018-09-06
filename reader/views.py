@@ -30,6 +30,13 @@ class Home(LoginRequiredMixin, ListView):
             .prefetch_related('read_by', 'stared_by', 'feed')
         )
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['has_subscription'] = models.Subscription.objects.filter(
+            reader=self.request.user.reader_profile
+        ).exists()
+        return context
+
     def handle_no_permission(self):
         return render(self.request, 'reader/home.html')
 
