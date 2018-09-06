@@ -57,7 +57,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'um.middleware.logout_deletion_pending'
+    'um.middleware.user_management_middleware'
 ]
 
 ROOT_URLCONF = 'feedsubs.urls'

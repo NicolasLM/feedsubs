@@ -3,6 +3,7 @@ import hashlib
 from logging import getLogger
 from typing import Optional, Tuple
 
+from atoma import FeedXMLError
 from atoma.simple import simple_parse_bytes
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
@@ -12,6 +13,8 @@ from django.utils.timezone import now
 from django.utils.http import http_date
 import requests
 from spinach import Tasks, Batch
+
+from um import background_messages
 
 from . import models
 
@@ -95,8 +98,22 @@ def create_feed(user_id: int, uri: str):
         logger.info('Feed already exists: %s', feed)
 
     if creation_needed:
-        feed_content, _ = retrieve_feed(uri, None, None, 1, None)
-        parsed_feed = simple_parse_bytes(feed_content)
+        try:
+            feed_content, _ = retrieve_feed(uri, None, None, 1, None)
+        except requests.exceptions.RequestException as e:
+            msg = f'Could not create feed "{uri}", HTTP fetch failed'
+            logger.warning('%s: %s', msg, e)
+            background_messages.warning(user, msg)
+            return
+
+        try:
+            parsed_feed = simple_parse_bytes(feed_content)
+        except FeedXMLError:
+            msg = f'Could not create feed "{uri}", content is not valid XML'
+            logger.warning(msg)
+            background_messages.warning(user, msg)
+            return
+
         feed = models.Feed.objects.create(
             name=parsed_feed.title[:100],
             uri=uri,
