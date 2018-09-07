@@ -41,7 +41,8 @@
     <div class="column">
       <div class="box">
 
-        <h1 class="title">{{ current_settings | title }}</h1>
+        <h1 class="title" style="margin-bottom: 0.2em">{{ current_settings | title }}</h1>
+        <div class="is-divider" style="margin-top: 0"></div>
 
         {% block settings_content %}
         {% endblock %}
