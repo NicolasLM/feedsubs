@@ -1,10 +1,13 @@
 from datetime import datetime, timedelta
+from collections import namedtuple
 import hashlib
 from logging import getLogger
-from typing import Optional, Tuple
+from typing import Optional
+import urllib.parse
 
 from atoma import FeedXMLError
 from atoma.simple import simple_parse_bytes
+from bs4 import BeautifulSoup
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.db.models import ObjectDoesNotExist
@@ -21,6 +24,9 @@ from . import models
 
 tasks = Tasks()
 logger = getLogger(__name__)
+FetchResult = namedtuple(
+    'FetchResult', ['content', 'hash', 'is_html', 'final_url']
+)
 
 
 @tasks.task(name='synchronize_all_feeds', periodicity=timedelta(minutes=30))
@@ -56,9 +62,11 @@ def synchronize_feed(feed_id: int):
         feed.save()
         return
 
+    if feed_request.is_html:
+        logger.warning('Fetch of %s gave an HTML page', feed)
+
     try:
-        feed_content, current_hash = feed_request
-        parsed_feed = simple_parse_bytes(feed_content)
+        parsed_feed = simple_parse_bytes(feed_request.content)
     except FeedXMLError as e:
         logger.warning('Could not synchronize %s: %s', feed, e)
         feed.last_failure = repr(e)
@@ -89,14 +97,14 @@ def synchronize_feed(feed_id: int):
         feed.name = parsed_feed.title
 
     feed.last_fetched_at = task_start_date
-    feed.last_hash = current_hash
+    feed.last_hash = feed_request.hash
     feed.last_failure = ''
     feed.frequency_per_year = calculate_frequency_per_year(feed)
     feed.save()
 
 
 @tasks.task(name='create_feed')
-def create_feed(user_id: int, uri: str):
+def create_feed(user_id: int, uri: str, process_html=True):
     try:
         user = get_user_model().objects.get(pk=user_id)
     except ObjectDoesNotExist:
@@ -115,15 +123,34 @@ def create_feed(user_id: int, uri: str):
 
     if creation_needed:
         try:
-            feed_content, _ = retrieve_feed(uri, None, None, 1, None)
+            feed_request = retrieve_feed(uri, None, None, 1, None)
         except requests.exceptions.RequestException as e:
             msg = f'Could not create feed "{uri}", HTTP fetch failed'
             logger.warning('%s: %s', msg, e)
             background_messages.warning(user, msg)
             return
 
+        if feed_request.is_html and not process_html:
+            # An HTML page gave a feed link that is another HTML page
+            msg = f'Could find valid feed in HTML page "{uri}"'
+            logger.warning(msg)
+            background_messages.warning(user, msg)
+            return
+
+        if feed_request.is_html and process_html:
+            found_uri = find_feed_in_html(feed_request.content,
+                                          feed_request.final_url)
+            if not found_uri:
+                # An HTML page does not contain a feed link
+                msg = f'Could find valid feed in HTML page "{uri}"'
+                logger.warning(msg)
+                background_messages.warning(user, msg)
+                return
+
+            return create_feed(user_id, found_uri, process_html=False)
+
         try:
-            parsed_feed = simple_parse_bytes(feed_content)
+            parsed_feed = simple_parse_bytes(feed_request.content)
         except FeedXMLError:
             msg = f'Could not create feed "{uri}", content is not valid XML'
             logger.warning(msg)
@@ -184,7 +211,7 @@ def get_user_agent(subscriber_count: int,
 
 def retrieve_feed(uri: str, last_fetched_at: Optional[datetime],
                   last_hash: Optional[bytes], subscriber_count: int,
-                  feed_id: Optional[int]) -> Optional[Tuple[bytes, bytes]]:
+                  feed_id: Optional[int]) -> Optional[FetchResult]:
     """Retrieve a new version of the feed via HTTP if available."""
     request_headers = {
         'User-Agent': get_user_agent(subscriber_count, feed_id)
@@ -205,4 +232,20 @@ def retrieve_feed(uri: str, last_fetched_at: Optional[datetime],
         logger.info('Feed did not change since last fetch, hashes match')
         return None
 
-    return r.content, current_hash
+    is_html = r.headers.get('Content-Type', '').startswith('text/html')
+
+    return FetchResult(r.content, current_hash, is_html, r.url)
+
+
+def find_feed_in_html(html_content: bytes, from_url: str) -> Optional[str]:
+    soup = BeautifulSoup(html_content, 'html.parser')
+    for type_ in ('application/atom+xml', 'application/rss+xml'):
+        link = soup.find('link', type=type_)
+        if not link:
+            continue
+
+        link = link.get('href')
+        if not link:
+            continue
+
+        return urllib.parse.urljoin(from_url, link)

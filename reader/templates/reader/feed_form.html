@@ -6,6 +6,8 @@
 
 {% block content %}
 
+  <p>Enter the URL of a website or a feed.</p>
+
   <form method="POST" action="">
     {% csrf_token %}
     {{ form|bulma }}
