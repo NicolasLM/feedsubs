@@ -40,6 +40,9 @@
             </span>
           </a>
 
+          <a class="navbar-item" href="{% url 'django.contrib.flatpages.views.flatpage' url='/about' %}">
+            About
+          </a>
 
           {% if user.is_authenticated %}
 
@@ -85,7 +88,7 @@
 
           {% else %}
 
-            <a class="navbar-item" href="{% url 'account_login' %}">
+            <a class="navbar-item is-active" href="{% url 'account_login' %}">
               Sign In
             </a>
 

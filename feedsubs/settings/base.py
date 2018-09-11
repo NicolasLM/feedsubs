@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.humanize',
+    'django.contrib.flatpages',
 
     'bulma',
     'allauth',
@@ -135,6 +136,7 @@ STATICFILES_DIRS = [
 ]
 
 SITE_ID = 1
+APPEND_SLASH = False
 
 
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 30 * 3  # About 3 months

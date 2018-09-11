@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ flatpage.title }}{% endblock %}
+
+{% block content %}
+
+  <div class="content">
+    <h1 class="title">{{ flatpage.title }}</h1>
+    <div class="is-divider" style="margin-top: 0"></div>
+
+    {{ flatpage.content }}
+
+  </div>
+
+{% endblock %}
+

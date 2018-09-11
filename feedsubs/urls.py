@@ -36,6 +36,7 @@ admin.site.site_title = 'Feedsubs'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('pages', include('django.contrib.flatpages.urls')),
     path('accounts/', include(accounts_urlpatterns)),
     path('', include('um.urls')),
     path('', include('reader.urls')),
