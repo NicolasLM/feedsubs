@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <h1 class="title">404 - Page not found</h1>
+  <p>Looks like you followed a bad link. If you think it's our fault, please let us know.</p>
+  <p>Here's a link to the <a href="{% url 'reader:home' %}">homepage</a>, just in case.</p>
+
+{% endblock %}

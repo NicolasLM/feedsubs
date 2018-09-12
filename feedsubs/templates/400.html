@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <h1 class="title">400 - Bad request</h1>
+  <p>The browser sent a request that the server cannot understand.</p>
+  <p>Here's a link to the <a href="{% url 'reader:home' %}">homepage</a>, just in case.</p>
+
+{% endblock %}
