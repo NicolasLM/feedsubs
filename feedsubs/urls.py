@@ -17,6 +17,7 @@ from allauth.account.urls import urlpatterns as accounts_urlpatterns
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.staticfiles.storage import staticfiles_storage as static
+from django.http import HttpResponse
 from django.urls import path, include
 from django.views.generic.base import RedirectView
 
@@ -40,11 +41,11 @@ urlpatterns = [
     path('accounts/', include(accounts_urlpatterns)),
     path('', include('um.urls')),
     path('', include('reader.urls')),
-    path(
-        'favicon.ico',
-        RedirectView.as_view(url=static.url('feedsubs/favicon.ico')),
-        name="favicon"
-    ),
+    path('robots.txt', lambda x: HttpResponse("User-Agent: *\nDisallow:",
+                                              content_type="text/plain")),
+    path('favicon.ico',
+         RedirectView.as_view(url=static.url('feedsubs/favicon.ico')),
+         name="favicon"),
 ]
 
 if settings.DEBUG:
