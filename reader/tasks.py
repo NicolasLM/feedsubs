@@ -80,7 +80,7 @@ def synchronize_feed(feed_id: int):
             feed=feed,
             defaults={
                 'uri': parsed_article.link,
-                'title': parsed_article.title,
+                'title': parsed_article.title or '',
                 'content': parsed_article.content,
                 'published_at': parsed_article.published_at,
                 'updated_at': parsed_article.updated_at
