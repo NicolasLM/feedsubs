@@ -44,13 +44,28 @@ def clean_article(content: str, base_url: str=None) -> str:
     This filter cleans the HTML from dangerous tags and formats it so that
     it fits with the style of the surrounding document by shifting titles.
     """
+    soup = bs4.BeautifulSoup(content, 'html.parser')
+    remove_unwanted_tags(soup)
+    unify_style(soup)
+    rewrite_relative_links(soup, base_url)
+    content = soup.prettify()
+
     content = bleach.clean(
         content, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRIBUTES, strip=True
     )
-    soup = bs4.BeautifulSoup(content, 'html.parser')
-    unify_style(soup)
-    rewrite_relative_links(soup, base_url)
-    return soup.prettify()
+
+    return content
+
+
+def remove_unwanted_tags(soup: bs4.BeautifulSoup):
+    """Remove unwanted tags from the HTML tree.
+
+    Bleach cannot be used to remove completely scripts and style tags because
+    bleach cannot remove the content inside these tags, leaving javascript code
+    or css as plain text.
+    """
+    for tag in soup.find_all(['script', 'style']):
+        tag.decompose()
 
 
 def rewrite_relative_links(soup: bs4.BeautifulSoup, base_url: str):
