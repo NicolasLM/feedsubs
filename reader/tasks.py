@@ -5,7 +5,7 @@ from logging import getLogger
 from typing import Optional
 import urllib.parse
 
-from atoma import FeedXMLError
+from atoma.exceptions import FeedDocumentError
 from atoma.simple import simple_parse_bytes
 from bs4 import BeautifulSoup
 from django.contrib.auth import get_user_model
@@ -67,7 +67,7 @@ def synchronize_feed(feed_id: int):
 
     try:
         parsed_feed = simple_parse_bytes(feed_request.content)
-    except FeedXMLError as e:
+    except FeedDocumentError as e:
         logger.warning('Could not synchronize %s: %s', feed, e)
         feed.last_failure = repr(e)
         feed.save()
@@ -177,8 +177,8 @@ def create_feed(user_id: int, uri: str, process_html=True):
 
         try:
             parsed_feed = simple_parse_bytes(feed_request.content)
-        except FeedXMLError:
-            msg = f'Could not create feed "{uri}", content is not valid XML'
+        except FeedDocumentError:
+            msg = f'Could not create feed "{uri}", content is not a valid feed'
             logger.warning(msg)
             background_messages.warning(user, msg)
             return
