@@ -56,6 +56,23 @@
       {% cache None cleaned_article article.id %}{{ article.content | clean_article:article.feed.uri | safe }}{% endcache %}
     </div>
 
+    {% if article.attachment_set.all %}
+      <div>
+        <ul>
+        {% for attachment in article.attachment_set.all %}
+          <li>
+            <a href="{{ attachment.uri }}">
+              <span class="icon is-medium">
+                <i class="fas {{ attachment.simple_type | content_type_to_icon }}"></i>
+              </span>
+              <span>{{ attachment }}</span>
+            </a>
+          </li>
+        {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
   </div>
 {% endfor %}
 

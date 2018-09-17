@@ -27,7 +27,7 @@ class Home(LoginRequiredMixin, ListView):
             super().get_queryset()
             .filter(feed__in=self.request.user.reader_profile.feeds.all())
             .exclude(id__in=self.request.user.reader_profile.read.all())
-            .prefetch_related('read_by', 'stared_by', 'feed')
+            .prefetch_related('read_by', 'stared_by', 'feed', 'attachment_set')
         )
 
     def get_context_data(self, **kwargs):
@@ -102,7 +102,7 @@ class FeedDetailList(LoginRequiredMixin, ListView):
         return (
             super().get_queryset()
             .filter(feed=self.kwargs.get('pk'))
-            .prefetch_related('read_by', 'stared_by', 'feed')
+            .prefetch_related('read_by', 'stared_by', 'feed', 'attachment_set')
         )
 
     def get_context_data(self, **kwargs):
@@ -207,7 +207,7 @@ class Starred(LoginRequiredMixin, ListView):
         return (
             super().get_queryset()
             .filter(stared_by=self.request.user.reader_profile)
-            .prefetch_related('read_by', 'stared_by', 'feed')
+            .prefetch_related('read_by', 'stared_by', 'feed', 'attachment_set')
         )
 
     def get_paginate_by(self, queryset):

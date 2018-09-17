@@ -1,9 +1,11 @@
+from typing import Optional
 from urllib.parse import urlsplit
 
 from django.contrib.auth.models import User
 from django.core.validators import URLValidator
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
+from django.template.defaultfilters import filesizeformat
 
 from .validators import http_port_validator
 
@@ -53,6 +55,31 @@ class Article(models.Model):
 
     def __str__(self):
         return 'Article {}: {}'.format(self.title, self.feed.name)
+
+
+class Attachment(models.Model):
+    uri = models.URLField(max_length=400)
+    title = models.TextField(blank=True, null=False)
+    mime_type = models.CharField(max_length=100, blank=True, null=False)
+    size_in_bytes = models.PositiveIntegerField(blank=True, null=True)
+    duration = models.DurationField(blank=True, null=True)
+
+    article = models.ForeignKey(Article, models.CASCADE)
+
+    @property
+    def simple_type(self) -> Optional[str]:
+        if not self.mime_type:
+            return None
+
+        return self.mime_type.split('/')[0]
+
+    def __str__(self):
+        rv = self.title
+        if self.size_in_bytes:
+            rv += ' - {}'.format(filesizeformat(self.size_in_bytes))
+        if self.duration:
+            rv += ' - {}'.format(self.duration)
+        return rv
 
 
 class ReaderProfile(models.Model):

@@ -110,3 +110,17 @@ def tag_color(tag_name: str) -> str:
     ]
     index = int(hashlib.md5(tag_name.encode()).hexdigest(), 16) % (len(colors))
     return colors[index]
+
+
+@register.filter
+def content_type_to_icon(content_type: str) -> str:
+    if content_type == 'audio':
+        return 'fa-headphones'
+    elif content_type == 'image':
+        return 'fa-image'
+    elif content_type == 'text':
+        return 'fa-file-alt'
+    elif content_type == 'video':
+        return 'fa-film'
+    else:
+        return 'fa-file'

@@ -25,6 +25,12 @@ class ArticleAdmin(admin.ModelAdmin):
     pass
 
 
+@admin.register(models.Attachment)
+class AttachmentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'size_in_bytes', 'duration')
+    readonly_fields = ('article',)
+
+
 @admin.register(models.ReaderProfile)
 class ProfileAdmin(admin.ModelAdmin):
     pass

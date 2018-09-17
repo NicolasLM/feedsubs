@@ -10,7 +10,7 @@ from atoma.simple import simple_parse_bytes
 from bs4 import BeautifulSoup
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
-from django.db.models import ObjectDoesNotExist
+from django.db.models import Q, ObjectDoesNotExist
 from django.db.utils import IntegrityError
 from django.utils.timezone import now
 from django.utils.http import http_date
@@ -74,7 +74,6 @@ def synchronize_feed(feed_id: int):
         return
 
     for parsed_article in reversed(parsed_feed.articles):
-
         article, created = models.Article.objects.update_or_create(
             id_in_feed=parsed_article.id,
             feed=feed,
@@ -90,6 +89,33 @@ def synchronize_feed(feed_id: int):
             logger.info('Created article %s', parsed_article.id)
         else:
             logger.info('Updated article %s', parsed_article.id)
+
+        current_attachments_ids = list()
+        for parsed_attachment in parsed_article.attachments:
+            attachment, created = models.Attachment.objects.update_or_create(
+                uri=parsed_attachment.link,
+                article=article,
+                defaults={
+                    'title': parsed_attachment.title,
+                    'mime_type': parsed_attachment.mime_type or '',
+                    'size_in_bytes': parsed_attachment.size_in_bytes or None,
+                    'duration': parsed_attachment.duration
+                }
+            )
+            current_attachments_ids.append(attachment.id)
+            if created:
+                logger.info('Created attachment %s', attachment)
+            else:
+                logger.info('Updated attachment %s', attachment)
+
+        deleted_attachments, _ = (
+            models.Attachment.objects
+            .filter(article=article)
+            .filter(~Q(id__in=current_attachments_ids))
+            .delete()
+        )
+        if deleted_attachments:
+            logger.info('Deleted %d old attachments', deleted_attachments)
 
     if feed.name != parsed_feed.title:
         logger.info('Renaming feed %d from "%s" to "%s"', feed_id, feed.name,
