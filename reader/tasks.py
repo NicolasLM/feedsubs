@@ -43,8 +43,8 @@ def synchronize_all_feeds():
         ats.append(current_date + timedelta(minutes=i))
 
     batch = Batch()
-    for feed in models.Feed.objects.values_list('id', flat=True):
-        batch.schedule_at('synchronize_feed', random.choice(ats), feed.id)
+    for feed_id in models.Feed.objects.values_list('id', flat=True):
+        batch.schedule_at('synchronize_feed', random.choice(ats), feed_id)
     tasks.schedule_batch(batch)
 
 
