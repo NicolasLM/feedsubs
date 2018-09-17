@@ -11,7 +11,7 @@ from atoma.simple import simple_parse_bytes
 from bs4 import BeautifulSoup
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
-from django.db.models import Q, ObjectDoesNotExist
+from django.db.models import Count, Q, ObjectDoesNotExist
 from django.db.utils import IntegrityError
 from django.utils.timezone import now
 from django.utils.http import http_date
@@ -51,14 +51,18 @@ def synchronize_all_feeds():
 @tasks.task(name='synchronize_feed')
 def synchronize_feed(feed_id: int):
     task_start_date = now()
-    feed = models.Feed.objects.get(pk=feed_id)
+
+    # Fetch the feed from db as well as its subscribers count in a single query,
+    # this approach may give incorrect results if other annotations are added
+    # in the future. See https://code.djangoproject.com/ticket/10060
+    feed = models.Feed.objects.annotate(Count('subscribers')).get(pk=feed_id)
 
     try:
         feed_request = retrieve_feed(
             feed.uri,
             feed.last_fetched_at,
             bytes(feed.last_hash) if feed.last_hash else None,
-            feed.subscribers.count(),  # Todo: possible to make a single query?
+            feed.subscribers__count,
             feed_id
         )
     except requests.exceptions.RequestException as e:
