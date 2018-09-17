@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from collections import namedtuple
 import hashlib
 from logging import getLogger
+import random
 from typing import Optional
 import urllib.parse
 
@@ -31,9 +32,19 @@ FetchResult = namedtuple(
 
 @tasks.task(name='synchronize_all_feeds', periodicity=timedelta(minutes=30))
 def synchronize_all_feeds():
+    """Synchronize all feeds every 30 minutes.
+
+    To avoid a spike of load, the synchronization is spread over a 20 minutes
+    period.
+    """
+    current_date = now()
+    ats = list()
+    for i in range(0, 20):
+        ats.append(current_date + timedelta(minutes=i))
+
     batch = Batch()
-    for feed in models.Feed.objects.all():
-        batch.schedule('synchronize_feed', feed.id)
+    for feed in models.Feed.objects.values_list('id', flat=True):
+        batch.schedule_at('synchronize_feed', random.choice(ats), feed.id)
     tasks.schedule_batch(batch)
 
 
