@@ -2,9 +2,10 @@ from typing import Optional
 from urllib.parse import urlsplit
 
 from django.contrib.auth.models import User
+from django.contrib.postgres.fields import ArrayField
 from django.core.validators import URLValidator
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
+from django.urls import reverse
 from django.template.defaultfilters import filesizeformat
 
 from .validators import http_port_validator
@@ -109,3 +110,26 @@ class Subscription(models.Model):
 
     class Meta:
         unique_together = ('reader', 'feed')
+
+
+class Board(models.Model):
+    name = models.CharField(max_length=100)
+    reader = models.ForeignKey(ReaderProfile, on_delete=models.CASCADE)
+    tags = ArrayField(
+        models.CharField(max_length=40, blank=False, null=False),
+        default=list,
+        blank=True,
+        null=False,
+        size=100,
+    )
+
+    is_static = False
+
+    class Meta:
+        unique_together = (('name', 'reader'),)
+
+    def get_absolute_url(self):
+        return reverse('reader:board-detail', kwargs={'pk': self.pk})
+
+    def __str__(self):
+        return self.name

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Delete board {{ object.name }}{% endblock %}
+{% block content_title %}<h1 class="title">Delete board {{ object.name }}</h1>{% endblock content_title %}
+
+{% block content %}
+
+  <form method="POST" action="">
+    {% csrf_token %}
+    {% if redirect_field_value %}
+      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+    {% endif %}
+    <p>Are you sure you want to delete the board {{ object.name }}?</p>
+    <button class="button is-danger" type="submit">{% trans "Delete" %}</button>
+  </form>
+
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load i18n reader bulma_tags static %}
+
+{% block title %}{{ board.name }}{% endblock %}
+
+{% block content %}
+
+  <div class="columns">
+    <div class="column">
+      <h1 class="title">{{ board.name }}</h1>
+    </div>
+    <div class="column is-narrow">
+
+      {% if articles %}
+        <a class="button is-success is-outlined" data-url="{{ mark_all_read_url }}" data-action="read-all">
+          <span class="icon is-small">
+              <i class="fas fa-check"></i>
+          </span>
+          <span>{% trans "Mark as read" %}</span>
+        </a>
+      {% endif %}
+
+      <div class="dropdown is-hoverable">
+        <div class="dropdown-trigger">
+          <button class="button is-info is-outlined" aria-haspopup="true"
+                  aria-controls="dropdown-menu2">
+            <span>{{ board.name }}</span>
+            <span class="icon is-small">
+              <i class="fas fa-angle-down" aria-hidden="true"></i>
+            </span>
+          </button>
+        </div>
+        <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+          <div class="dropdown-content">
+
+            {% if show_read %}
+              <a href="?show-read=false" class="dropdown-item">
+                Hide read articles
+              </a>
+            {% else %}
+              <a href="?show-read=true" class="dropdown-item">
+                Show read articles
+              </a>
+            {% endif %}
+
+            {% if other_boards %}
+              <hr class="dropdown-divider">
+            {% endif %}
+
+            {% for other_board in other_boards %}
+              <a href="{{ other_board.get_absolute_url }}{% if show_read %}?show-read=true{% endif %}" class="dropdown-item">
+                {{ other_board.name }}
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  {% if articles %}
+
+    {% include 'reader/_articles.html' %}
+
+  {% else %}
+
+    <section class="hero is-fullheight">
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <h1 class="title">
+            <span class="icon">
+              <i class="fas fa-2x {{ empty_icon }}"></i>
+            </span>
+          </h1>
+          <h2 class="subtitle">
+            <span>{{ empty_phrase }}</span>
+          </h2>
+        </div>
+      </div>
+    </section>
+
+  {% endif %}
+
+{% endblock %}

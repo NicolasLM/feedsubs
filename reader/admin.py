@@ -39,3 +39,8 @@ class ProfileAdmin(admin.ModelAdmin):
 @admin.register(models.Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(models.Board)
+class BoardAdmin(admin.ModelAdmin):
+    pass

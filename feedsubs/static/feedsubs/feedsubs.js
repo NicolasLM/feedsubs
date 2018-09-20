@@ -54,12 +54,14 @@ function star()
     var type = current.data('type');
     var pk = current.data('id');
     var action = current.data('action');
-    var url;
+    var url = current.data('url');
 
-    if (pk === "") {
-        url = "/" + type + "/" + action;
-    } else {
-        url = "/" + type + "/" + pk + "/" + action;
+    if (url === undefined) {
+        if (pk === "") {
+            url = "/" + type + "/" + action;
+        } else {
+            url = "/" + type + "/" + pk + "/" + action;
+        }
     }
 
     $.ajax({

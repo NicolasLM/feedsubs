@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load bulma_tags i18n static %}
+
+{% block title %}{% if object %}Edit {{ object.name }}{% else %}New board{% endif %}{% endblock %}
+
+{% block content_title %}<h1 class="title">{% if object %}Edit {{ object.name }}{% else %}New board{% endif %}</h1>{% endblock content_title %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'feedsubs/vendor/bulma-tagsinput.min.css' %}">
+  <script type="text/javascript" src="{% static 'feedsubs/vendor/bulma-tagsinput.min.js' %}" defer></script>
+{% endblock extra_css %}
+
+{% block content %}
+
+  <form method="POST" action="">
+    {% csrf_token %}
+    {{ form|bulma }}
+    {% if redirect_field_value %}
+      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+    {% endif %}
+    <button class="button is-primary" type="submit" style="margin-top: 1em">
+      {% if object %}Save{% else %}Create{% endif %}
+    </button>
+  </form>
+
+{% endblock %}

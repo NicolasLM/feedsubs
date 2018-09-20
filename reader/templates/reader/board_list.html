@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load i18n reader %}
+
+{% block title %}{% trans "Boards" %}{% endblock %}
+{% block content_title %}{% endblock content_title %}
+
+{% block content %}
+
+  <div class="columns">
+    <div class="column">
+      <h1 class="title">Boards</h1>
+    </div>
+    <div class="column is-narrow">
+      <a class="button is-success is-outlined" href="{% url 'reader:board-create' %}">
+        <span class="icon">
+            <i class="fas fa-plus"></i>
+        </span>
+        <span>{% trans "New board" %}</span>
+      </a>
+    </div>
+  </div>
+
+  <table class="table is-striped is-hoverable is-fullwidth">
+
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Tags</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for board in object_list %}
+        <tr>
+          <th><a href="{{ board.get_absolute_url }}">{{ board.name }}</a></th>
+          <td>
+            <div class="tags">
+              {% for tag in board.tags %}
+                <span class="tag is-small is-{{ tag | tag_color }}">{{ tag }}</span>
+              {% endfor %}
+            </div>
+          </td>
+          <td>
+            {% if not board.is_static %}
+            <a class="button is-info is-small is-outlined" href="{% url 'reader:board-update' board.id %}">
+              <span class="icon is-small">
+                  <i class="fas fa-edit"></i>
+              </span>
+              <span>{% trans "Edit" %}</span>
+            </a>
+            <a class="button is-danger is-small is-outlined" href="{% url 'reader:board-delete' board.id %}">
+              <span class="icon is-small">
+                  <i class="fas fa-times"></i>
+              </span>
+              <span>{% trans "Delete" %}</span>
+            </a>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+
+  </table>
+
+
+{% endblock %}
