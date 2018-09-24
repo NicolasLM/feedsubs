@@ -4,11 +4,9 @@ import hashlib
 from logging import getLogger
 import random
 from typing import Optional
-import urllib.parse
 
 from atoma.exceptions import FeedDocumentError
 from atoma.simple import simple_parse_bytes
-from bs4 import BeautifulSoup
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.db.models import Count, Q, ObjectDoesNotExist
@@ -20,7 +18,7 @@ from spinach import Tasks, Batch
 
 from um import background_messages
 
-from . import models
+from . import models, html_processing
 
 
 tasks = Tasks()
@@ -179,8 +177,9 @@ def create_feed(user_id: int, uri: str, process_html=True):
             return
 
         if feed_request.is_html and process_html:
-            found_uri = find_feed_in_html(feed_request.content,
-                                          feed_request.final_url)
+            found_uri = html_processing.find_feed_in_html(
+                feed_request.content, feed_request.final_url
+            )
             if not found_uri:
                 # An HTML page does not contain a feed link
                 msg = f'Could find valid feed in HTML page "{uri}"'
@@ -276,17 +275,3 @@ def retrieve_feed(uri: str, last_fetched_at: Optional[datetime],
     is_html = r.headers.get('Content-Type', '').startswith('text/html')
 
     return FetchResult(r.content, current_hash, is_html, r.url)
-
-
-def find_feed_in_html(html_content: bytes, from_url: str) -> Optional[str]:
-    soup = BeautifulSoup(html_content, 'html.parser')
-    for type_ in ('application/atom+xml', 'application/rss+xml'):
-        link = soup.find('link', type=type_)
-        if not link:
-            continue
-
-        link = link.get('href')
-        if not link:
-            continue
-
-        return urllib.parse.urljoin(from_url, link)
