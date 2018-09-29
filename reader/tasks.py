@@ -1,6 +1,4 @@
-from datetime import datetime, timedelta
-from collections import namedtuple
-import hashlib
+from datetime import timedelta
 from logging import getLogger
 import random
 from typing import Optional
@@ -8,27 +6,22 @@ from typing import Optional
 from atoma.exceptions import FeedDocumentError
 from atoma.simple import simple_parse_bytes
 from django.contrib.auth import get_user_model
-from django.contrib.sites.models import Site
 from django.core.files.base import File
 from django.core.files.storage import default_storage
 from django.db.models import Count, Q, ObjectDoesNotExist
 from django.db.utils import IntegrityError
 from django.template.defaultfilters import filesizeformat
 from django.utils.timezone import now
-from django.utils.http import http_date
 import requests
 from spinach import Tasks, Batch
 
 from um import background_messages
 
-from . import models, html_processing, image_processing
+from . import models, html_processing, image_processing, http_fetcher
 
 
 tasks = Tasks()
 logger = getLogger(__name__)
-FetchResult = namedtuple(
-    'FetchResult', ['content', 'hash', 'is_html', 'final_url']
-)
 
 
 @tasks.task(name='synchronize_all_feeds', periodicity=timedelta(minutes=30))
@@ -59,7 +52,7 @@ def synchronize_feed(feed_id: int):
     feed = models.Feed.objects.annotate(Count('subscribers')).get(pk=feed_id)
 
     try:
-        feed_request = retrieve_feed(
+        feed_request = http_fetcher.fetch_feed(
             feed.uri,
             feed.last_fetched_at,
             bytes(feed.last_hash) if feed.last_hash else None,
@@ -166,7 +159,7 @@ def cache_images(images_uris):
     images_uris = [u for u in images_uris if u not in already_cached_uris]
     for image_uri in images_uris:
         try:
-            image_data = retrieve_image(image_uri)
+            image_data = http_fetcher.fetch_image(image_uri)
             processed = image_processing.process_image_data(image_data)
         except (requests.RequestException,
                 image_processing.ImageProcessingError) as e:
@@ -218,7 +211,7 @@ def create_feed(user_id: int, uri: str, process_html=True):
 
     if creation_needed:
         try:
-            feed_request = retrieve_feed(uri, None, None, 1, None)
+            feed_request = http_fetcher.fetch_feed(uri, None, None, 1, None)
         except requests.exceptions.RequestException as e:
             msg = f'Could not create feed "{uri}", HTTP fetch failed'
             logger.warning('%s: %s', msg, e)
@@ -289,55 +282,3 @@ def calculate_frequency_per_year(feed: models.Feed) -> Optional[int]:
         return None
 
     return int(num_articles_over_year * yearly_ratio)
-
-
-def get_user_agent(subscriber_count: int,
-                   feed_id: Optional[int]=None) -> str:
-    """Generate a user-agent allowing publisher to gather subscribers count.
-
-    See https://support.feed.press/article/66-how-to-be-a-good-feed-fetcher
-    """
-    service_name = Site.objects.get_current().domain
-    help_page = 'https://github.com/NicolasLM/feedsubs'
-    feed_id = '' if feed_id is None else '; feed-id={}'.format(feed_id)
-    return '{}; (+{}; {} subscribers{})'.format(
-        service_name, help_page, subscriber_count, feed_id
-    )
-
-
-def retrieve_feed(uri: str, last_fetched_at: Optional[datetime],
-                  last_hash: Optional[bytes], subscriber_count: int,
-                  feed_id: Optional[int]) -> Optional[FetchResult]:
-    """Retrieve a new version of the feed via HTTP if available."""
-    request_headers = {
-        'User-Agent': get_user_agent(subscriber_count, feed_id)
-    }
-    if last_fetched_at:
-        request_headers['If-Modified-Since'] = http_date(
-            last_fetched_at.timestamp()
-        )
-    r = requests.get(uri, headers=request_headers, timeout=(15, 120))
-    r.raise_for_status()
-
-    if r.status_code == 304:
-        logger.info('Feed did not change since last fetch, got HTTP 304')
-        return None
-
-    current_hash = hashlib.sha1(r.content).digest()
-    if last_hash == current_hash:
-        logger.info('Feed did not change since last fetch, hashes match')
-        return None
-
-    is_html = r.headers.get('Content-Type', '').startswith('text/html')
-
-    return FetchResult(r.content, current_hash, is_html, r.url)
-
-
-def retrieve_image(uri: str) -> bytes:
-    """Retrieve an image."""
-    request_headers = {
-        'User-Agent': get_user_agent(0)
-    }
-    r = requests.get(uri, headers=request_headers, timeout=(15, 120))
-    r.raise_for_status()
-    return r.content
