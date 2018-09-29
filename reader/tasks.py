@@ -157,38 +157,41 @@ def cache_images(images_uris):
         .values_list('uri', flat=True)
     )
     images_uris = [u for u in images_uris if u not in already_cached_uris]
-    for image_uri in images_uris:
-        try:
-            image_data = http_fetcher.fetch_image(image_uri)
-            processed = image_processing.process_image_data(image_data)
-        except (requests.RequestException,
-                image_processing.ImageProcessingError) as e:
-            failure_reason = str(e)
-            logger.warning('Failed to cache image: %s', failure_reason)
-            models.CachedImage.objects.create(
+
+    with requests.Session() as session:
+        for image_uri in images_uris:
+            try:
+                image_data = http_fetcher.fetch_image(session, image_uri)
+                processed = image_processing.process_image_data(image_data)
+            except (requests.RequestException,
+                    image_processing.ImageProcessingError) as e:
+                failure_reason = str(e)
+                logger.warning('Failed to cache image: %s', failure_reason)
+                models.CachedImage.objects.create(
+                    uri=image_uri,
+                    failure_reason=failure_reason[:99]
+                )
+                continue
+
+            cached_image = models.CachedImage.objects.create(
                 uri=image_uri,
-                failure_reason=failure_reason[:99]
+                format=processed.image_format,
+                width=processed.width,
+                height=processed.height,
+                size_in_bytes=processed.size_in_bytes
             )
-            continue
 
-        cached_image = models.CachedImage.objects.create(
-            uri=image_uri,
-            format=processed.image_format,
-            width=processed.width,
-            height=processed.height,
-            size_in_bytes=processed.size_in_bytes
-        )
+            try:
+                default_storage.save(
+                    cached_image.image_path, File(processed.data)
+                )
+            except Exception:
+                cached_image.delete()
+                raise
 
-        try:
-            default_storage.save(cached_image.image_path, File(processed.data))
-        except Exception:
-            cached_image.delete()
-            raise
-
-        logger.info(
-            'Cached image %s %dx%d %s', cached_image.format, cached_image.width,
-            cached_image.height, filesizeformat(cached_image.size_in_bytes)
-        )
+            logger.info('Cached image %s %dx%d %s', cached_image.format,
+                        cached_image.width, cached_image.height,
+                        filesizeformat(cached_image.size_in_bytes))
 
 
 @tasks.task(name='create_feed')

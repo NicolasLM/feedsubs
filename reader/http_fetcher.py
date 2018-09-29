@@ -47,12 +47,12 @@ def fetch_feed(uri: str, last_fetched_at: Optional[datetime],
     return FeedFetchResult(r.content, current_hash, is_html, r.url)
 
 
-def fetch_image(uri: str) -> bytes:
+def fetch_image(session: requests.Session, uri: str) -> bytes:
     """Retrieve an image."""
     request_headers = {
         'User-Agent': get_user_agent(0)
     }
-    r = requests.get(uri, headers=request_headers, timeout=(15, 120))
+    r = session.get(uri, headers=request_headers, timeout=(15, 120))
     r.raise_for_status()
     return r.content
 
