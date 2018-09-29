@@ -184,6 +184,9 @@ LOGGING = {
         'spinach': {
             'level': 'INFO',
         },
+        'PIL': {
+            'level': 'INFO',
+        },
     }
 }
 

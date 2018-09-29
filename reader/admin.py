@@ -44,3 +44,11 @@ class SubscriptionAdmin(admin.ModelAdmin):
 @admin.register(models.Board)
 class BoardAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(models.CachedImage)
+class CachedImageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'uri', 'format', 'resolution', 'is_tracking_pixel',
+                    'created_at')
+    readonly_fields = ('id', 'uri', 'format', 'resolution',
+                       'size_in_bytes', 'failure_reason', 'created_at')

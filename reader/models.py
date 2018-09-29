@@ -1,5 +1,6 @@
 from typing import Optional
 from urllib.parse import urlsplit
+from uuid import uuid4
 
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
@@ -133,3 +134,45 @@ class Board(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class CachedImage(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    uri = models.URLField(max_length=400, db_index=True, unique=True)
+    format = models.CharField(max_length=8, blank=True, editable=False,
+                              default='')
+    width = models.PositiveSmallIntegerField(editable=False, default=0)
+    height = models.PositiveSmallIntegerField(editable=False, default=0)
+    size_in_bytes = models.PositiveIntegerField(editable=False, default=0)
+    failure_reason = models.CharField(max_length=100, blank=True,
+                                      editable=False, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        if not self.format:
+            return 'Failed image {}'.format(self.id)
+
+        return 'Cached image {}'.format(self.id)
+
+    @property
+    def image_path(self):
+        """Generate a hierarchy of folders to store an image based on its UUID.
+
+        This prevents having a single directory with millions of entries, which
+        file systems usually don't really like.
+        """
+        uuid_str = str(self.id)
+        return 'cached-images/{}/{}/{}.{}'.format(
+            uuid_str[:2],
+            uuid_str[:4],
+            uuid_str,
+            self.format.lower()
+        )
+
+    @property
+    def resolution(self):
+        return '{}x{}'.format(self.width, self.height)
+
+    @property
+    def is_tracking_pixel(self):
+        return self.failure_reason == 'Tracking pixel'

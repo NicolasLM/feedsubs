@@ -56,6 +56,7 @@ setup(
         'psycopg2',
         'requests',
         'spinach',
+        'Pillow',
         'python-decouple',
     ],
 

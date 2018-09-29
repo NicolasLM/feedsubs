@@ -7,3 +7,4 @@ feedsubs.egg-info
 .coverage
 .env
 ignored*
+media

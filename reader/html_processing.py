@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 import urllib.parse
 
 import bleach
@@ -14,7 +14,8 @@ URL_REWRITE_PAIRS = (
 )
 
 
-def clean_article(content: str, base_url: str=None) -> str:
+def clean_article(content: str, base_url: str=None,
+                  replace_images: bool=True) -> str:
     """Clean and format an untrusted chunk of HTML.
 
     This filter cleans the HTML from dangerous tags and formats it so that
@@ -24,6 +25,8 @@ def clean_article(content: str, base_url: str=None) -> str:
     remove_unwanted_tags(soup)
     unify_style(soup)
     rewrite_relative_links(soup, base_url)
+    if replace_images:
+        rewrite_image_links(soup)
     content = soup.prettify()
 
     content = bleach.clean(
@@ -76,6 +79,42 @@ def unify_style(soup: bs4.BeautifulSoup):
         title_tag_name = 'h{}'.format(i)
         for tag in soup.find_all(title_tag_name):
             tag.name = 'h{}'.format(i + shift_by)
+
+
+def rewrite_image_links(soup: bs4.BeautifulSoup):
+    from . import models, tasks
+    from django.core.files.storage import default_storage
+    img_tags = soup.find_all('img', attrs={'src': True})
+    img_srcs = {img_tag['src'] for img_tag in img_tags}
+    cached_images = models.CachedImage.objects.filter(uri__in=img_srcs)
+    cached_images = {ci.uri: ci for ci in cached_images}
+    uncached_uris = set()
+
+    for img_tag in img_tags:
+        try:
+            cached_image = cached_images[img_tag['src']]
+        except KeyError:
+            uncached_uris.add(img_tag['src'])
+            continue
+
+        if cached_image.is_tracking_pixel:
+            img_tag.decompose()
+            continue
+
+        if cached_image.failure_reason:
+            continue
+
+        cached_url = default_storage.url(cached_image.image_path)
+        img_tag['src'] = cached_url
+
+    if uncached_uris:
+        tasks.tasks.schedule('cache_images', list(uncached_uris))
+
+
+def find_images_in_article(content: str, base_url) -> List[str]:
+    content = clean_article(content, base_url=base_url, replace_images=False)
+    soup = bs4.BeautifulSoup(content, 'html.parser')
+    return [i['src'] for i in soup.find_all('img', attrs={'src': True})]
 
 
 def find_feed_in_html(html_content: bytes, from_url: str) -> Optional[str]:

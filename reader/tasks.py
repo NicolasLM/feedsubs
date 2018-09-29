@@ -9,8 +9,11 @@ from atoma.exceptions import FeedDocumentError
 from atoma.simple import simple_parse_bytes
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
+from django.core.files.base import File
+from django.core.files.storage import default_storage
 from django.db.models import Count, Q, ObjectDoesNotExist
 from django.db.utils import IntegrityError
+from django.template.defaultfilters import filesizeformat
 from django.utils.timezone import now
 from django.utils.http import http_date
 import requests
@@ -18,7 +21,7 @@ from spinach import Tasks, Batch
 
 from um import background_messages
 
-from . import models, html_processing
+from . import models, html_processing, image_processing
 
 
 tasks = Tasks()
@@ -86,6 +89,7 @@ def synchronize_feed(feed_id: int):
         feed.save()
         return
 
+    images_uris = set()
     for parsed_article in reversed(parsed_feed.articles):
         article, created = models.Article.objects.update_or_create(
             id_in_feed=parsed_article.id,
@@ -102,6 +106,10 @@ def synchronize_feed(feed_id: int):
             logger.info('Created article %s', parsed_article.id)
         else:
             logger.info('Updated article %s', parsed_article.id)
+        images_uris.update(
+            html_processing.find_images_in_article(parsed_article.content,
+                                                   feed.uri)
+        )
 
         current_attachments_ids = list()
         for parsed_attachment in parsed_article.attachments:
@@ -140,6 +148,54 @@ def synchronize_feed(feed_id: int):
     feed.last_failure = ''
     feed.frequency_per_year = calculate_frequency_per_year(feed)
     feed.save()
+    cache_images(images_uris)
+
+
+@tasks.task(name='cache_images')
+def cache_images(images_uris):
+    number_of_images = len(images_uris)
+    if number_of_images > 1000:
+        logger.error('Too many images to cache: %d', number_of_images)
+        return
+
+    already_cached_uris = (
+        models.CachedImage.objects
+        .filter(uri__in=images_uris)
+        .values_list('uri', flat=True)
+    )
+    images_uris = [u for u in images_uris if u not in already_cached_uris]
+    for image_uri in images_uris:
+        try:
+            image_data = retrieve_image(image_uri)
+            processed = image_processing.process_image_data(image_data)
+        except (requests.RequestException,
+                image_processing.ImageProcessingError) as e:
+            failure_reason = str(e)
+            logger.warning('Failed to cache image: %s', failure_reason)
+            models.CachedImage.objects.create(
+                uri=image_uri,
+                failure_reason=failure_reason[:99]
+            )
+            continue
+
+        cached_image = models.CachedImage.objects.create(
+            uri=image_uri,
+            format=processed.image_format,
+            width=processed.width,
+            height=processed.height,
+            size_in_bytes=processed.size_in_bytes
+        )
+
+        try:
+            default_storage.save(cached_image.image_path, File(processed.data))
+        except Exception:
+            cached_image.delete()
+            raise
+
+        logger.info(
+            'Cached image %s %dx%d %s', cached_image.format, cached_image.width,
+            cached_image.height, filesizeformat(cached_image.size_in_bytes)
+        )
 
 
 @tasks.task(name='create_feed')
@@ -236,7 +292,7 @@ def calculate_frequency_per_year(feed: models.Feed) -> Optional[int]:
 
 
 def get_user_agent(subscriber_count: int,
-                   feed_id: Optional[int]) -> str:
+                   feed_id: Optional[int]=None) -> str:
     """Generate a user-agent allowing publisher to gather subscribers count.
 
     See https://support.feed.press/article/66-how-to-be-a-good-feed-fetcher
@@ -275,3 +331,13 @@ def retrieve_feed(uri: str, last_fetched_at: Optional[datetime],
     is_html = r.headers.get('Content-Type', '').startswith('text/html')
 
     return FetchResult(r.content, current_hash, is_html, r.url)
+
+
+def retrieve_image(uri: str) -> bytes:
+    """Retrieve an image."""
+    request_headers = {
+        'User-Agent': get_user_agent(0)
+    }
+    r = requests.get(uri, headers=request_headers, timeout=(15, 120))
+    r.raise_for_status()
+    return r.content
