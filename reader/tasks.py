@@ -59,7 +59,8 @@ def synchronize_feed(feed_id: int):
             feed.subscribers__count,
             feed_id
         )
-    except requests.exceptions.RequestException as e:
+    except (requests.exceptions.RequestException,
+            http_fetcher.FetchFileTooBigError) as e:
         logger.warning('Could not synchronize %s: %s', feed, e)
         feed.last_failure = repr(e)
         feed.save()
@@ -164,6 +165,7 @@ def cache_images(images_uris):
                 image_data = http_fetcher.fetch_image(session, image_uri)
                 processed = image_processing.process_image_data(image_data)
             except (requests.RequestException,
+                    http_fetcher.FetchFileTooBigError,
                     image_processing.ImageProcessingError) as e:
                 failure_reason = str(e)
                 logger.warning('Failed to cache image: %s', failure_reason)
@@ -215,7 +217,8 @@ def create_feed(user_id: int, uri: str, process_html=True):
     if creation_needed:
         try:
             feed_request = http_fetcher.fetch_feed(uri, None, None, 1, None)
-        except requests.exceptions.RequestException as e:
+        except (requests.exceptions.RequestException,
+                http_fetcher.FetchFileTooBigError) as e:
             msg = f'Could not create feed "{uri}", HTTP fetch failed'
             logger.warning('%s: %s', msg, e)
             background_messages.warning(user, msg)
