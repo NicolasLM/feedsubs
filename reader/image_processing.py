@@ -39,7 +39,7 @@ def process_image_data(data: bytes) -> ImageProcessingResult:
         if (width * height) < MIN_AREA_TRACKING_PIXEL:
             raise ImageProcessingError('Tracking pixel')
 
-        if image.format != 'GIF':
+        if image.format == 'GIF':
             # Gif are weird, saving them often fails and the result after
             # compression is sometimes bigger than the original file.
             # Let's just keep the original file.
