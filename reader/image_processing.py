@@ -24,7 +24,11 @@ class ImageProcessingError(Exception):
 
 
 def process_image_data(data: bytes) -> ImageProcessingResult:
-    image = Image.open(BytesIO(data))
+    try:
+        image = Image.open(BytesIO(data))
+    except OSError as e:
+        raise ImageProcessingError('Cannot open image: {}'.format(e))
+
     if image.format not in SUPPORTED_FORMATS:
         raise ImageProcessingError('Unsupported format {}'.format(image.format))
 
