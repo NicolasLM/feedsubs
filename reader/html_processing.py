@@ -1,8 +1,12 @@
+from logging import getLogger
 from typing import Optional, List
 import urllib.parse
 
 import bleach
 import bs4
+from django.core.files.storage import default_storage
+
+from . import models
 
 ALLOWED_TAGS = bleach.ALLOWED_TAGS + ['p', 'pre', 'img', 'br', 'h1', 'h2',
                                       'h3', 'h4', 'h5', 'h6']
@@ -12,6 +16,8 @@ URL_REWRITE_PAIRS = (
     ('a', 'href'),
     ('img', 'src')
 )
+
+logger = getLogger(__name__)
 
 
 def clean_article(content: str, base_url: str=None,
@@ -82,19 +88,16 @@ def unify_style(soup: bs4.BeautifulSoup):
 
 
 def rewrite_image_links(soup: bs4.BeautifulSoup):
-    from . import models, tasks
-    from django.core.files.storage import default_storage
     img_tags = soup.find_all('img', attrs={'src': True})
     img_srcs = {img_tag['src'] for img_tag in img_tags}
     cached_images = models.CachedImage.objects.filter(uri__in=img_srcs)
     cached_images = {ci.uri: ci for ci in cached_images}
-    uncached_uris = set()
 
     for img_tag in img_tags:
         try:
             cached_image = cached_images[img_tag['src']]
         except KeyError:
-            uncached_uris.add(img_tag['src'])
+            logger.warning('Image not in cache: %s', img_tag['src'])
             continue
 
         if cached_image.is_tracking_pixel:
@@ -106,9 +109,6 @@ def rewrite_image_links(soup: bs4.BeautifulSoup):
 
         cached_url = default_storage.url(cached_image.image_path)
         img_tag['src'] = cached_url
-
-    if uncached_uris:
-        tasks.tasks.schedule('cache_images', list(uncached_uris))
 
 
 def find_images_in_article(content: str, base_url) -> List[str]:
