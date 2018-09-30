@@ -4,8 +4,10 @@ from logging import getLogger
 from typing import Optional
 
 import attr
-from django.utils.http import http_date
+from django.conf import settings
 from django.contrib.sites.models import Site
+from django.urls import reverse
+from django.utils.http import http_date
 import requests
 
 
@@ -84,15 +86,30 @@ def _check_content_length(r: requests.Response):
         )
 
 
-def get_user_agent(subscriber_count: int,
+def get_user_agent(subscriber_count: Optional[int]=None,
                    feed_id: Optional[int]=None) -> str:
     """Generate a user-agent allowing publisher to gather subscribers count.
 
     See https://support.feed.press/article/66-how-to-be-a-good-feed-fetcher
     """
-    service_name = Site.objects.get_current().domain
-    help_page = 'https://github.com/NicolasLM/feedsubs'
-    feed_id = '' if feed_id is None else '; feed-id={}'.format(feed_id)
-    return '{}; (+{}; {} subscribers{})'.format(
-        service_name, help_page, subscriber_count, feed_id
-    )
+    options = list()
+
+    if settings.DEBUG:
+        name = 'Feedsubs-dev'
+    else:
+        name = 'Feedsubs'
+        options.append('+{}://{}{}'.format(settings.DEFAULT_HTTP_PROTOCOL,
+                                           Site.objects.get_current().domain,
+                                           reverse('reader:fetcher')))
+
+    if subscriber_count is not None:
+        options.append('{} subscribers'.format(subscriber_count))
+
+    if feed_id is not None:
+        options.append('feed-id={}'.format(feed_id))
+
+    user_agent = name
+    if options:
+        user_agent = '{} ({})'.format(user_agent, '; '.join(options))
+
+    return user_agent

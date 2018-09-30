@@ -32,7 +32,7 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_PROXY_SSL_HEADER = ('X-Forwarded-Proto', 'https')
 XFF_TRUSTED_PROXY_DEPTH = 1
-ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+DEFAULT_HTTP_PROTOCOL = 'https'
 
 ADMINS = [('Nicolas', 'nicolas@lemanchet.fr')]
 MANAGERS = [('Nicolas', 'nicolas@lemanchet.fr')]

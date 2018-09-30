@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load reader %}
+
+{% block title %}Feedsubs Fetcher{% endblock %}
+{% block content_title %}<h1 class="title">Feedsubs Fetcher</h1>{% endblock content_title %}
+
+
+{% block content %}
+
+<div class="content">
+  <h2>What is the Feedsubs Fetcher?</h2>
+  <p>
+    Feedsubs is an Open-Source RSS feed reader. Users of the service add RSS feeds they want to follow
+    and the Fetcher retrieves their content periodically.
+  </p>
+
+  <h2>What does the Fetcher retrieve exactly?</h2>
+  <ul>
+    <li>Feeds added by users</li>
+    <li>Images linked in the feed content</li>
+  </ul>
+
+  <h2>How often does the Fetcher hit my site?</h2>
+  <p>
+    On average the Fetcher retrieves each feed twice per hour. If your website offers many different feeds
+    you may see more hits. Each image linked in the feed will be retrieved once when the fetcher first encounters it.
+  </p>
+
+  <h2>Why does Feedsubs retrieve images?</h2>
+  <p>
+    Some images attached in feeds can be retrieved and cached by Feedsubs in order to:
+  </p>
+  <ul>
+    <li>Avoid hot linking images, preventing third-party websites from paying for the bandwidth used by Feedsubs users.</li>
+    <li>Prevent security issues related to loading third-party content, like HTTPS mixed content warnings.</li>
+  </ul>
+
+  <h2>How to prevent Feedsubs from fetching my content?</h2>
+  <p>
+    Feedsubs only fetches files that are publicly available on the Internet. If you wish to prevent automated
+    tools from retrieving them you may:
+  </p>
+  <ul>
+    <li>Not publish the feeds in the first place. Most CMS have an option to disable the generation of RSS and Atom feeds.</li>
+    <li>Block the Feedsubs Fetcher user-agent.</li>
+  </ul>
+  <p>
+    Note that Feedsubs does not read robots.txt files because it does not crawl websites but merely fetches the content
+    requested by human users.
+  </p>
+
+  <h2>What is the Fetcher user-agent?</h2>
+  <p>
+    When retrieving feeds, the Fetcher identifies itself with the following string. The additional information allows websites to know how many
+    users are subscribed.
+  </p>
+  <code>{{ "" | example_user_agent }}</code>
+
+  <h2>The Fetcher is misbehaving, where can I signal the issue?</h2>
+  <p>You can send an email to <a href="mailto:info@feedsubs.com">info@feedsubs.com</a>.</p>
+
+
+</div>
+
+{% endblock %}

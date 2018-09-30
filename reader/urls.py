@@ -43,5 +43,6 @@ urlpatterns = [
 
     path('read-all', views.AllReadAllBoard.as_view(),
          name='all-read-all'),
+    path('fetcher', views.FetcherTemplate.as_view(), name='fetcher'),
     path('', views.home_router, name='home'),
 ]

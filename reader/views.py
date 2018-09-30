@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import (
-    ListView, CreateView, UpdateView, FormView, DeleteView
+    ListView, CreateView, UpdateView, FormView, DeleteView, TemplateView
 )
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
@@ -433,3 +433,7 @@ class AllReadAllBoard(ReadAllBoard):
 
 class StarredReadAllBoard(ReadAllBoard):
     board_class_view = Starred
+
+
+class FetcherTemplate(TemplateView):
+    template_name = 'reader/fetcher.html'

@@ -3,7 +3,7 @@ from typing import Optional
 
 from django import template
 
-from .. import html_processing
+from .. import html_processing, http_fetcher
 
 register = template.Library()
 
@@ -60,3 +60,8 @@ def content_type_to_icon(content_type: str) -> str:
         return 'fa-film'
     else:
         return 'fa-file'
+
+
+@register.filter
+def example_user_agent(_) -> str:
+    return http_fetcher.get_user_agent(subscriber_count=42, feed_id=2940953)
