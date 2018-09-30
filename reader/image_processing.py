@@ -29,23 +29,30 @@ def process_image_data(data: bytes) -> ImageProcessingResult:
     except OSError as e:
         raise ImageProcessingError('Cannot open image: {}'.format(e))
 
-    if image.format not in SUPPORTED_FORMATS:
-        raise ImageProcessingError('Unsupported format {}'.format(image.format))
+    with image:
+        if image.format not in SUPPORTED_FORMATS:
+            raise ImageProcessingError(
+                'Unsupported format {}'.format(image.format)
+            )
 
-    width, height = image.size
-    if (width * height) < MIN_AREA_TRACKING_PIXEL:
-        raise ImageProcessingError('Tracking pixel')
+        width, height = image.size
+        if (width * height) < MIN_AREA_TRACKING_PIXEL:
+            raise ImageProcessingError('Tracking pixel')
 
-    image.thumbnail((MAX_EDGE_PIXELS, MAX_EDGE_PIXELS))
-    width, height = image.size
+        if image.format != 'GIF':
+            # Gif are weird, saving them often fails and the result after
+            # compression is sometimes bigger than the original file.
+            # Let's just keep the original file.
+            data = BytesIO(data)
+        else:
+            image.thumbnail((MAX_EDGE_PIXELS, MAX_EDGE_PIXELS))
+            width, height = image.size
+            data = BytesIO()
+            image.save(data, image.format, quality=QUALITY,
+                       optimize=True, progressive=True)
 
-    data = BytesIO()
-    is_save_all = image.format == 'GIF'
-    image.save(data, image.format, quality=QUALITY, save_all=is_save_all,
-               optimize=True, progressive=True)
     size_in_bytes = data.seek(0, SEEK_END)
     data.seek(0)
-
     if size_in_bytes > MAX_SIZE_IN_BYTES_AFTER_PROCESSING:
         raise ImageProcessingError(
             'Resulting file too big: {} bytes'.format(size_in_bytes)
