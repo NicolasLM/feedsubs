@@ -4,7 +4,6 @@ import urllib.parse
 
 import bleach
 import bs4
-from django.core.files.storage import default_storage
 
 from . import models
 
@@ -104,11 +103,10 @@ def rewrite_image_links(soup: bs4.BeautifulSoup):
             img_tag.decompose()
             continue
 
-        if cached_image.failure_reason:
+        if cached_image.external_uri is None:
             continue
 
-        cached_url = default_storage.url(cached_image.image_path)
-        img_tag['src'] = cached_url
+        img_tag['src'] = cached_image.external_uri
 
 
 def find_images_in_article(content: str, base_url) -> List[str]:

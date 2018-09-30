@@ -4,6 +4,7 @@ from uuid import uuid4
 
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
+from django.core.files.storage import default_storage
 from django.core.validators import URLValidator
 from django.db import models
 from django.urls import reverse
@@ -168,6 +169,13 @@ class CachedImage(models.Model):
             uuid_str,
             self.format.lower()
         )
+
+    @property
+    def external_uri(self) -> Optional[str]:
+        if self.failure_reason:
+            return None
+
+        return default_storage.url(self.image_path)
 
     @property
     def resolution(self):
