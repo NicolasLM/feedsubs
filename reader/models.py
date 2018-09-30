@@ -177,6 +177,16 @@ class CachedImage(models.Model):
 
         return default_storage.url(self.image_path)
 
+    def image_tag(self):
+        from django.utils.safestring import mark_safe
+        external_uri = self.external_uri
+        if external_uri is None:
+            return 'No preview'
+
+        return mark_safe('<img src="{}" width="{}" height="{}">'.format(
+            external_uri, self.width, self.height
+        ))
+
     @property
     def resolution(self):
         return '{}x{}'.format(self.width, self.height)

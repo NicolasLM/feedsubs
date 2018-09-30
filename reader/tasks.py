@@ -142,22 +142,25 @@ def synchronize_feed(feed_id: int):
     feed.last_failure = ''
     feed.frequency_per_year = calculate_frequency_per_year(feed)
     feed.save()
+
+    number_of_images = len(images_uris)
+    if number_of_images > 1000:
+        logger.error('Too many images to cache: %d', number_of_images)
+        return
     cache_images(images_uris)
 
 
 @tasks.task(name='cache_images')
 def cache_images(images_uris):
-    number_of_images = len(images_uris)
-    if number_of_images > 1000:
-        logger.error('Too many images to cache: %d', number_of_images)
-        return
-
     already_cached_uris = (
         models.CachedImage.objects
         .filter(uri__in=images_uris)
         .values_list('uri', flat=True)
     )
+    already_cached_uris = set(already_cached_uris)
     images_uris = [u for u in images_uris if u not in already_cached_uris]
+    logger.info('Attempting to cache %d images (%d already cached)',
+                len(images_uris), len(already_cached_uris))
 
     with requests.Session() as session:
         for image_uri in images_uris:
