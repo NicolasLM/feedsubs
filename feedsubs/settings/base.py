@@ -195,6 +195,9 @@ LOGGING = {
         'boto3': {
             'level': 'INFO',
         },
+        's3transfer': {
+            'level': 'INFO',
+        },
     }
 }
 
