@@ -64,7 +64,7 @@ def fetch_feed(uri: str, last_fetched_at: Optional[datetime],
 def fetch_image(session: requests.Session, uri: str) -> bytes:
     """Retrieve an image."""
     request_headers = {
-        'User-Agent': get_user_agent(0)
+        'User-Agent': get_user_agent()
     }
     with session.get(uri, headers=request_headers, stream=True,
                      timeout=TIMEOUT) as r:
