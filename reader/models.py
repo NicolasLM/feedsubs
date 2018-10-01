@@ -13,9 +13,13 @@ from django.template.defaultfilters import filesizeformat
 from .validators import http_port_validator
 
 
+URI_MAX_LENGTH = 2048  # https://stackoverflow.com/a/417184
+
+
 class Feed(models.Model):
     name = models.CharField(max_length=100)
     uri = models.URLField(
+        max_length=URI_MAX_LENGTH,
         unique=True,
         validators=[URLValidator(schemes=['http', 'https']),
                     http_port_validator]
@@ -43,7 +47,7 @@ class Feed(models.Model):
 
 class Article(models.Model):
     id_in_feed = models.CharField(max_length=400)
-    uri = models.URLField(max_length=400)
+    uri = models.URLField(max_length=URI_MAX_LENGTH)
     title = models.TextField(blank=True, null=False)
     content = models.TextField(blank=True, null=False)
     published_at = models.DateTimeField(null=True, blank=True)
@@ -61,7 +65,7 @@ class Article(models.Model):
 
 
 class Attachment(models.Model):
-    uri = models.URLField(max_length=400)
+    uri = models.URLField(max_length=URI_MAX_LENGTH)
     title = models.TextField(blank=True, null=False)
     mime_type = models.CharField(max_length=100, blank=True, null=False)
     size_in_bytes = models.PositiveIntegerField(blank=True, null=True)
@@ -139,7 +143,7 @@ class Board(models.Model):
 
 class CachedImage(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    uri = models.URLField(max_length=400, db_index=True, unique=True)
+    uri = models.URLField(max_length=URI_MAX_LENGTH, db_index=True, unique=True)
     format = models.CharField(max_length=8, blank=True, editable=False,
                               default='')
     width = models.PositiveSmallIntegerField(editable=False, default=0)
