@@ -12,6 +12,7 @@ from django.db.models import Count, Q, ObjectDoesNotExist
 from django.db.utils import IntegrityError
 from django.template.defaultfilters import filesizeformat
 from django.utils.timezone import now
+from psycopg2 import errorcodes as pg_error_codes
 import requests
 from spinach import Tasks, Batch
 
@@ -172,19 +173,21 @@ def cache_images(images_uris):
                     image_processing.ImageProcessingError) as e:
                 failure_reason = str(e)
                 logger.warning('Failed to cache image: %s', failure_reason)
-                models.CachedImage.objects.create(
+                _create_cached_image_object(
                     uri=image_uri,
                     failure_reason=failure_reason[:99]
                 )
                 continue
 
-            cached_image = models.CachedImage.objects.create(
+            cached_image = _create_cached_image_object(
                 uri=image_uri,
                 format=processed.image_format,
                 width=processed.width,
                 height=processed.height,
                 size_in_bytes=processed.size_in_bytes
             )
+            if cached_image is None:
+                continue
 
             try:
                 default_storage.save(
@@ -197,6 +200,18 @@ def cache_images(images_uris):
             logger.info('Cached image %s %dx%d %s', cached_image.format,
                         cached_image.width, cached_image.height,
                         filesizeformat(cached_image.size_in_bytes))
+
+
+def _create_cached_image_object(**kwargs) -> Optional[models.CachedImage]:
+    """Save a CachedImage to database or fail silently if it already exists."""
+    try:
+        return models.CachedImage.objects.create(**kwargs)
+    except IntegrityError as e:
+        if e.__cause__.pgcode == pg_error_codes.UNIQUE_VIOLATION:
+            logger.info('Cached image already exists in database')
+            return None
+
+        raise
 
 
 @tasks.task(name='create_feed')
