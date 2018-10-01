@@ -189,6 +189,12 @@ LOGGING = {
         'PIL': {
             'level': 'INFO',
         },
+        'botocore': {
+            'level': 'INFO',
+        },
+        'boto3': {
+            'level': 'INFO',
+        },
     }
 }
 

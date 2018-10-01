@@ -47,9 +47,11 @@ setup(
     },
 
     install_requires=[
+        'boto3',
         'django',
         'django-allauth',
         'django-bulma',
+        'django-storages',
         'atoma',
         'bleach',
         'beautifulsoup4',

@@ -53,7 +53,7 @@
     </div>
 
     <div class="content">
-      {% cache None cleaned_article article.id %}{{ article.content | clean_article:article.feed.uri | safe }}{% endcache %}
+      {% cache 7200 cleaned_article article.id %}{{ article.content | clean_article:article.feed.uri | safe }}{% endcache %}
     </div>
 
     {% if article.attachment_set.all %}

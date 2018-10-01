@@ -71,3 +71,12 @@ WAITRESS = {
     'asyncore_use_poll': True,
     'threads': config('WAITRESS_THREADS', default=16, cast=int)
 }
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_S3_REGION_NAME = 'ams3'
+AWS_S3_ENDPOINT_URL = 'https://ams3.digitaloceanspaces.com'
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = 'feedsubs'
+AWS_DEFAULT_ACL = 'private'
+AWS_QUERYSTRING_EXPIRE = 7800  # 2h10, must be more than article cache
