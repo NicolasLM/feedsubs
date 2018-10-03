@@ -3,7 +3,7 @@ attrs==18.2.0
 beautifulsoup4==4.6.3
 bleach==2.1.4
 blinker==1.4
-boto3==1.9.14
+boto3==1.9.16
 botocore==1.12.16
 certifi==2018.8.24
 chardet==3.0.4
