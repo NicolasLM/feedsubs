@@ -1,7 +1,7 @@
 atoma==0.0.11
 attrs==18.2.0
 beautifulsoup4==4.6.3
-bleach==2.1.4
+bleach==3.0.0
 blinker==1.4
 boto3==1.9.16
 botocore==1.12.16
