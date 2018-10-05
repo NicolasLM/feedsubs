@@ -1,7 +1,7 @@
 from datetime import timedelta
 from logging import getLogger
 import random
-from typing import Optional
+from typing import Optional, Tuple
 
 from atoma.exceptions import FeedDocumentError
 from atoma.simple import simple_parse_bytes
@@ -85,8 +85,20 @@ def synchronize_feed(feed_id: int):
         return
 
     images_uris = set()
+    existing_articles = (
+        models.Article.objects.filter(feed=feed)
+        .filter(id_in_feed__in={a.id for a in parsed_feed.articles})
+    )
+    existing_attachments = (
+        models.Attachment.objects
+        .filter(article__in=existing_articles)
+    )
+
     for parsed_article in reversed(parsed_feed.articles):
-        article, created = models.Article.objects.update_or_create(
+
+        article, modified = create_or_update_if_needed(
+            models.Article,
+            existing_articles,
             id_in_feed=parsed_article.id,
             feed=feed,
             defaults={
@@ -97,18 +109,18 @@ def synchronize_feed(feed_id: int):
                 'updated_at': parsed_article.updated_at
             }
         )
-        if created:
-            logger.info('Created article %s', parsed_article.id)
-        else:
-            logger.info('Updated article %s', parsed_article.id)
-        images_uris.update(
-            html_processing.find_images_in_article(parsed_article.content,
-                                                   feed.uri)
-        )
+
+        if modified:
+            images_uris.update(
+                html_processing.find_images_in_article(parsed_article.content,
+                                                       feed.uri)
+            )
 
         current_attachments_ids = list()
         for parsed_attachment in parsed_article.attachments:
-            attachment, created = models.Attachment.objects.update_or_create(
+            attachment, _ = create_or_update_if_needed(
+                models.Attachment,
+                existing_attachments,
                 uri=parsed_attachment.link,
                 article=article,
                 defaults={
@@ -119,10 +131,6 @@ def synchronize_feed(feed_id: int):
                 }
             )
             current_attachments_ids.append(attachment.id)
-            if created:
-                logger.info('Created attachment %s', attachment)
-            else:
-                logger.info('Updated attachment %s', attachment)
 
         deleted_attachments, _ = (
             models.Attachment.objects
@@ -144,10 +152,14 @@ def synchronize_feed(feed_id: int):
     feed.frequency_per_year = calculate_frequency_per_year(feed)
     feed.save()
 
+    if not images_uris:
+        return
+
     number_of_images = len(images_uris)
     if number_of_images > 1000:
         logger.error('Too many images to cache: %d', number_of_images)
         return
+
     cache_images(images_uris)
 
 
@@ -306,3 +318,53 @@ def calculate_frequency_per_year(feed: models.Feed) -> Optional[int]:
         return None
 
     return int(num_articles_over_year * yearly_ratio)
+
+
+def _is_object_equivalent(obj, attributes: dict):
+    for k, v in attributes.items():
+        if getattr(obj, k, object()) != v:
+            return False
+
+    return True
+
+
+def create_or_update_if_needed(model: models.models.Model,
+                               existing_objects: list,
+                               defaults: Optional[dict]=None, **kwargs
+                               ) -> Tuple[models.models.Model, bool]:
+    """Create or update an object only if needed.
+
+    The Django update_or_create always issues either an INSERT INTO or an
+    UPDATE, even when the object exists and does not need modification.
+
+    This function solves this problem by trying to find the object in a list
+    of pre-existing objects. It only calls update_or_create when the object is
+    not found or found to be different.
+
+    This approach is more prone to race-conditions than the normal Django
+    update_or_create but the ability to know if an object has been created or
+    updated is important. For instance this allows to avoid searching for
+    images in an article if we know that it was not modified.
+
+    It returns a tuple of the object with a boolean indicating if it was created
+    or updated.
+    """
+    defaults = defaults or {}
+
+    existing_object = None
+    for candidate_object in existing_objects:
+        if _is_object_equivalent(candidate_object, kwargs):
+            existing_object = candidate_object
+            break
+
+    if existing_object and _is_object_equivalent(existing_object, defaults):
+        logger.debug('Not updated %s', existing_object)
+        return existing_object, False
+
+    obj, created = model.objects.update_or_create(defaults=defaults, **kwargs)
+    if created:
+        logger.info('Created %s', obj)
+    else:
+        logger.info('Updated %s', obj)
+
+    return obj, True
