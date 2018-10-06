@@ -312,8 +312,7 @@ class BaseBoardDetailList(LoginRequiredMixin, ListView):
     @cached_property
     def show_read(self):
         param = (
-            self.kwargs.get('show-read') or
-            self.request.GET.get('show-read')
+            self.kwargs.get('show-read') or self.request.GET.get('show-read')
         )
         if param is None:
             return self.default_show_read

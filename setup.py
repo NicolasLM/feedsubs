@@ -71,6 +71,7 @@ setup(
         ],
         'dev': [
             'django-debug-toolbar',
+            'pycodestyle'
         ],
     },
 

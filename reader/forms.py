@@ -23,4 +23,4 @@ class BoardForm(ModelForm):
 
 
 class UploadOPMLFileForm(forms.Form):
-    opml_uris = fields.OPMLField(max_length=1024*1024)
+    opml_uris = fields.OPMLField(max_length=1024 * 1024)
