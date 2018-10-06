@@ -1,0 +1,8 @@
+[run]
+include =
+    reader/*
+    um/*
+    spinachd/*
+omit =
+    */tests/*
+    */migrations/*

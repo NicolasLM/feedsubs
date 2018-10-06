@@ -72,8 +72,9 @@ setup(
         'dev': [
             'django-debug-toolbar',
             'pycodestyle',
-            'pytest-django',
             'pytest',
+            'pytest-cov',
+            'pytest-django',
         ],
     },
 

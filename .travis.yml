@@ -22,8 +22,12 @@ install:
   - pip install -e .[dev]
 
 script:
-  - pytest -v
+  - pytest -v --cov
   - pycodestyle feedsubs reader um spinachd
+
+after_success:
+  - pip install python-coveralls
+  - coveralls
 
 notifications:
     email: false
