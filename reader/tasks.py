@@ -9,6 +9,7 @@ from django.contrib.auth import get_user_model
 from django.core.files.base import File
 from django.core.files.storage import default_storage
 from django.db.models import Count, Q, ObjectDoesNotExist
+from django.db.models.base import ModelBase
 from django.db.utils import IntegrityError
 from django.template.defaultfilters import filesizeformat
 from django.utils.timezone import now
@@ -337,7 +338,7 @@ def _is_object_equivalent(obj, attributes: dict):
     return True
 
 
-def create_or_update_if_needed(model: models.models.Model,
+def create_or_update_if_needed(model: ModelBase,
                                existing_objects: list,
                                defaults: Optional[dict]=None, **kwargs
                                ) -> Tuple[models.models.Model, bool]:
