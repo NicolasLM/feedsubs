@@ -158,6 +158,20 @@ ACCOUNT_FORMS = {
     'signup': 'um.forms.SignupFormWithToS'
 }
 
+
+loggers = {
+    '': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    }
+}
+info_loggers = (
+    'django', 'spinach', 'PIL', 'botocore', 'boto3', 's3transfer', 'reader'
+)
+for logger_name in info_loggers:
+    if logger_name not in loggers:
+        loggers[logger_name] = {'level': 'INFO'}
+
 LOGGING = {
     'version': 1,
     'incremental': False,
@@ -175,31 +189,9 @@ LOGGING = {
             'formatter': 'default',
         },
     },
-    'loggers': {
-        '': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-        },
-        'django': {
-            'level': 'INFO',
-        },
-        'spinach': {
-            'level': 'INFO',
-        },
-        'PIL': {
-            'level': 'INFO',
-        },
-        'botocore': {
-            'level': 'INFO',
-        },
-        'boto3': {
-            'level': 'INFO',
-        },
-        's3transfer': {
-            'level': 'INFO',
-        },
-    }
+    'loggers': loggers
 }
+
 
 SPINACH_ENGINE = {
     'broker': RedisBroker(redis=StrictRedis.from_url(
