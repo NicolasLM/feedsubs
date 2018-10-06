@@ -4,7 +4,7 @@ import random
 from typing import Optional, Tuple
 
 from atoma.exceptions import FeedDocumentError
-from atoma.simple import simple_parse_bytes
+from atoma.simple import simple_parse_bytes, Feed as ParsedFeed
 from django.contrib.auth import get_user_model
 from django.core.files.base import File
 from django.core.files.storage import default_storage
@@ -68,6 +68,7 @@ def synchronize_feed(feed_id: int):
         return
 
     if feed_request is None:
+        # Feed did not change since last synchronization
         feed.last_fetched_at = task_start_date
         feed.last_failure = ''
         feed.save()
@@ -84,6 +85,22 @@ def synchronize_feed(feed_id: int):
         feed.save()
         return
 
+    if feed.name != parsed_feed.title:
+        logger.info('Renaming feed %d from "%s" to "%s"', feed_id, feed.name,
+                    parsed_feed.title)
+        feed.name = parsed_feed.title
+
+    synchronize_parsed_feed(feed, parsed_feed)
+
+    feed.last_fetched_at = task_start_date
+    feed.last_hash = feed_request.hash
+    feed.last_failure = ''
+    feed.frequency_per_year = calculate_frequency_per_year(feed)
+    feed.save()
+
+
+def synchronize_parsed_feed(feed: models.Feed, parsed_feed: ParsedFeed):
+    """Synchronize articles, attachments and images from a parsed feed."""
     images_uris = set()
     existing_articles = (
         models.Article.objects.filter(feed=feed)
@@ -140,17 +157,6 @@ def synchronize_feed(feed_id: int):
         )
         if deleted_attachments:
             logger.info('Deleted %d old attachments', deleted_attachments)
-
-    if feed.name != parsed_feed.title:
-        logger.info('Renaming feed %d from "%s" to "%s"', feed_id, feed.name,
-                    parsed_feed.title)
-        feed.name = parsed_feed.title
-
-    feed.last_fetched_at = task_start_date
-    feed.last_hash = feed_request.hash
-    feed.last_failure = ''
-    feed.frequency_per_year = calculate_frequency_per_year(feed)
-    feed.save()
 
     if not images_uris:
         return
@@ -297,6 +303,9 @@ def create_feed(user_id: int, uri: str, process_html=True):
         logger.warning('User probably already subscribed to the feed: %s', e)
     else:
         logger.info('User subscribed to feed')
+
+    if creation_needed:
+        synchronize_parsed_feed(feed, parsed_feed)
 
 
 def calculate_frequency_per_year(feed: models.Feed) -> Optional[int]:
