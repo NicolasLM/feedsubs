@@ -44,8 +44,7 @@ INSTALLED_APPS = [
     'bulma',
     'allauth',
     'allauth.account',
-
-    'spinachd.apps.SpinachdConfig',
+    'spinach.contrib.spinachd',
 
     'reader.apps.ReaderConfig',
     'um.apps.UMConfig',
@@ -193,15 +192,9 @@ LOGGING = {
 }
 
 
-SPINACH_ENGINE = {
-    'broker': RedisBroker(redis=StrictRedis.from_url(
-        config('REDIS_SPINACH_URL', default='redis://'),
-        **recommended_socket_opts
-    )),
-    'namespace': 'feedsubs'
-}
-
-SPINACH_WORKER = {
-    'number': config('SPINACH_WORKER_NUMBER', default=5, cast=int)
-}
+SPINACH_BROKER = RedisBroker(redis=StrictRedis.from_url(
+    config('REDIS_SPINACH_URL', default='redis://'),
+    **recommended_socket_opts
+))
+SPINACH_NAMESPACE = 'feedsubs'
 SPINACH_CLEAR_SESSIONS_PERIODICITY = timedelta(weeks=1)
