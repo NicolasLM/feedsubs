@@ -23,7 +23,7 @@ install:
 
 script:
   - pytest -v --cov
-  - pycodestyle feedsubs reader um spinachd
+  - pycodestyle feedsubs reader um
 
 after_success:
   - pip install python-coveralls
