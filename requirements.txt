@@ -1,10 +1,10 @@
 atoma==0.0.11
 attrs==18.2.0
 beautifulsoup4==4.6.3
-bleach==3.0.1
+bleach==3.0.2
 blinker==1.4
-boto3==1.9.20
-botocore==1.12.20
+boto3==1.9.21
+botocore==1.12.21
 certifi==2018.8.24
 chardet==3.0.4
 defusedxml==0.5.0
@@ -29,7 +29,7 @@ requests==2.19.1
 requests-oauthlib==1.0.0
 s3transfer==0.1.13
 six==1.11.0
-spinach==0.0.7
+spinach==0.0.8
 urllib3==1.23
 waitress==1.1.0
 webencodings==0.5.1
