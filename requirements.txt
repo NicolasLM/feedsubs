@@ -25,7 +25,7 @@ python3-openid==3.1.0
 pytz==2018.5
 raven==6.9.0
 redis==2.10.6
-requests==2.19.1
+requests==2.20.0
 requests-oauthlib==1.0.0
 s3transfer==0.1.13
 six==1.11.0
