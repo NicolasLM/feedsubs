@@ -16,6 +16,7 @@ from .base import *
 
 INSTALLED_APPS += [
     'raven.contrib.django',
+    'ddtrace.contrib.django',
     'waitressd.apps.WaitressdConfig'
 ]
 MIDDLEWARE = (
@@ -80,3 +81,9 @@ AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = 'feedsubs'
 AWS_DEFAULT_ACL = 'private'
 AWS_QUERYSTRING_EXPIRE = 7800  # 2h10, must be more than article cache
+
+DATADOG_TRACE = {
+    'DEFAULT_SERVICE': 'feedsubs',
+    'AGENT_HOSTNAME': config('DD_AGENT_HOSTNAME', default='localhost'),
+    'AGENT_PORT': config('DD_AGENT_PORT', 8126, cast=int),
+}

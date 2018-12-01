@@ -64,6 +64,7 @@ setup(
 
     extras_require={
         'prod': [
+            'ddtrace',
             'django-xff',
             'django-redis',
             'waitress',
