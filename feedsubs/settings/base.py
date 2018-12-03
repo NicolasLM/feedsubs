@@ -165,7 +165,8 @@ loggers = {
     }
 }
 info_loggers = (
-    'django', 'spinach', 'PIL', 'botocore', 'boto3', 's3transfer', 'reader'
+    'django', 'spinach', 'PIL', 'botocore', 'boto3', 's3transfer', 'reader',
+    'ddtrace'
 )
 for logger_name in info_loggers:
     if logger_name not in loggers:

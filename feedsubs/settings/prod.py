@@ -84,6 +84,8 @@ AWS_QUERYSTRING_EXPIRE = 7800  # 2h10, must be more than article cache
 
 DATADOG_TRACE = {
     'DEFAULT_SERVICE': 'feedsubs',
+    'DEFAULT_CACHE_SERVICE': 'cache',
+    'TAGS': {'env': 'prod'},
     'AGENT_HOSTNAME': config('DD_AGENT_HOSTNAME', default='localhost'),
     'AGENT_PORT': config('DD_AGENT_PORT', 8126, cast=int),
 }
