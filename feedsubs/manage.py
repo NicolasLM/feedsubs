@@ -7,6 +7,15 @@ import sys
 
 
 def main():
+
+    if os.environ.get('DDTRACE_EXTRA_PATCH') == 'true':
+        # The ddtrace/Django integration only patches Django internals, it
+        # doesn't patch other libraries.
+        # Manually patching them very early here seems like a less intrusive
+        # approach than running the whole app under `ddtrace-run`
+        import ddtrace
+        ddtrace.patch(requests=True, botocore=True, redis=True)
+
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "feedsubs.settings.dev")
     try:
         from django.core.management import execute_from_command_line
