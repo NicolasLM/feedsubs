@@ -378,3 +378,17 @@ def create_or_update_if_needed(model: ModelBase,
         logger.info('Updated %s', obj)
 
     return obj, True
+
+
+# Dirty Monkey Patch
+
+from boto3.s3 import transfer
+
+
+def create_transfer_manager(*arg, **kwargs):
+    return transfer.TransferManager(
+        *arg, **kwargs, executor_cls=transfer.NonThreadedExecutor
+    )
+
+
+transfer.create_transfer_manager = create_transfer_manager
