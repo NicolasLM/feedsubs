@@ -68,6 +68,7 @@ setup(
             'django-xff',
             'django-redis',
             'waitress',
+            'whitenoise',
             'raven',
         ],
         'dev': [

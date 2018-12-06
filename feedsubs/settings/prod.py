@@ -20,15 +20,18 @@ INSTALLED_APPS += [
     'waitressd.apps.WaitressdConfig'
 ]
 MIDDLEWARE = (
-        ['xff.middleware.XForwardedForMiddleware'] +
-        ['waitressd.middleware.access_log'] +
-        MIDDLEWARE +
-        ['raven.contrib.django.middleware.SentryResponseErrorIdMiddleware']
+    ['xff.middleware.XForwardedForMiddleware'] +
+    ['waitressd.middleware.access_log'] +
+    ['whitenoise.middleware.WhiteNoiseMiddleware'] +
+    MIDDLEWARE +
+    ['raven.contrib.django.middleware.SentryResponseErrorIdMiddleware']
 )
 
 STATIC_ROOT = '/opt/static'
-ALLOWED_HOSTS = [config('ALLOWED_HOST', default='feedsubs.com')]
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+WHITENOISE_KEEP_ONLY_HASHED_FILES = True
 
+ALLOWED_HOSTS = [config('ALLOWED_HOST', default='feedsubs.com')]
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_PROXY_SSL_HEADER = ('X-Forwarded-Proto', 'https')

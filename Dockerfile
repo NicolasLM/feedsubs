@@ -11,5 +11,8 @@ RUN pip install -U pip setuptools && pip install -r /opt/code/requirements.txt
 COPY . /opt/code
 RUN pip install /opt/code[prod]
 
+# These secrets are only used to run collectstatic
+RUN SECRET_KEY=x DB_PASSWORD=x EMAIL_HOST_PASSWORD=x SENTRY_DSN=x AWS_ACCESS_KEY_ID=x AWS_SECRET_ACCESS_KEY=x manage.py collectstatic
+
 USER nobody
 
