@@ -6,9 +6,15 @@
 
     <div class="columns">
       <div class="column">
-        <a href="{{ article.uri }}">
+
+        {% if article.uri %}
+          <a href="{{ article.uri }}">
+            <h2 class="title">{{ article.title }}</h2>
+          </a>
+        {% else %}
           <h2 class="title">{{ article.title }}</h2>
-        </a>
+        {% endif %}
+
         {% if article.published_at %}
           <span>{{ article.published_at | naturalday | title}}</span>
         {% else %}

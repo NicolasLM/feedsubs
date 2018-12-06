@@ -120,7 +120,7 @@ def synchronize_parsed_feed(feed: models.Feed, parsed_feed: ParsedFeed):
             id_in_feed=parsed_article.id,
             feed=feed,
             defaults={
-                'uri': parsed_article.link,
+                'uri': parsed_article.link or '',
                 'title': parsed_article.title or '',
                 'content': parsed_article.content,
                 'published_at': parsed_article.published_at,
