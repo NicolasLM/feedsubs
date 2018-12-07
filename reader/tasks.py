@@ -30,12 +30,12 @@ logger = getLogger(__name__)
 def synchronize_all_feeds():
     """Synchronize all feeds every 30 minutes.
 
-    To avoid a spike of load, the synchronization is spread over a 20 minutes
+    To avoid a spike of load, the synchronization is spread over the whole
     period.
     """
     current_date = now()
     ats = list()
-    for i in range(0, 20):
+    for i in range(0, 29):
         ats.append(current_date + timedelta(minutes=i))
 
     batch = Batch()
