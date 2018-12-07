@@ -1,5 +1,6 @@
 import hashlib
 from typing import Optional
+from urllib.parse import urlencode
 
 from django import template
 
@@ -65,3 +66,10 @@ def content_type_to_icon(content_type: str) -> str:
 @register.filter
 def example_user_agent(_) -> str:
     return http_fetcher.get_user_agent(subscriber_count=42, feed_id=2940953)
+
+
+@register.simple_tag(takes_context=True)
+def url_replace(context, **kwargs):
+    query = context['request'].GET.dict()
+    query.update(kwargs)
+    return urlencode(query)
