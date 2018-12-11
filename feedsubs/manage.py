@@ -16,6 +16,18 @@ def main():
         import ddtrace
         ddtrace.patch(requests=True, botocore=True, redis=True)
 
+    # Dirty Monkey Patch to prevent boto3 from creating many threadpools
+    try:
+        from boto3.s3 import transfer
+    except ImportError:
+        pass
+    else:
+        def create_transfer_manager(*arg, **kwargs):
+            return transfer.TransferManager(
+                *arg, **kwargs, executor_cls=transfer.NonThreadedExecutor
+            )
+        transfer.create_transfer_manager = create_transfer_manager
+
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "feedsubs.settings.dev")
     try:
         from django.core.management import execute_from_command_line
