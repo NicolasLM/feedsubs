@@ -6,7 +6,7 @@ from .. import models, tasks
 @pytest.mark.django_db
 def test_create_or_update_if_needed():
     assert list(models.CachedImage.objects.all()) == []
-    created_obj, modified = tasks.create_or_update_if_needed(
+    created_obj, created, modified = tasks.create_or_update_if_needed(
         models.CachedImage,
         [],
         uri='https://foo.bar/image.jpg',
@@ -16,9 +16,10 @@ def test_create_or_update_if_needed():
     )
     assert isinstance(created_obj, models.CachedImage)
     assert created_obj.size_in_bytes == 0
-    assert modified
+    assert created
+    assert not modified
 
-    updated_obj, modified = tasks.create_or_update_if_needed(
+    updated_obj, created, modified = tasks.create_or_update_if_needed(
         models.CachedImage,
         [created_obj],
         uri='https://foo.bar/image.jpg',
@@ -29,9 +30,10 @@ def test_create_or_update_if_needed():
     )
     assert isinstance(updated_obj, models.CachedImage)
     assert updated_obj.size_in_bytes == 1024
+    assert not created
     assert modified
 
-    not_updated_obj, modified = tasks.create_or_update_if_needed(
+    not_updated_obj, created, modified = tasks.create_or_update_if_needed(
         models.CachedImage,
         [updated_obj],
         uri='https://foo.bar/image.jpg',
@@ -42,6 +44,7 @@ def test_create_or_update_if_needed():
     )
     assert not_updated_obj is updated_obj
     assert not_updated_obj.size_in_bytes == 1024
+    assert not created
     assert not modified
 
 

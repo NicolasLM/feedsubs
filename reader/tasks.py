@@ -19,7 +19,7 @@ from spinach import Tasks, Batch
 
 from um import background_messages
 
-from . import models, html_processing, image_processing, http_fetcher
+from . import models, html_processing, image_processing, http_fetcher, caching
 
 
 tasks = Tasks()
@@ -103,6 +103,7 @@ def synchronize_feed(feed_id: int):
 def synchronize_parsed_feed(feed: models.Feed, parsed_feed: ParsedFeed):
     """Synchronize articles, attachments and images from a parsed feed."""
     images_uris = set()
+    articles_to_uncache = list()
     existing_articles = (
         models.Article.objects.filter(feed=feed)
         .filter(id_in_feed__in={a.id for a in parsed_feed.articles})
@@ -114,7 +115,7 @@ def synchronize_parsed_feed(feed: models.Feed, parsed_feed: ParsedFeed):
 
     for parsed_article in reversed(parsed_feed.articles):
 
-        article, modified = create_or_update_if_needed(
+        article, created, modified = create_or_update_if_needed(
             models.Article,
             existing_articles,
             id_in_feed=parsed_article.id,
@@ -128,15 +129,18 @@ def synchronize_parsed_feed(feed: models.Feed, parsed_feed: ParsedFeed):
             }
         )
 
-        if modified:
+        if created or modified:
             images_uris.update(
                 html_processing.find_images_in_article(parsed_article.content,
                                                        feed.uri)
             )
 
+        if modified:
+            articles_to_uncache.append(article)
+
         current_attachments_ids = list()
         for parsed_attachment in parsed_article.attachments:
-            attachment, _ = create_or_update_if_needed(
+            attachment, _, _ = create_or_update_if_needed(
                 models.Attachment,
                 existing_attachments,
                 uri=parsed_attachment.link,
@@ -158,6 +162,11 @@ def synchronize_parsed_feed(feed: models.Feed, parsed_feed: ParsedFeed):
         )
         if deleted_attachments:
             logger.info('Deleted %d old attachments', deleted_attachments)
+
+    if articles_to_uncache:
+        logger.info('Removing %d updated articles from cache',
+                    len(articles_to_uncache))
+        caching.remove_cleaned_articles(articles_to_uncache)
 
     if not images_uris:
         return
@@ -341,7 +350,7 @@ def _is_object_equivalent(obj, attributes: dict):
 def create_or_update_if_needed(model: ModelBase,
                                existing_objects: list,
                                defaults: Optional[dict]=None, **kwargs
-                               ) -> Tuple[models.models.Model, bool]:
+                               ) -> Tuple[models.models.Model, bool, bool]:
     """Create or update an object only if needed.
 
     The Django update_or_create always issues either an INSERT INTO or an
@@ -356,8 +365,8 @@ def create_or_update_if_needed(model: ModelBase,
     updated is important. For instance this allows to avoid searching for
     images in an article if we know that it was not modified.
 
-    It returns a tuple of the object with a boolean indicating if it was created
-    or updated.
+    It returns a tuple of the object with two booleans indicating if it was
+    created and updated.
     """
     defaults = defaults or {}
 
@@ -369,12 +378,12 @@ def create_or_update_if_needed(model: ModelBase,
 
     if existing_object and _is_object_equivalent(existing_object, defaults):
         logger.debug('Not updated %s', existing_object)
-        return existing_object, False
+        return existing_object, False, False
 
     obj, created = model.objects.update_or_create(defaults=defaults, **kwargs)
     if created:
         logger.info('Created %s', obj)
+        return obj, True, False
     else:
         logger.info('Updated %s', obj)
-
-    return obj, True
+        return obj, False, True

@@ -31,3 +31,7 @@ def get_cleaned_articles(articles) -> dict:
         cache.set_many(to_cache, timeout=7200)
 
     return rv
+
+
+def remove_cleaned_articles(articles):
+    cache.delete_many([cache_id_to_key(a.id) for a in articles])
