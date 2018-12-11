@@ -30,16 +30,6 @@ def humanize_yearly_frequency(value: Optional[int]) -> str:
 
 
 @register.filter
-def clean_article(content: str, base_url: str=None) -> str:
-    """Clean and format an untrusted chunk of HTML.
-
-    This filter cleans the HTML from dangerous tags and formats it so that
-    it fits with the style of the surrounding document by shifting titles.
-    """
-    return html_processing.clean_article(content, base_url=base_url)
-
-
-@register.filter
 def tag_color(tag_name: str) -> str:
     colors = [
         'dark', 'primary', 'link', 'info', 'success', 'warning', 'danger',
@@ -73,3 +63,9 @@ def url_replace(context, **kwargs):
     query = context['request'].GET.dict()
     query.update(kwargs)
     return urlencode(query)
+
+
+@register.filter(name='dict_get')
+def dict_get(d, k):
+    """Returns the given key from a dictionary."""
+    return d[k]

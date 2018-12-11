@@ -1,4 +1,4 @@
-{% load humanize reader cache %}
+{% load humanize reader %}
 
 
 {% for article in articles %}
@@ -59,7 +59,7 @@
     </div>
 
     <div class="content">
-      {% cache 7200 cleaned_article article.id %}{{ article.content | clean_article:article.feed.uri | safe }}{% endcache %}
+      {{ cleaned_articles | dict_get:article.id | safe }}
     </div>
 
     {% if article.attachment_set.all %}

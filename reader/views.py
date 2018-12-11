@@ -13,7 +13,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils.functional import cached_property
 from spinach import Batch
 
-from . import models, forms, tasks, static_boards
+from . import models, forms, tasks, static_boards, caching
 
 
 def home_router(request):
@@ -111,6 +111,9 @@ class FeedDetailList(LoginRequiredMixin, ListView):
         except models.Subscription.DoesNotExist:
             context['subscription'] = None
 
+        context['cleaned_articles'] = caching.get_cleaned_articles(
+            context['articles']
+        )
         return context
 
     def get_paginate_by(self, queryset):
@@ -342,6 +345,9 @@ class BaseBoardDetailList(LoginRequiredMixin, ListView):
         context['empty_icon'] = self.empty_icon
         context['empty_phrase'] = self.empty_phrase
         context['mark_all_read_url'] = self.mark_all_read_url
+        context['cleaned_articles'] = caching.get_cleaned_articles(
+            context['articles']
+        )
         return context
 
     def get_paginate_by(self, queryset):
