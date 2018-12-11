@@ -73,7 +73,9 @@ DJANGO_REDIS_LOG_IGNORED_EXCEPTIONS = True
 WAITRESS = {
     'port': config('WAITRESS_PORT', default=8000, cast=int),
     'asyncore_use_poll': True,
-    'threads': config('WAITRESS_THREADS', default=16, cast=int)
+    'threads': config('WAITRESS_THREADS', default=16, cast=int),
+    'channel_timeout': config('WAITRESS_CHANNEL_TIMEOUT', default=60, cast=int),
+    'connection_limit': config('WAITRESS_CONNECTION_LIMIT', default=100, cast=int)
 }
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
