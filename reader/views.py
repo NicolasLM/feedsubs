@@ -234,10 +234,10 @@ class ReadAllView(LoginRequiredMixin, View):
             query = query.filter(feed_id=pk)
         else:
             query = query.filter(
-                feed__in=self.request.user.reader_profile.feeds.all()
+                feed__subscribers=self.request.user.reader_profile
             )
         articles = query.exclude(
-            id__in=self.request.user.reader_profile.read.all()
+            read_by=self.request.user.reader_profile
         )
         request.user.reader_profile.read.add(*articles)
         return HttpResponse(status=204)
@@ -326,7 +326,7 @@ class BaseBoardDetailList(LoginRequiredMixin, ListView):
         queryset = self.filter_queryset(super().get_queryset())
         if not self.show_read:
             queryset = queryset.exclude(
-                id__in=self.request.user.reader_profile.read.all()
+                read_by=self.request.user.reader_profile
             )
         return queryset.prefetch_related(
             'read_by', 'stared_by', 'feed', 'attachment_set'
@@ -392,7 +392,7 @@ class AllArticles(BaseBoardDetailList):
 
     def filter_queryset(self, queryset):
         return queryset.filter(
-            feed__in=self.request.user.reader_profile.feeds.all()
+            feed__subscribers=self.request.user.reader_profile
         )
 
 
@@ -422,7 +422,7 @@ class ReadAllBoard(LoginRequiredMixin, View):
         queryset = models.Article.objects
         queryset = board_view.filter_queryset(queryset)
         articles = queryset.exclude(
-            id__in=self.request.user.reader_profile.read.all()
+            read_by=self.request.user.reader_profile
         )
         request.user.reader_profile.read.add(*articles)
         return HttpResponse(status=204)
