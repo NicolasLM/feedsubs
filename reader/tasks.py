@@ -45,7 +45,7 @@ def synchronize_all_feeds():
 
 
 @tasks.task(name='synchronize_feed')
-def synchronize_feed(feed_id: int):
+def synchronize_feed(feed_id: int, force=False):
     task_start_date = now()
 
     # Fetch the feed from db as well as its subscribers count in a single query,
@@ -56,8 +56,8 @@ def synchronize_feed(feed_id: int):
     try:
         feed_request = http_fetcher.fetch_feed(
             feed.uri,
-            feed.last_fetched_at,
-            bytes(feed.last_hash) if feed.last_hash else None,
+            feed.last_fetched_at if not force else None,
+            bytes(feed.last_hash) if feed.last_hash and not force else None,
             feed.subscribers__count,
             feed_id
         )
@@ -107,10 +107,8 @@ def synchronize_parsed_feed(feed: models.Feed, parsed_feed: ParsedFeed):
     existing_articles = (
         models.Article.objects.filter(feed=feed)
         .filter(id_in_feed__in={a.id for a in parsed_feed.articles})
-    )
-    existing_attachments = (
-        models.Attachment.objects
-        .filter(article__in=existing_articles)
+        .select_related('feed')
+        .prefetch_related('attachment_set')
     )
 
     for parsed_article in reversed(parsed_feed.articles):
@@ -138,11 +136,11 @@ def synchronize_parsed_feed(feed: models.Feed, parsed_feed: ParsedFeed):
         if modified:
             articles_to_uncache.append(article)
 
-        current_attachments_ids = list()
+        current_attachments = set()
         for parsed_attachment in parsed_article.attachments:
             attachment, _, _ = create_or_update_if_needed(
                 models.Attachment,
-                existing_attachments,
+                article.attachment_set.all(),
                 uri=parsed_attachment.link,
                 article=article,
                 defaults={
@@ -152,12 +150,17 @@ def synchronize_parsed_feed(feed: models.Feed, parsed_feed: ParsedFeed):
                     'duration': parsed_attachment.duration
                 }
             )
-            current_attachments_ids.append(attachment.id)
+            current_attachments.add(attachment)
+
+        attachments_ids_to_delete = set()
+        for attachment in article.attachment_set.all():
+            if attachment not in current_attachments:
+                attachments_ids_to_delete.add(attachment.id)
 
         deleted_attachments, _ = (
             models.Attachment.objects
             .filter(article=article)
-            .filter(~Q(id__in=current_attachments_ids))
+            .filter(id__in=attachments_ids_to_delete)
             .delete()
         )
         if deleted_attachments:
