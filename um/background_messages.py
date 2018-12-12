@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 from django.core.cache import cache
-from django.contrib.messages import constants
+from django.contrib.messages import constants, add_message
 
 
 def message_user(user, message, level=constants.INFO):
@@ -44,7 +44,7 @@ def message_user(user, message, level=constants.INFO):
     cache.set(user_key, messages)
 
 
-def get_messages(user):
+def _get_messages(user):
     """Fetch messages for given user.
 
     :param user: User instance
@@ -59,6 +59,12 @@ def get_messages(user):
         return result
 
     return []
+
+
+def add_background_messages_to_contrib_messages(request):
+    """Merge background messages with normal contrib.message."""
+    for msg, level in _get_messages(request.user):
+        add_message(request, level, msg)
 
 
 def _user_key(user):

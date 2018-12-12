@@ -1,5 +1,5 @@
 {% extends 'bulma/base.html' %}
-{% load static bulma_tags %}
+{% load static bulma_tags um %}
 
 {% block title %}FeedSubs{% endblock %}
 
@@ -101,6 +101,7 @@
 {% endblock header %}
 
 {% block messages %}
+  {% fetch_background_messages %}
   {% if messages %}
     <div class="messages columns is-desktop">
       <div class="column is-4 is-offset-4">
