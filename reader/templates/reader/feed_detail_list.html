@@ -55,7 +55,7 @@
         <div class="level-item has-text-centered">
           <div>
             <p class="heading">Subscribers</p>
-            <p class="title">{{ feed.subscribers.count }}</p>
+            <p class="title">{{ feed.subscribers.count | blur_subscriber_count }}</p>
           </div>
         </div>
         <div class="level-item has-text-centered">

@@ -1,10 +1,11 @@
 import hashlib
+import math
 from typing import Optional
 from urllib.parse import urlencode
 
 from django import template
 
-from .. import html_processing, http_fetcher
+from .. import http_fetcher
 
 register = template.Library()
 
@@ -27,6 +28,20 @@ def humanize_yearly_frequency(value: Optional[int]) -> str:
         return '{}/week'.format(int(value / 52))
 
     return '{}/day'.format(int(value / 365))
+
+
+@register.filter
+def blur_subscriber_count(count: int) -> str:
+    if count < 10:
+        return '< 10'
+
+    if count < 1000:
+        return str(int(math.ceil(count / 10.0)) * 10)
+
+    for unit in ('', 'K', 'M', 'G'):
+        if abs(count) < 1000.0:
+            return "%3.1f %s" % (count, unit)
+        count /= 1000.0
 
 
 @register.filter
