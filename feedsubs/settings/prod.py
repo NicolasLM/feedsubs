@@ -40,12 +40,12 @@ DEFAULT_HTTP_PROTOCOL = 'https'
 
 ADMINS = [('Nicolas', 'nicolas@lemanchet.fr')]
 MANAGERS = [('Nicolas', 'nicolas@lemanchet.fr')]
-DEFAULT_FROM_EMAIL = 'hello@feedsubs.com'
+DEFAULT_FROM_EMAIL = 'info@feedsubs.com'
 EMAIL_BACKEND = 'spinach.contrib.spinachd.mail.BackgroundEmailBackend'
-SERVER_EMAIL = 'hello@feedsubs.com'
+SERVER_EMAIL = 'info@feedsubs.com'
 EMAIL_HOST = 'smtp.eu.mailgun.org'
 EMAIL_PORT = 2525
-EMAIL_HOST_USER = 'hello@feedsubs.com'
+EMAIL_HOST_USER = 'info@feedsubs.com'
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 EMAIL_TIMEOUT = 120
