@@ -294,7 +294,7 @@ class FeedFetchError(Exception):
 
 
 def _fetch_and_create_feed(uri: str, process_html: bool=True
-                           ) -> Tuple[models.Feed, ParsedFeed]:
+                           ) -> Tuple[models.Feed, Optional[ParsedFeed]]:
     try:
         feed_request = http_fetcher.fetch_feed(uri, None, None, 1, None)
     except (requests.exceptions.RequestException,
@@ -323,12 +323,15 @@ def _fetch_and_create_feed(uri: str, process_html: bool=True
             f'Could not create feed "{uri}", content is not a valid feed'
         )
 
-    feed = models.Feed.objects.create(
-        name=parsed_feed.title[:100],
-        uri=uri,
+    feed, created = models.Feed.objects.update_or_create(
+        defaults={'name': parsed_feed.title[:100]}, uri=feed_request.final_url
     )
-    logger.info('Created feed %s', feed)
-    return feed, parsed_feed
+    if created:
+        logger.info('Created feed %s', feed)
+        return feed, parsed_feed
+    else:
+        logger.info('Submitted URI %s points to existing %s', uri, feed)
+        return feed, None
 
 
 def calculate_frequency_per_year(feed: models.Feed) -> Optional[int]:
