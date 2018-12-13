@@ -68,17 +68,17 @@ def synchronize_feed(feed_id: int, force=False):
         feed.save()
         return
 
-    if feed_request.final_url != feed.uri:
-        logger.info(
-            'Feed was redirected: %s -> %s', feed.uri, feed_request.final_url
-        )
-
     if feed_request is None:
         # Feed did not change since last synchronization
         feed.last_fetched_at = task_start_date
         feed.last_failure = ''
         feed.save()
         return
+
+    if feed_request.final_url != feed.uri:
+        logger.info(
+            'Feed was redirected: %s -> %s', feed.uri, feed_request.final_url
+        )
 
     if feed_request.is_html:
         logger.warning('Fetch of %s gave an HTML page', feed)
