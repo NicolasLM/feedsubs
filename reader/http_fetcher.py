@@ -4,6 +4,7 @@ from logging import getLogger
 from typing import Optional
 
 import attr
+from allauth.utils import build_absolute_uri
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.urls import reverse
@@ -98,9 +99,9 @@ def get_user_agent(subscriber_count: Optional[int]=None,
         name = 'Feedsubs-dev'
     else:
         name = 'Feedsubs'
-        options.append('+{}://{}{}'.format(settings.DEFAULT_HTTP_PROTOCOL,
-                                           Site.objects.get_current().domain,
-                                           reverse('reader:fetcher')))
+        options.append(
+            '+{}'.format(build_absolute_uri(None, reverse('reader:fetcher')))
+        )
 
     if subscriber_count is not None:
         options.append('{} subscribers'.format(subscriber_count))
