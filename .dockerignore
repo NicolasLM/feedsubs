@@ -1,3 +1,5 @@
 venv
 .env
 ignored*
+media
+cache

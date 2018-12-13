@@ -246,7 +246,7 @@ def _create_cached_image_object(**kwargs) -> Optional[models.CachedImage]:
 
 
 @tasks.task(name='create_feed')
-def create_feed(user_id: int, uri: str, process_html=True):
+def create_feed(user_id: int, uri: str):
     try:
         user = get_user_model().objects.get(pk=user_id)
     except ObjectDoesNotExist:
@@ -255,58 +255,29 @@ def create_feed(user_id: int, uri: str, process_html=True):
         return
 
     # Check if the feed already exists
+    parsed_feed = None
     try:
         feed = models.Feed.objects.get(uri=uri)
     except ObjectDoesNotExist:
-        creation_needed = True
+        feed = None
     else:
-        creation_needed = False
         logger.info('Feed already exists: %s', feed)
 
-    if creation_needed:
+    if feed is None:
         try:
-            feed_request = http_fetcher.fetch_feed(uri, None, None, 1, None)
-        except (requests.exceptions.RequestException,
-                http_fetcher.FetchFileTooBigError) as e:
-            msg = f'Could not create feed "{uri}", HTTP fetch failed'
-            logger.warning('%s: %s', msg, e)
-            background_messages.warning(user, msg)
+            feed, parsed_feed = _fetch_and_create_feed(uri)
+        except FeedFetchError as e:
+            logger.warning('%s', e)
+            background_messages.warning(user, str(e))
             return
 
-        if feed_request.is_html and not process_html:
-            # An HTML page gave a feed link that is another HTML page
-            msg = f'Could find valid feed in HTML page "{uri}"'
-            logger.warning(msg)
-            background_messages.warning(user, msg)
-            return
+    _subscribe_user(user, feed)
 
-        if feed_request.is_html and process_html:
-            found_uri = html_processing.find_feed_in_html(
-                feed_request.content, feed_request.final_url
-            )
-            if not found_uri:
-                # An HTML page does not contain a feed link
-                msg = f'Could find valid feed in HTML page "{uri}"'
-                logger.warning(msg)
-                background_messages.warning(user, msg)
-                return
+    if parsed_feed is not None:
+        synchronize_parsed_feed(feed, parsed_feed)
 
-            return create_feed(user_id, found_uri, process_html=False)
 
-        try:
-            parsed_feed = simple_parse_bytes(feed_request.content)
-        except FeedDocumentError:
-            msg = f'Could not create feed "{uri}", content is not a valid feed'
-            logger.warning(msg)
-            background_messages.warning(user, msg)
-            return
-
-        feed = models.Feed.objects.create(
-            name=parsed_feed.title[:100],
-            uri=uri,
-        )
-        logger.info('Created feed %s', feed)
-
+def _subscribe_user(user, feed):
     subscription = models.Subscription(
         feed=feed, reader=user.reader_profile
     )
@@ -317,8 +288,47 @@ def create_feed(user_id: int, uri: str, process_html=True):
     else:
         logger.info('User subscribed to feed')
 
-    if creation_needed:
-        synchronize_parsed_feed(feed, parsed_feed)
+
+class FeedFetchError(Exception):
+    pass
+
+
+def _fetch_and_create_feed(uri: str, process_html: bool=True
+                           ) -> Tuple[models.Feed, ParsedFeed]:
+    try:
+        feed_request = http_fetcher.fetch_feed(uri, None, None, 1, None)
+    except (requests.exceptions.RequestException,
+            http_fetcher.FetchFileTooBigError):
+        raise FeedFetchError(f'Could not create feed "{uri}", HTTP get failed')
+
+    if feed_request.is_html and not process_html:
+        # An HTML page gave a feed link that is another HTML page
+        raise FeedFetchError(f'Could not find valid feed in HTML page "{uri}"')
+
+    if feed_request.is_html and process_html:
+        found_uri = html_processing.find_feed_in_html(
+            feed_request.content, feed_request.final_url
+        )
+        if not found_uri:
+            # An HTML page does not contain a feed link
+            raise FeedFetchError(f'Could not find feed in HTML page "{uri}"')
+
+        # An HTML page contains a feed link, let's fetch it
+        return _fetch_and_create_feed(found_uri, process_html=False)
+
+    try:
+        parsed_feed = simple_parse_bytes(feed_request.content)
+    except FeedDocumentError:
+        raise FeedFetchError(
+            f'Could not create feed "{uri}", content is not a valid feed'
+        )
+
+    feed = models.Feed.objects.create(
+        name=parsed_feed.title[:100],
+        uri=uri,
+    )
+    logger.info('Created feed %s', feed)
+    return feed, parsed_feed
 
 
 def calculate_frequency_per_year(feed: models.Feed) -> Optional[int]:
