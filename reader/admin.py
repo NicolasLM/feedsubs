@@ -14,7 +14,7 @@ class FeedAdmin(admin.ModelAdmin):
     def sync(self, request, queryset):
         batch = Batch()
         for feed in queryset:
-            batch.schedule('synchronize_feed', feed.id)
+            batch.schedule('synchronize_feed', feed.id, force=True)
         tasks.schedule_batch(batch)
 
     sync.short_description = 'Synchronize feed'

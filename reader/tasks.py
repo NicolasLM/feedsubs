@@ -8,7 +8,7 @@ from atoma.simple import simple_parse_bytes, Feed as ParsedFeed
 from django.contrib.auth import get_user_model
 from django.core.files.base import File
 from django.core.files.storage import default_storage
-from django.db.models import Count, Q, ObjectDoesNotExist
+from django.db.models import Count, ObjectDoesNotExist
 from django.db.models.base import ModelBase
 from django.db.utils import IntegrityError
 from django.template.defaultfilters import filesizeformat
@@ -75,11 +75,6 @@ def synchronize_feed(feed_id: int, force=False):
         feed.save()
         return
 
-    if feed_request.final_url != feed.uri:
-        logger.info(
-            'Feed was redirected: %s -> %s', feed.uri, feed_request.final_url
-        )
-
     if feed_request.is_html:
         logger.warning('Fetch of %s gave an HTML page', feed)
 
@@ -103,6 +98,23 @@ def synchronize_feed(feed_id: int, force=False):
     feed.last_failure = ''
     feed.frequency_per_year = calculate_frequency_per_year(feed)
     feed.save()
+
+    # Update feed URI if it was redirected
+    if feed_request.final_url != feed.uri:
+        logger.info(
+            'Feed was redirected: %s -> %s', feed.uri, feed_request.final_url
+        )
+        feed.uri = feed_request.final_url
+        try:
+            feed.save(update_fields=['uri'])
+        except IntegrityError as e:
+            if e.__cause__.pgcode != pg_error_codes.UNIQUE_VIOLATION:
+                raise
+
+            logger.warning(
+                'Could not change feed %d URI to %s, another feed '
+                'already has this URI', feed.id, feed.uri,
+            )
 
 
 def synchronize_parsed_feed(feed: models.Feed, parsed_feed: ParsedFeed):
