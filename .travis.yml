@@ -15,7 +15,6 @@ addons:
 env:
   global:
     - SECRET_KEY=vah6raGhah5Tee2Ejai5eiT2ealooj5vae4aiJu6
-    - DB_HOST=localhost
     - DB_PASSWORD=''
 
 
