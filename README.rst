@@ -8,6 +8,9 @@ Feedsubs
 
 RSS feeds reader for Python 3.
 
+.. image:: https://raw.githubusercontent.com/NicolasLM/feedsubs/master/misc/screenshot.png
+    :target: https://feedsubs.com
+
 Features:
 
 * Support for RSS, Atom and JSON feeds
