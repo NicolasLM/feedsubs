@@ -12,8 +12,8 @@ with open(path.join(here, 'LICENSE'), encoding='utf-8') as f:
 
 setup(
     name='feedsubs',
-    version='0.0.1',
-    description='RSS feeds reader for Python 3',
+    version='0.0.2',
+    description='RSS feed reader for Python 3',
     long_description=long_description,
     url='https://github.com/NicolasLM/feedsubs',
     author='Nicolas Le Manchet',

@@ -6,7 +6,7 @@ Feedsubs
 .. image:: https://coveralls.io/repos/github/NicolasLM/feedsubs/badge.svg?branch=master
     :target: https://coveralls.io/github/NicolasLM/feedsubs?branch=master
 
-RSS feeds reader for Python 3.
+RSS feed reader for Python 3.
 
 .. image:: https://raw.githubusercontent.com/NicolasLM/feedsubs/master/misc/screenshot.png
     :target: https://feedsubs.com
