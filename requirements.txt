@@ -1,10 +1,10 @@
-atoma==0.0.12
+atoma==0.0.13
 attrs==18.2.0
 beautifulsoup4==4.6.3
 bleach==3.0.2
 blinker==1.4
-boto3==1.9.66
-botocore==1.12.66
+boto3==1.9.71
+botocore==1.12.71
 certifi==2018.11.29
 chardet==3.0.4
 ddtrace==0.18.0
@@ -25,7 +25,7 @@ python3-openid==3.1.0
 python-dateutil==2.7.5
 python-decouple==3.1
 pytz==2018.7
-raven==6.9.0
+raven==6.10.0
 redis==3.0.1
 requests==2.21.0
 requests-oauthlib==1.0.0
