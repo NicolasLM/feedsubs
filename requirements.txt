@@ -1,13 +1,13 @@
 atoma==0.0.13
 attrs==18.2.0
-beautifulsoup4==4.6.3
+beautifulsoup4==4.7.0
 bleach==3.0.2
 blinker==1.4
 boto3==1.9.71
 botocore==1.12.71
 certifi==2018.11.29
 chardet==3.0.4
-ddtrace==0.18.0
+ddtrace==0.19.0
 defusedxml==0.5.0
 Django==2.1.4
 django-allauth==0.38.0
@@ -19,7 +19,7 @@ html5lib==1.0.1
 idna==2.8
 msgpack-python==0.5.6
 oauthlib==2.1.0
-Pillow==5.3.0
+Pillow==5.4.0
 psycopg2==2.7.6.1
 python3-openid==3.1.0
 python-dateutil==2.7.5
