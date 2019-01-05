@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 {% load i18n %}
 
-{% url 'reader:home' as home_url %}
 
 {% block content %}
 
   <h1 class="title">{% block error_title %}{% endblock %}</h1>
   <p>{% block error_message %}{% endblock %}</p>
+
+  {% url 'reader:home' as home_url %}
   <p>{% blocktrans %}Here's a link to the <a href="{{ home_url }}">homepage</a>, just in case.{% endblocktrans %}</p>
 
 {% endblock %}
