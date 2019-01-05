@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-05 10:32+0000\n"
+"POT-Creation-Date: 2019-01-05 13:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,7 +73,16 @@ msgstr "Flux"
 msgid "Boards"
 msgstr "Tableaux"
 
-#: feedsubs/templates/error_base.html:10
+#: feedsubs/templates/base.html:70 um/templates/um/_base_settings.html:4
+#: um/templates/um/_base_settings.html:12
+msgid "Settings"
+msgstr "Paramètres"
+
+#: feedsubs/templates/base.html:77
+msgid "Admin panel"
+msgstr "Panneau d'administration"
+
+#: feedsubs/templates/error_base.html:11
 #, python-format
 msgid ""
 "Here's a link to the <a href=\"%(home_url)s\">homepage</a>, just in case."
