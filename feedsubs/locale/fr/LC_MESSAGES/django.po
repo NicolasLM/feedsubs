@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-05 13:27+0000\n"
+"POT-Creation-Date: 2019-01-05 15:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -349,7 +349,7 @@ msgstr "Entrez votre nom d'utilisateur"
 msgid "I have read and I agree with the <a href=\"%s\">Terms of Service</a>"
 msgstr "J'ai lu et j'accepte les <a href=\"%s\">Conditions d'Utilisation</a>"
 
-#: um/middleware.py:26
+#: um/middleware.py:34
 msgid ""
 "This account is about to be permanently deleted, sign in again to reactivate "
 "it."
@@ -357,11 +357,15 @@ msgstr ""
 "Ce compte est sur le point d'être supprimé, connectez-vous de nouveau pour "
 "le réactiver"
 
-#: um/models.py:11
+#: um/models.py:12
 msgid "Items per page"
 msgstr "Entrées par page"
 
-#: um/signals.py:29
+#: um/models.py:18
+msgid "Language"
+msgstr "Langue"
+
+#: um/signals.py:30
 msgid "Your account was pending deletion, it has now been re-enabled"
 msgstr ""
 "Votre compte était sur le point d'être supprimé, il a maintenant été réactivé"

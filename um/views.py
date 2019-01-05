@@ -53,7 +53,7 @@ class AccountSettings(CurrentPageSettings, LoginRequiredMixin,
 
 class InterfaceSettings(CurrentPageSettings, LoginRequiredMixin, UpdateView):
     model = models.UMProfile
-    fields = ['items_per_page']
+    fields = ['language', 'items_per_page']
     template_name = 'um/settings_interface.html'
     success_url = reverse_lazy('um:settings-interface')
     current_settings = _noop('Interface')
