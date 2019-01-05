@@ -10,8 +10,8 @@ from django.utils.translation import gettext_lazy as _
 class OPMLField(FileField):
     default_error_messages = {
         'invalid_opml': _(
-            "Upload a valid OPML file. The file you uploaded was either not an "
-            "OPML or a corrupted one."
+            "The file you uploaded was either not an "
+            "OPML file or a corrupted one."
         ),
         'no_opml_feeds': _(
             "Uploaded OPML file does not contain any feed URL."

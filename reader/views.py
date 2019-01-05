@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils.functional import cached_property
+from django.utils.translation import gettext_lazy as _
 from spinach import Batch
 
 from . import models, forms, tasks, static_boards, caching
@@ -65,8 +66,8 @@ class ImportFeedList(LoginRequiredMixin, SuccessMessageMixin, FormView):
     template_name = 'reader/opml_import_form.html'
     form_class = forms.UploadOPMLFileForm
     success_url = reverse_lazy('reader:feed-list')
-    success_message = ('The %d feeds found in the OPML file are being imported '
-                       'in the background, they will be available shortly.')
+    success_message = _('The %d feeds found in the OPML file are being imported'
+                        ' in the background, they will be available shortly.')
 
     def form_valid(self, form):
         batch = Batch()
@@ -298,7 +299,7 @@ class BaseBoardDetailList(LoginRequiredMixin, ListView):
     context_object_name = 'articles'
     default_show_read = False
     empty_icon = 'fa-thumbs-up'
-    empty_phrase = "You're all caught up"
+    empty_phrase = _("You're all caught up")
 
     @method_decorator(ensure_csrf_cookie)
     def dispatch(self, request, *args, **kwargs):
@@ -399,7 +400,7 @@ class AllArticles(BaseBoardDetailList):
 class Starred(BaseBoardDetailList):
     default_show_read = True
     empty_icon = 'fa-star-half'
-    empty_phrase = "No starred articles"
+    empty_phrase = _("No starred articles")
 
     @cached_property
     def board(self):

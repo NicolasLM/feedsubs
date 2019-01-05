@@ -1,0 +1,382 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-01-05 10:32+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: feedsubs/templates/400.html:4
+msgid "Bad request"
+msgstr "Mauvaise requête"
+
+#: feedsubs/templates/400.html:5
+msgid "The browser sent a request that the server cannot understand."
+msgstr ""
+"Le navigateur a envoyé une requête que le serveur ne peut pas comprendre."
+
+#: feedsubs/templates/403.html:4
+msgid "Forbidden"
+msgstr "Interdit"
+
+#: feedsubs/templates/403.html:5
+msgid "Looks like you are not allowed here."
+msgstr "Il semble que vous ne devriez pas être ici."
+
+#: feedsubs/templates/404.html:4
+msgid "Page not found"
+msgstr "Page non trouvée"
+
+#: feedsubs/templates/404.html:5
+msgid ""
+"Looks like you followed a bad link. If you think it's our fault, please let "
+"us know."
+msgstr ""
+"Il semble que vous avez suivi un mauvais lien. Contactez-nous si vous pensez "
+"qu'il s'agit d'une erreur de notre part."
+
+#: feedsubs/templates/500.html:4
+msgid "Internal server error"
+msgstr "Erreur interne du serveur"
+
+#: feedsubs/templates/500.html:5
+msgid ""
+"Sorry for the trouble, it looks like something is broken on our side. The "
+"good news is that the team has been automatically notified of the problem."
+msgstr ""
+"Désolé pour le désagrément mais il semble que quelque chose ne fonctionne "
+"pas. La bonne nouvelle est que l'équipe a été notifiée automatiquement du "
+"problème."
+
+#: feedsubs/templates/base.html:44
+msgid "About"
+msgstr "À propos"
+
+#: feedsubs/templates/base.html:58
+msgid "Feeds"
+msgstr "Flux"
+
+#: feedsubs/templates/base.html:64 reader/templates/reader/board_list.html:4
+#: reader/templates/reader/board_list.html:11
+msgid "Boards"
+msgstr "Tableaux"
+
+#: feedsubs/templates/error_base.html:10
+#, python-format
+msgid ""
+"Here's a link to the <a href=\"%(home_url)s\">homepage</a>, just in case."
+msgstr ""
+"Voici un lien vers la <a href=\"%(home_url)s\">page d'acceuil</a>, au cas où."
+
+#: feedsubs/templates/flatpages/default.html:14
+msgid "This page is only available in English"
+msgstr "Cette page n'est disponible qu'en Anglais"
+
+#: reader/fields.py:13
+msgid "The file you uploaded was either not an OPML file or a corrupted one."
+msgstr "Le fichier envoyé n'est pas un fichier OPML valide."
+
+#: reader/fields.py:17
+msgid "Uploaded OPML file does not contain any feed URL."
+msgstr "Le fichier OPML envoyé ne contient pas d'adresse de flux."
+
+#: reader/fields.py:20
+msgid "Uploaded OPML file contains too many feed URLs."
+msgstr "Le fichier OPML envoyé contient trop de flux."
+
+#: reader/forms.py:22 reader/templates/reader/feed_detail_list.html:111
+msgid "Add tags"
+msgstr "Ajouter des labels"
+
+#: reader/models.py:21 reader/models.py:124
+msgid "name"
+msgstr "nom"
+
+#: reader/models.py:23
+msgid "Feed address"
+msgstr "Addresse du flux"
+
+#: reader/models.py:128
+msgid "tags"
+msgstr "labels"
+
+#: reader/static_boards.py:27
+msgid "All articles"
+msgstr "Tous les articles"
+
+#: reader/static_boards.py:28
+msgid "Stars"
+msgstr "Favoris"
+
+#: reader/templates/reader/_pagination.html:7
+#: reader/templates/reader/_pagination.html:10
+msgid "First"
+msgstr "Début"
+
+#: reader/templates/reader/_pagination.html:8
+#: reader/templates/reader/_pagination.html:11
+msgid "Previous"
+msgstr "Précédent"
+
+#: reader/templates/reader/_pagination.html:29
+#: reader/templates/reader/_pagination.html:32
+msgid "Next"
+msgstr "Suivant"
+
+#: reader/templates/reader/_pagination.html:30
+#: reader/templates/reader/_pagination.html:33
+msgid "Last"
+msgstr "Fin"
+
+#: reader/templates/reader/board_confirm_delete.html:4
+#: reader/templates/reader/board_confirm_delete.html:5
+msgid "Delete board"
+msgstr "Supprimer le tableau"
+
+#: reader/templates/reader/board_confirm_delete.html:14
+#, python-format
+msgid "Are you sure you want to delete the board %(board_name)s?"
+msgstr "Voulez-vous vraiment supprimer le tableau %(board_name)s ?"
+
+#: reader/templates/reader/board_detail_list.html:19
+#: reader/templates/reader/feed_detail_list.html:31
+msgid "Mark as read"
+msgstr "Marquer comme lu"
+
+#: reader/templates/reader/board_detail_list.html:38
+msgid "Hide read articles"
+msgstr "Cacher articles lus"
+
+#: reader/templates/reader/board_detail_list.html:42
+msgid "Show read articles"
+msgstr "Afficher articles lus"
+
+#: reader/templates/reader/board_form.html:4
+#: reader/templates/reader/board_form.html:6
+#: reader/templates/reader/board_list.html:50
+#: reader/templates/reader/feed_detail_list.html:96
+msgid "Edit"
+msgstr "Modifier"
+
+#: reader/templates/reader/board_form.html:4
+#: reader/templates/reader/board_form.html:6
+#: reader/templates/reader/board_list.html:18
+msgid "New board"
+msgstr "Nouveau tableau"
+
+#: reader/templates/reader/board_form.html:22
+#: reader/templates/reader/feed_detail_list.html:123
+#: um/templates/um/settings_interface.html:10
+msgid "Save"
+msgstr "Enregistrer"
+
+#: reader/templates/reader/board_form.html:22
+msgid "Create"
+msgstr "Créer"
+
+#: reader/templates/reader/board_list.html:27
+#: reader/templates/reader/feed_list.html:39
+msgid "Name"
+msgstr "Nom"
+
+#: reader/templates/reader/board_list.html:28
+#: reader/templates/reader/feed_list.html:40
+msgid "Tags"
+msgstr "Labels"
+
+#: reader/templates/reader/feed_detail_list.html:4
+msgid "Feed"
+msgstr "Flux"
+
+#: reader/templates/reader/feed_detail_list.html:24
+#: reader/templates/reader/feed_list.html:61
+msgid "Unsubscribe"
+msgstr "Se désabonner"
+
+#: reader/templates/reader/feed_detail_list.html:38
+msgid "Subscribe"
+msgstr "S'abonner"
+
+#: reader/templates/reader/feed_detail_list.html:51
+msgid "Articles"
+msgstr "Articles"
+
+#: reader/templates/reader/feed_detail_list.html:57
+msgid "Subscribers"
+msgstr "Abonnées"
+
+#: reader/templates/reader/feed_detail_list.html:63
+msgid "Frequency"
+msgstr "Fréquence"
+
+#: reader/templates/reader/feed_detail_list.html:84
+msgid "Add tags to group feeds together"
+msgstr "Ajouter des labels pour regrouper des flux"
+
+#: reader/templates/reader/feed_form.html:4
+#: reader/templates/reader/feed_form.html:5
+msgid "Subscribe to feed"
+msgstr "S'abonner au flux"
+
+#: reader/templates/reader/feed_form.html:9
+msgid "Enter the URL of a website or a feed."
+msgstr "Entrez l'addresse d'un site web ou d'un flux."
+
+#: reader/templates/reader/feed_form.html:17
+msgid "Create feed"
+msgstr "Créer le flux"
+
+#: reader/templates/reader/feed_list.html:4
+#: reader/templates/reader/feed_list.html:11
+msgid "Feed subscriptions"
+msgstr "Abonnements aux flux"
+
+#: reader/templates/reader/feed_list.html:18
+msgid "Export"
+msgstr "Exporter"
+
+#: reader/templates/reader/feed_list.html:24
+msgid "Import"
+msgstr "Importer"
+
+#: reader/templates/reader/feed_list.html:30
+#: reader/templates/reader/home_new_user.html:28
+msgid "Add feed"
+msgstr "Ajouter flux"
+
+#: reader/templates/reader/home_anonymous.html:13
+msgid "Open Source RSS feed reader"
+msgstr "Lecteur de flux RSS Open Source"
+
+#: reader/templates/reader/home_anonymous.html:17
+#, python-format
+msgid ""
+"Start using it straight away by <a href=\"%(signup_url)s\">creating an "
+"account</a>."
+msgstr ""
+"Commencez à l'utiliser en <a href=\"%(signup_url)s\">créant un compte</a>."
+
+#: reader/templates/reader/home_new_user.html:10
+msgid "Welcome, start be adding feeds to read"
+msgstr "Bienvenue, commencez par ajouter des flux à lire"
+
+#: reader/templates/reader/home_new_user.html:20
+msgid "Import OPML list"
+msgstr "Importer une liste"
+
+#: reader/templates/reader/opml_import_form.html:4
+#: reader/templates/reader/opml_import_form.html:5
+msgid "Import OPML feeds"
+msgstr "Importer une liste OPML"
+
+#: reader/templates/reader/opml_import_form.html:15
+msgid "Import OPML file"
+msgstr "Importer un fichier OPML"
+
+#: reader/templatetags/reader.py:17
+msgid "Unknown"
+msgstr "Inconnue"
+
+#: reader/templatetags/reader.py:20 reader/templatetags/reader.py:23
+msgid "year"
+msgstr "an"
+
+#: reader/templatetags/reader.py:26
+msgid "month"
+msgstr "mois"
+
+#: reader/templatetags/reader.py:29
+msgid "week"
+msgstr "semaine"
+
+#: reader/templatetags/reader.py:31
+msgid "day"
+msgstr "jour"
+
+#: reader/validators.py:11
+msgid "URL port is not a common HTTP port"
+msgstr "L'addresse n'a pas un port HTTP"
+
+#: reader/views.py:69
+#, python-format
+msgid ""
+"The %d feeds found in the OPML file are being imported in the background, "
+"they will be available shortly."
+msgstr ""
+"Les %d flux trouvés dans le fichier OPML sont en train d'être ajoutés en "
+"tâche de fond. Ils seront disponibles bientôt."
+
+#: reader/views.py:302
+msgid "You're all caught up"
+msgstr "Vous avez tout lu"
+
+#: reader/views.py:403
+msgid "No starred articles"
+msgstr "Aucun article favoris"
+
+#: um/forms.py:12
+msgid "Confirm account deletion by entering your username"
+msgstr ""
+"Confirmez la suppression de votre compte en entrant for nom d'utilisateur"
+
+#: um/forms.py:22
+msgid "Enter your current username"
+msgstr "Entrez votre nom d'utilisateur"
+
+#: um/forms.py:32
+#, python-format
+msgid "I have read and I agree with the <a href=\"%s\">Terms of Service</a>"
+msgstr "J'ai lu et j'accepte les <a href=\"%s\">Conditions d'Utilisation</a>"
+
+#: um/middleware.py:26
+msgid ""
+"This account is about to be permanently deleted, sign in again to reactivate "
+"it."
+msgstr ""
+"Ce compte est sur le point d'être supprimé, connectez-vous de nouveau pour "
+"le réactiver"
+
+#: um/models.py:11
+msgid "Items per page"
+msgstr "Entrées par page"
+
+#: um/signals.py:29
+msgid "Your account was pending deletion, it has now been re-enabled"
+msgstr ""
+"Votre compte était sur le point d'être supprimé, il a maintenant été réactivé"
+
+#: um/templates/um/_base_settings.html:24
+msgid "Interface"
+msgstr "Interface"
+
+#: um/templates/um/_base_settings.html:36
+msgid "Security"
+msgstr "Sécurité"
+
+#: um/templates/um/settings_account.html:14
+msgid "Change"
+msgstr "Changer"
+
+#: um/templates/um/settings_account.html:19
+#: um/templates/um/settings_account.html:24
+msgid "Delete account"
+msgstr "Supprimer le compte"
+
+#: um/views.py:31
+#, python-format
+msgid ""
+"The account will be permanently deleted in %d hours, sign in again to "
+"reactivate it"
+msgstr ""

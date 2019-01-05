@@ -6,7 +6,6 @@ from typing import Optional
 import attr
 from allauth.utils import build_absolute_uri
 from django.conf import settings
-from django.contrib.sites.models import Site
 from django.urls import reverse
 from django.utils.http import http_date
 import requests

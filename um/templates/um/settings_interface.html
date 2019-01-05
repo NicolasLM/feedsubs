@@ -7,7 +7,7 @@
      {% csrf_token %}
      {{ form | bulma }}
      <div class="field">
-       <button type="submit" class="button is-primary">Save</button>
+       <button type="submit" class="button is-primary">{% trans "Save" %}</button>
      </div>
      <input type="hidden" name="next" value="{{ next }}"/>
   </form>

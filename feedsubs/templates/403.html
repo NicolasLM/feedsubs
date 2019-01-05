@@ -1,9 +1,5 @@
-{% extends 'base.html' %}
+{% extends 'error_base.html' %}
+{% load i18n %}
 
-{% block content %}
-
-  <h1 class="title">403 - Forbidden</h1>
-  <p>Looks like you are not allowed here.</p>
-  <p>Here's a link to the <a href="{% url 'reader:home' %}">homepage</a>, just in case.</p>
-
-{% endblock %}
+{% block error_title %}403 - {% trans "Forbidden" %}{% endblock %}
+{% block error_message %}{% trans "Looks like you are not allowed here." %}{% endblock %}

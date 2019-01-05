@@ -1,9 +1,5 @@
-{% extends 'base.html' %}
+{% extends 'error_base.html' %}
+{% load i18n %}
 
-{% block content %}
-
-  <h1 class="title">400 - Bad request</h1>
-  <p>The browser sent a request that the server cannot understand.</p>
-  <p>Here's a link to the <a href="{% url 'reader:home' %}">homepage</a>, just in case.</p>
-
-{% endblock %}
+{% block error_title %}400 - {% trans "Bad request" %}{% endblock %}
+{% block error_message %}{% trans "The browser sent a request that the server cannot understand." %}{% endblock %}

@@ -8,7 +8,7 @@
 
   <div class="columns">
     <div class="column">
-      <h1 class="title">Boards</h1>
+      <h1 class="title">{% trans "Boards" %}</h1>
     </div>
     <div class="column is-narrow">
       <a class="button is-success is-outlined" href="{% url 'reader:board-create' %}">
@@ -24,9 +24,9 @@
 
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Tags</th>
-        <th>Actions</th>
+        <th>{% trans "Name" %}</th>
+        <th>{% trans "Tags" %}</th>
+        <th></th>
       </tr>
     </thead>
 

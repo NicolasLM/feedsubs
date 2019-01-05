@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 from django.views.generic import UpdateView
 from django.views.generic.edit import FormView
 from django.utils.timezone import now
+from django.utils.translation import gettext_lazy as _, gettext_noop as _noop
 
 from . import models, forms, tasks
 from .settings import UM_DELETE_ACCOUNT_AFTER
@@ -23,15 +24,13 @@ class CurrentPageSettings:
 class AccountSettings(CurrentPageSettings, LoginRequiredMixin,
                       SuccessMessageMixin, FormView):
     template_name = 'um/settings_account.html'
-    current_settings = 'account'
+    current_settings = _noop('Account')
     form_class = forms.DeleteUserForm
     success_url = reverse_lazy('reader:home')
-    success_message = (
-        'The account will be permanently deleted in {} hours, sign in again '
-        'to reactivate it.'.format(
-            int(UM_DELETE_ACCOUNT_AFTER.total_seconds() / 3600)
-        )
-    )
+    success_message = _(
+        'The account will be permanently deleted in %d hours, sign in again '
+        'to reactivate it'
+    ) % int(UM_DELETE_ACCOUNT_AFTER.total_seconds() / 3600)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -57,7 +56,7 @@ class InterfaceSettings(CurrentPageSettings, LoginRequiredMixin, UpdateView):
     fields = ['items_per_page']
     template_name = 'um/settings_interface.html'
     success_url = reverse_lazy('um:settings-interface')
-    current_settings = 'interface'
+    current_settings = _noop('Interface')
 
     def get_object(self, *args, **kwargs):
         return self.request.user.um_profile
@@ -66,11 +65,11 @@ class InterfaceSettings(CurrentPageSettings, LoginRequiredMixin, UpdateView):
 class EmailSettings(CurrentPageSettings, LoginRequiredMixin, EmailView):
     template_name = 'um/settings_email.html'
     success_url = reverse_lazy('um:settings-email')
-    current_settings = 'email'
+    current_settings = _noop('Email')
 
 
 class SecuritySettings(CurrentPageSettings, LoginRequiredMixin,
                        PasswordChangeView):
     template_name = 'um/settings_security.html'
     success_url = reverse_lazy('um:settings-security')
-    current_settings = 'security'
+    current_settings = _noop('Security')

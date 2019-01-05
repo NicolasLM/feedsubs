@@ -2,6 +2,7 @@ from django.contrib.auth import logout
 from django.contrib import messages
 from django.http import Http404
 from django.urls import reverse
+from django.utils.translation import gettext as _
 
 
 def user_management_middleware(get_response):
@@ -22,8 +23,8 @@ def user_management_middleware(get_response):
             if request.user.um_profile.deletion_pending:
                 messages.info(
                     request,
-                    'This account is about to be permanently deleted, sign in '
-                    'again to reactivate it.'
+                    _('This account is about to be permanently deleted, sign '
+                      'in again to reactivate it.')
                 )
                 logout(request)
 

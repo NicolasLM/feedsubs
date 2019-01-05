@@ -8,6 +8,7 @@ from django.core.files.storage import default_storage
 from django.core.validators import URLValidator
 from django.db import models
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 from django.template.defaultfilters import filesizeformat
 
 from .validators import http_port_validator
@@ -17,8 +18,9 @@ URI_MAX_LENGTH = 2048  # https://stackoverflow.com/a/417184
 
 
 class Feed(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(_('name'), max_length=100)
     uri = models.URLField(
+        verbose_name=_('Feed address'),
         max_length=URI_MAX_LENGTH,
         unique=True,
         validators=[URLValidator(schemes=['http', 'https']),
@@ -119,10 +121,11 @@ class Subscription(models.Model):
 
 
 class Board(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(_('name'), max_length=100)
     reader = models.ForeignKey(ReaderProfile, on_delete=models.CASCADE)
     tags = ArrayField(
         models.CharField(max_length=40, blank=False, null=False),
+        verbose_name=_('tags'),
         default=list,
         blank=True,
         null=False,

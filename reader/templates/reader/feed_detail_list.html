@@ -12,7 +12,7 @@
 
   <div class="columns">
     <div class="column">
-      <h1 class="title">{% trans "Feed" %} {{ feed.name }} <small>&bull; {{ feed.domain }}</small></h1>
+      <h1 class="title">{{ feed.name }} <small>&bull; {{ feed.domain }}</small></h1>
     </div>
     <div class="column is-narrow">
 
@@ -48,19 +48,19 @@
       <nav class="level is-mobile">
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading">Articles</p>
+            <p class="heading">{% trans "Articles" %}</p>
             <p class="title">{{ feed.article_set.count }}</p>
           </div>
         </div>
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading">Subscribers</p>
+            <p class="heading">{% trans "Subscribers" %}</p>
             <p class="title">{{ feed.subscribers.count | blur_subscriber_count }}</p>
           </div>
         </div>
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading">Frequency</p>
+            <p class="heading">{% trans "Frequency" %}</p>
             <p class="title">{{ feed.frequency_per_year | humanize_yearly_frequency }}</p>
           </div>
         </div>
@@ -81,7 +81,7 @@
             {% endfor %}
           </div>
           {% else %}
-            Add tags to group feeds together
+            {% trans "Add tags to group feeds together" %}
           {% endif %}
         </div>
 
@@ -93,7 +93,7 @@
                 <span class="icon is-small">
                   <i class="fas fa-tag"></i>
                 </span>
-                <span>Edit</span>
+                <span>{% trans "Edit" %}</span>
               </a>
             </p>
 
@@ -108,7 +108,7 @@
         <div class="columns">
 
           <div class="column">
-            <input name="tags" class="input" type="tags" placeholder="Add Tag"
+            <input name="tags" class="input" type="tags" placeholder="{% trans "Add tags" %}"
                    value="{{ subscription.tags | join:',' }}">
           </div>
 
@@ -120,7 +120,7 @@
                   <span class="icon is-small">
                     <i class="far fa-save"></i>
                   </span>
-                  <span>Save</span>
+                  <span>{% trans "Save" %}</span>
                 </button>
               </p>
 

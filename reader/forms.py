@@ -1,5 +1,6 @@
 from django import forms
 from django.forms import ModelForm, TextInput
+from django.utils.translation import gettext_lazy as _
 
 from . import models, fields
 
@@ -18,7 +19,7 @@ class BoardForm(ModelForm):
         fields = ['name', 'tags']
         widgets = {
             'tags': TextInput(attrs={'type': 'tags',
-                                     'placeholder': 'Add tags'}),
+                                     'placeholder': _('Add tags')}),
         }
 
 

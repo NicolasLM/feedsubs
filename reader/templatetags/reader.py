@@ -4,6 +4,7 @@ from typing import Optional
 from urllib.parse import urlencode
 
 from django import template
+from django.utils.translation import gettext as _
 
 from .. import http_fetcher
 
@@ -13,21 +14,21 @@ register = template.Library()
 @register.filter
 def humanize_yearly_frequency(value: Optional[int]) -> str:
     if value is None:
-        return 'Unknown'
+        return _('Unknown')
 
     if value <= 1:
-        return '1/year'
+        return '1/' + _('year')
 
     if value <= 12:
-        return f'{value}/year'
+        return f'{value}/' + _('year')
 
     if value <= 52:
-        return '{}/month'.format(int(value / 12))
+        return '{}/{}'.format(int(value / 12), _('month'))
 
     if value <= 365:
-        return '{}/week'.format(int(value / 52))
+        return '{}/{}'.format(int(value / 52), _('week'))
 
-    return '{}/day'.format(int(value / 365))
+    return '{}/{}'.format(int(value / 365), _('day'))
 
 
 @register.filter

@@ -1,9 +1,5 @@
-{% extends 'base.html' %}
+{% extends 'error_base.html' %}
+{% load i18n %}
 
-{% block content %}
-
-  <h1 class="title">404 - Page not found</h1>
-  <p>Looks like you followed a bad link. If you think it's our fault, please let us know.</p>
-  <p>Here's a link to the <a href="{% url 'reader:home' %}">homepage</a>, just in case.</p>
-
-{% endblock %}
+{% block error_title %}404 - {% trans "Page not found" %}{% endblock %}
+{% block error_message %}{% trans "Looks like you followed a bad link. If you think it's our fault, please let us know." %}{% endblock %}

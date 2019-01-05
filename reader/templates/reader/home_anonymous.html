@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load humanize %}
+{% load i18n %}
 
 {% block hero %}
 
@@ -10,10 +10,11 @@
           Feedsubs
         </h1>
         <h2 class="subtitle">
-          Open Source RSS feed reader
+          {% blocktrans %}Open Source RSS feed reader{% endblocktrans %}
         </h2>
         <p>
-          Start using it straight away by <a href="{% url 'account_signup' %}">creating an account</a>.
+          {% url 'account_signup' as signup_url %}
+          {% blocktrans %}Start using it straight away by <a href="{{ signup_url }}">creating an account</a>.{% endblocktrans %}
         </p>
       </div>
     </div>

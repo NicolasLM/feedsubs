@@ -1,5 +1,5 @@
 {% extends 'bulma/base.html' %}
-{% load static bulma_tags um %}
+{% load static bulma_tags um i18n %}
 
 {% block title %}FeedSubs{% endblock %}
 
@@ -41,7 +41,7 @@
           </a>
 
           <a class="navbar-item" href="{% url 'django.contrib.flatpages.views.flatpage' url='/about' %}">
-            About
+            {% trans "About" %}
           </a>
 
           {% if user.is_authenticated %}
@@ -55,33 +55,33 @@
                   <span class="icon is-medium">
                     <i class="fas fa-lg fa-rss"></i>
                   </span>
-                  Feeds
+                  {% trans "Feeds" %}
                 </a>
                 <a class="navbar-item" href="{% url 'reader:board-list' %}">
                   <span class="icon is-medium">
                     <i class="far fa-lg fa-clipboard"></i>
                   </span>
-                  Boards
+                  {% trans "Boards" %}
                 </a>
                 <a class="navbar-item" href="{% url 'um:settings-account' %}">
                   <span class="icon is-medium">
                     <i class="fas fa-lg fa-cog"></i>
                   </span>
-                  Settings
+                  {% trans "Settings" %}
                 </a>
                 {% if user.is_staff %}
                   <a class="navbar-item" href="{% url 'admin:index' %}">
                     <span class="icon is-medium">
                       <i class="fas fa-lg fa-unlock"></i>
                     </span>
-                    Admin panel
+                    {% trans "Admin panel" %}
                   </a>
                 {% endif %}
                 <a class="navbar-item" href="{% url 'account_logout' %}">
                   <span class="icon is-medium">
                     <i class="fas fa-lg fa-sign-out-alt"></i>
                   </span>
-                  Sign Out
+                  {% trans "Sign Out" %}
                 </a>
               </div>
             </div>
@@ -89,7 +89,7 @@
           {% else %}
 
             <a class="navbar-item is-active" href="{% url 'account_login' %}">
-              Sign In
+              {% trans "Sign In" %}
             </a>
 
           {% endif %}

@@ -1,11 +1,5 @@
-{% extends 'base.html' %}
+{% extends 'error_base.html' %}
+{% load i18n %}
 
-{% block content %}
-
-  <h1 class="title">500 - Internal server error</h1>
-  <p>Sorry for the trouble, it looks like something is broken on our side.</p>
-  <p>The good news is that the team has been automatically notified of the problem.</p>
-  <p>You can go back to the <a href="{% url 'reader:home' %}">homepage</a>,
-  or retry in a few minutes.</p>
-
-{% endblock %}
+{% block error_title %}500 - {% trans "Internal server error" %}{% endblock %}
+{% block error_message %}{% trans "Sorry for the trouble, it looks like something is broken on our side. The good news is that the team has been automatically notified of the problem." %}{% endblock %}

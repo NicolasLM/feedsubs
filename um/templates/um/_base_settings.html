@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load bulma_tags i18n %}
 
-{% block title %}{{ current_settings | title }} Settings{% endblock %}
+{% block title %}{% trans current_settings %} {% trans 'Settings' %}{% endblock %}
 
 {% block content %}
 
@@ -9,31 +9,31 @@
     <div class="column is-one-quarter">
       <nav class="panel">
         <p class="panel-heading">
-          Settings
+          {% trans "Settings" %}
         </p>
-        <a class="panel-block {% if current_settings == 'account' %}is-active{% endif %}" href="{% url 'um:settings-account' %}">
+        <a class="panel-block {% if current_settings == 'Account' %}is-active{% endif %}" href="{% url 'um:settings-account' %}">
           <span class="panel-icon">
             <i class="far fa-user"></i>
           </span>
-          Account
+          {% trans "Account" %}
         </a>
-        <a class="panel-block {% if current_settings == 'interface' %}is-active{% endif %}" href="{% url 'um:settings-interface' %}">
+        <a class="panel-block {% if current_settings == 'Interface' %}is-active{% endif %}" href="{% url 'um:settings-interface' %}">
           <span class="panel-icon">
             <i class="fas fa-desktop"></i>
           </span>
-          Interface
+          {% trans "Interface" %}
         </a>
-        <a class="panel-block {% if current_settings == 'email' %}is-active{% endif %}" href="{% url 'um:settings-email' %}">
+        <a class="panel-block {% if current_settings == 'Email' %}is-active{% endif %}" href="{% url 'um:settings-email' %}">
           <span class="panel-icon">
             <i class="far fa-envelope"></i>
           </span>
-          Email
+          {% trans "Email" %}
         </a>
-        <a class="panel-block {% if current_settings == 'security' %}is-active{% endif %}" href="{% url 'um:settings-security' %}">
+        <a class="panel-block {% if current_settings == 'Security' %}is-active{% endif %}" href="{% url 'um:settings-security' %}">
           <span class="panel-icon">
             <i class="fas fa-unlock-alt"></i>
           </span>
-          Security
+          {% trans "Security" %}
         </a>
       </nav>
     </div>
@@ -41,7 +41,7 @@
     <div class="column">
       <div class="box">
 
-        <h1 class="title" style="margin-bottom: 0.2em">{{ current_settings | title }}</h1>
+        <h1 class="title" style="margin-bottom: 0.2em">{% trans current_settings %}</h1>
         <div class="is-divider" style="margin-top: 0"></div>
 
         {% block settings_content %}

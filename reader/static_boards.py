@@ -4,6 +4,7 @@ Static boards act like users' boards except that they are shared by every users
 and they don't only rely on feed tags to filter articles.
 """
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from .models import Board
 
@@ -23,8 +24,8 @@ class StaticBoard:
 
 
 static_boards = {
-    'all': StaticBoard('all', 'All articles', 'home'),
-    'starred': StaticBoard('starred', 'Stars', 'starred')
+    'all': StaticBoard('all', _('All articles'), 'home'),
+    'starred': StaticBoard('starred', _('Stars'), 'starred')
 }
 
 

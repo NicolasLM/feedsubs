@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n humanize %}
+{% load i18n %}
 
 {% block content %}
 
@@ -7,7 +7,7 @@
   <div class="hero-body">
     <div class="container has-text-centered">
       <h1 class="title">
-        Welcome, start be adding feeds to read
+        {% blocktrans %}Welcome, start be adding feeds to read{% endblocktrans %}
       </h1>
 
       <div class="columns is-centered">
