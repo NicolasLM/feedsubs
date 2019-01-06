@@ -47,7 +47,7 @@ def process_image_data(data: bytes) -> ImageProcessingResult:
         else:
             try:
                 image.thumbnail((MAX_EDGE_PIXELS, MAX_EDGE_PIXELS))
-            except OSError:
+            except OSError as e:
                 raise ImageProcessingError('Cannot resize image: {}'.format(e))
 
             width, height = image.size
