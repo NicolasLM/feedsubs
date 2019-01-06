@@ -52,8 +52,11 @@ def process_image_data(data: bytes) -> ImageProcessingResult:
 
             width, height = image.size
             data = BytesIO()
-            image.save(data, image.format, quality=QUALITY,
-                       optimize=True, progressive=True)
+            try:
+                image.save(data, image.format, quality=QUALITY,
+                           optimize=True, progressive=True)
+            except EOFError as e:
+                raise ImageProcessingError('Cannot save image: {}'.format(e))
 
     size_in_bytes = data.seek(0, SEEK_END)
     data.seek(0)
