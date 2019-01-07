@@ -45,18 +45,14 @@ def process_image_data(data: bytes) -> ImageProcessingResult:
             # Let's just keep the original file.
             data = BytesIO(data)
         else:
-            try:
-                image.thumbnail((MAX_EDGE_PIXELS, MAX_EDGE_PIXELS))
-            except OSError as e:
-                raise ImageProcessingError('Cannot resize image: {}'.format(e))
-
-            width, height = image.size
             data = BytesIO()
             try:
+                image.thumbnail((MAX_EDGE_PIXELS, MAX_EDGE_PIXELS))
+                width, height = image.size
                 image.save(data, image.format, quality=QUALITY,
                            optimize=True, progressive=True)
-            except EOFError as e:
-                raise ImageProcessingError('Cannot save image: {}'.format(e))
+            except (OSError, EOFError) as e:
+                raise ImageProcessingError('Cannot resize image: {}'.format(e))
 
     size_in_bytes = data.seek(0, SEEK_END)
     data.seek(0)
