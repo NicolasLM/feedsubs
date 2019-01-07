@@ -1,6 +1,6 @@
 atoma==0.0.13
 attrs==18.2.0
-beautifulsoup4==4.7.0
+beautifulsoup4==4.7.1
 bleach==3.0.2
 blinker==1.4
 boto3==1.9.73
