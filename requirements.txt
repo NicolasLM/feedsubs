@@ -18,7 +18,7 @@ django-xff==1.2.0
 html5lib==1.0.1
 idna==2.8
 msgpack-python==0.5.6
-oauthlib==2.1.0
+oauthlib==3.0.0
 Pillow==5.4.1
 psycopg2==2.7.6.1
 python3-openid==3.1.0
