@@ -1,35 +1,9 @@
-document.addEventListener('DOMContentLoaded', function () {
-
-    // Get all "navbar-burger" elements
-    var $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-
-    // Check if there are any navbar burgers
-    if ($navbarBurgers.length > 0) {
-
-        // Add a click event on each of them
-        $navbarBurgers.forEach(function ($el) {
-            $el.addEventListener('click', function () {
-
-                // Get the target from the "data-target" attribute
-                var target = $el.dataset.target;
-                var $target = document.getElementById(target);
-
-                // Toggle the class on both the "navbar-burger" and the "navbar-menu"
-                $el.classList.toggle('is-active');
-                $target.classList.toggle('is-active');
-
-            });
-        });
-    }
-
-});
-
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
         var cookies = document.cookie.split(';');
         for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
+            var cookie = cookies[i].trim();
             // Does this cookie string begin with the name we want?
             if (cookie.substring(0, name.length + 1) === (name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
@@ -47,14 +21,13 @@ function csrfSafeMethod(method) {
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
-
-function star()
+function sendRequest(current)
 {
-    var current = $(this);
-    var type = current.data('type');
-    var pk = current.data('id');
-    var action = current.data('action');
-    var url = current.data('url');
+    var type = current.dataset.type;
+    var pk = current.dataset.id;
+    var action = current.dataset.action;
+    var url = current.dataset.url;
+    var method = 'POST';
 
     if (url === undefined) {
         if (pk === "") {
@@ -64,72 +37,76 @@ function star()
         }
     }
 
-    $.ajax({
-        url: url,
-        type: 'POST',
-        statusCode: {
-            204: function () {
-                if (action === "star") {
-                    current.addClass("is-warning is-selected");
-                    current.data("action", "unstar");
-                } else if (action === "unstar") {
-                    current.removeClass("is-warning is-selected");
-                    current.data("action", "star");
-                } else if (action === "read") {
-                    current.addClass("is-success is-selected");
-                    current.data("action", "unread");
-                } else if (action === "unread") {
-                    current.removeClass("is-success is-selected");
-                    current.data("action", "read");
-                } else if (action === "unsubscribe") {
-                    current.attr("disabled", true);
-                    location.reload(true);
-                } else if (action === "subscribe") {
-                    current.attr("disabled", true);
-                    location.reload(true);
-                } else if (action === "read-all") {
-                    current.attr("disabled", true);
-                    var all_read_buttons = $('[data-action="read"]');
-                    all_read_buttons.addClass("is-success is-selected");
-                    all_read_buttons.data("action", "unread");
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+
+        // Only run if the request is complete
+        if (xhr.readyState !== 4) return;
+
+        // Process our return data
+        if (xhr.status >= 200 && xhr.status < 300) {
+            if (action === "star") {
+                current.classList.add("is-warning", "is-selected");
+                current.dataset.action = "unstar";
+            } else if (action === "unstar") {
+                current.classList.remove("is-warning", "is-selected");
+                current.dataset.action = "star";
+            } else if (action === "read") {
+                current.classList.add("is-success", "is-selected");
+                current.dataset.action = "unread";
+            } else if (action === "unread") {
+                current.classList.remove("is-success", "is-selected");
+                current.dataset.action = "read";
+            } else if (action === "unsubscribe") {
+                current.setAttribute("disabled", true);
+                location.reload(true);
+            } else if (action === "subscribe") {
+                current.setAttribute("disabled", true);
+                location.reload(true);
+            } else if (action === "read-all") {
+                current.setAttribute("disabled", true);
+                var el = document.querySelectorAll('[data-action="read"]');
+                for (var i = 0; i < el.length; i++) {
+                    el[i].classList.add("is-success", "is-selected");
+                    el[i].dataset.action = "unread";
                 }
             }
         }
-    });
 
-    return false;
-}
+    };
 
-
-function showEditTagsBox() {
-    $('#show-tags-box').addClass("is-hidden");
-    $('#edit-tags-box').removeClass("is-hidden");
-
-}
-
-$(function() {
-    $('[data-action="star"]').click(star);
-    $('[data-action="unstar"]').click(star);
-    $('[data-action="read"]').click(star);
-    $('[data-action="unread"]').click(star);
-    $('[data-action="unsubscribe"]').click(star);
-    $('[data-action="subscribe"]').click(star);
-    $('[data-action="read-all"]').click(star);
-
-    $('#edit-tags-button').click(showEditTagsBox);
-});
-
-
-$.ajaxSetup({
-    beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-        }
+    xhr.open(method, url);
+    xhr.setRequestHeader('Cache-Control', 'no-cache');
+    if (!csrfSafeMethod(method) && !xhr.crossDomain) {
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
     }
-});
+    xhr.send();
+}
+
+document.addEventListener('click', function (event) {
+
+    var target = event.target;
+
+	if (target.closest('.notification > button.delete')) {
+        target.parentNode.classList.add('is-hidden');
+	}
+
+	if (target.matches('.navbar-burger')) {
+        var associated = document.getElementById(target.dataset.target);
+
+        // Toggle the class on both the "navbar-burger" and the "navbar-menu"
+        target.classList.toggle('is-active');
+        associated.classList.toggle('is-active');
+    }
+
+	if (target.closest('#edit-tags-button')) {
+        document.getElementById('show-tags-box').classList.add("is-hidden");
+        document.getElementById('edit-tags-box').classList.remove("is-hidden");
+    }
+
+	if (target.closest('[data-action]')) {
+	    sendRequest(target.closest('[data-action]'));
+    }
 
 
-$(document).on('click', '.notification > button.delete', function() {
-    $(this).parent().addClass('is-hidden');
-    return false;
-});
+}, false);
