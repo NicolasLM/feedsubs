@@ -28,7 +28,6 @@ class SignupFormWithToS(SignupForm):
         super().__init__(*args, **kwargs)
         tos_page = reverse_lazy('django.contrib.flatpages.views.flatpage',
                                 kwargs={'url': '/terms-of-service'})
-        label = mark_safe(
-            _('I have read and I agree with the <a href="%s">Terms of Service</a>') % tos_page
-        )
+        label = mark_safe(_('I have read and I agree with the <a href="%s">'
+                            'Terms of Service</a>') % tos_page)
         self.fields['tos'] = forms.BooleanField(required=True, label=label)
