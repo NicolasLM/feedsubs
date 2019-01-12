@@ -3,8 +3,8 @@ attrs==18.2.0
 beautifulsoup4==4.7.1
 bleach==3.1.0
 blinker==1.4
-boto3==1.9.75
-botocore==1.12.75
+boto3==1.9.78
+botocore==1.12.78
 certifi==2018.11.29
 chardet==3.0.4
 ddtrace==0.20.0
@@ -36,4 +36,4 @@ urllib3==1.24.1
 waitress==1.1.0
 webencodings==0.5.1
 whitenoise==4.1.2
-wrapt==1.10.11
+wrapt==1.11.0
