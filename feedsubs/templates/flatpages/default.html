@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% load i18n %}
-{% get_current_language as LANGUAGE_CODE %}
 
 {% block title %}{{ flatpage.title }}{% endblock %}
 
@@ -10,6 +9,7 @@
     <h1 class="title">{{ flatpage.title }}</h1>
     <div class="is-divider" style="margin-top: 0"></div>
 
+    {% get_current_language as LANGUAGE_CODE %}
     {% if LANGUAGE_CODE != 'en-us'%}
       <p><b>{% trans "This page is only available in English" %}</b></p>
     {% endif %}
