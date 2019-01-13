@@ -19,7 +19,7 @@
     <nav class="navbar is-transparent">
       <div class="navbar-brand">
         <a class="navbar-item" href="{% url 'reader:home' %}">
-          <img src="{% static 'feedsubs/logo.svg' %}" height="28">
+          <img alt="" src="{% static 'feedsubs/logo.svg' %}" height="28">
         </a>
 
         <div class="navbar-burger burger" data-target="navMenuExample">
@@ -33,10 +33,8 @@
       <div id="navMenuExample" class="navbar-menu">
         <div class="navbar-end">
 
-          <a class="navbar-item is-hidden-touch" href="https://github.com/NicolasLM/feedsubs">
-            <span class="icon" style="color: #BBB;">
-              <i class="fab fa-lg fa-github"></i>
-            </span>
+          <a class="navbar-item" href="https://github.com/NicolasLM/feedsubs">
+            <img alt="" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KCiA8Zz4KICA8dGl0bGU+YmFja2dyb3VuZDwvdGl0bGU+CiAgPHJlY3QgZmlsbD0ibm9uZSIgaWQ9ImNhbnZhc19iYWNrZ3JvdW5kIiBoZWlnaHQ9IjQwMiIgd2lkdGg9IjU4MiIgeT0iLTEiIHg9Ii0xIi8+CiA8L2c+CiA8Zz4KICA8dGl0bGU+TGF5ZXIgMTwvdGl0bGU+CiAgPHBhdGggaWQ9InN2Z18yIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiNkZWU1ZWQiIGQ9Im0yOTYuMTMyOTk2LDM1NC4xNzQwMTFjNDkuODg0OTc5LC01Ljg5MDk5MSAxMDIuOTQyMDE3LC0yNC4wMjg5OTIgMTAyLjk0MjAxNywtMTEwLjE5MjAwMWMwLC0yNC40OTAwMDUgLTguNjI0MDIzLC00NC40NDc5OTggLTIyLjY3MDAxMywtNTkuODY5MDAzYzIuMjY1OTkxLC01Ljg4OTk5OSA5LjUxNTAxNSwtMjguMTEzOTk4IC0yLjczNDAwOSwtNTguOTQ2OTk5YzAsMCAtMTguMTM4OTc3LC01Ljg5Nzk5NSAtNjAuNzU5MDAzLDIyLjY2ODk5OWMtMTguMTM4OTc3LC00Ljk4MzAwMiAtMzguMDg5OTk2LC04LjE2Mjk5NCAtNTYuNjgxOTc2LC04LjE2Mjk5NGMtMTkuMDUzMDA5LDAgLTM5LjAxMTAxNywzLjE3OTk5MyAtNTYuNjk3MDA2LDguMTYyOTk0Yy00My4wODIwMDEsLTI4LjU2Njk5NCAtNjEuMjIwMDAxLC0yMi42Njg5OTkgLTYxLjIyMDAwMSwtMjIuNjY4OTk5Yy0xMi4yNDEwMDUsMzAuODMzIC00Ljk4MzAwMiw1My4wNTY5OTkgLTIuNzE4MDAyLDU4Ljk0Njk5OWMtMTQuMDYxMDA1LDE1LjQxOTk5OCAtMjIuNjc3MDAyLDM1LjM3ODk5OCAtMjIuNjc3MDAyLDU5Ljg2OTAwM2MwLDg2LjE2MzAxIDUzLjA1NzAwNywxMDQuMzAxMDEgMTAyLjk0MjAwMSwxMTAuMTkyMDAxYy02LjM0Mzk5NCw1LjQ1MTk5NiAtMTIuMjQwOTk3LDE1Ljg3Mjk4NiAtMTQuNTA3MDA0LDMwLjM4Njk5M2MtMTIuNzAxOTk2LDUuNDM4MDE5IC00NS44MDc5OTksMTUuODczMDE2IC02NS43NTc5OTYsLTE4LjU5MTk4YzAsMCAtMTEuNzk0OTk4LC0yMS4zMTAwMjggLTM0LjAxMjAwMSwtMjIuNjY5MDA2YzAsMCAtMjIuMjIzOTk5LC0wLjQ1MzAwMyAtMS44MTMwMDQsMTMuNTkxOThjMCwwIDE0Ljk2MDAwNyw2LjgxMjAxMiAyNC45NDMwMDEsMzIuNjUzMDE1YzAsMCAxMy42MDAwMDYsNDMuMDg4OTg5IDc2LjE3OTAwMSwyOS40ODAwMTFsMCwzOC41NDI5OTljMCw1LjkwNTk3NSAtNC41Mjk5OTksMTIuNzAxOTk2IC0xNS44NjUwMDUsMTAuODg5OTg0Yy04OC44ODc5OTMsLTI5LjQ4MTAxOCAtMTUyLjgyNjk5MiwtMTEzLjgzMjAwMSAtMTUyLjgyNjk5MiwtMjEyLjY4ODAwNGMwLC0xMjMuODA2OTkyIDEwMC4yMTYsLTIyNC4wMjIwMDUgMjI0LjAzMDAxLC0yMjQuMDIyMDA1YzEyMy4zNDY5ODUsMCAyMjQuMDIyOTgsMTAwLjIxNjAwNSAyMjMuNTcwMDA3LDIyNC4wMjIwMDVjMCw5OC44NTYwMDMgLTYzLjk0NjAxNCwxODIuNzUzOTgzIC0xNTIuODI4MDMzLDIxMi42ODgwMDRjLTExLjM0MTk4LDIuMjY1OTkxIC0xNS44NzI5ODYsLTQuNTI5OTk5IC0xNS44NzI5ODYsLTEwLjg4OTk4NGwwLC02Mi4xMTgwMTFjMC4wMDEwMDcsLTIwLjg3MzAxNiAtNi44MTEwMDUsLTM0LjQ2NTAyNyAtMTQuOTY2MDAzLC00MS4yNzYwMDFsMCwwem0yMTUuODY3MDA0LC05Ny45NDRjMCwtMTQxLjUwMDAwOCAtMTE0LjczNywtMjU2LjIzMDAxMSAtMjU1Ljc2OTk4OSwtMjU2LjIzMDAxMWMtMTQxLjUwMDAwOCwwIC0yNTYuMjMwMDExLDExNC43MzAwMDMgLTI1Ni4yMzAwMTEsMjU2LjIzMDAxMWMwLDE0MS4wMzI5OSAxMTQuNzMwMDAzLDI1NS43Njk5ODkgMjU2LjIzMDAxMSwyNTUuNzY5OTg5YzE0MS4wMzI5OSwwIDI1NS43Njk5ODksLTExNC43MzcgMjU1Ljc2OTk4OSwtMjU1Ljc2OTk4OWwwLDB6IiBjbGlwLXJ1bGU9ImV2ZW5vZGQiLz4KIDwvZz4KPC9zdmc+">
           </a>
 
           <a class="navbar-item" href="{% url 'django.contrib.flatpages.views.flatpage' url='/about' %}">
