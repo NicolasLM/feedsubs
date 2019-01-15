@@ -20,7 +20,6 @@ INSTALLED_APPS += [
     'waitressd.apps.WaitressdConfig'
 ]
 MIDDLEWARE = (
-    ['xff.middleware.XForwardedForMiddleware'] +
     ['waitressd.middleware.access_log'] +
     ['whitenoise.middleware.WhiteNoiseMiddleware'] +
     MIDDLEWARE +
@@ -35,7 +34,6 @@ ALLOWED_HOSTS = [config('ALLOWED_HOST', default='feedsubs.com')]
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_PROXY_SSL_HEADER = ('X-Forwarded-Proto', 'https')
-XFF_TRUSTED_PROXY_DEPTH = 1
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 
 ADMINS = [('Nicolas', 'nicolas@lemanchet.fr')]
@@ -73,9 +71,14 @@ DJANGO_REDIS_LOG_IGNORED_EXCEPTIONS = True
 WAITRESS = {
     'port': config('WAITRESS_PORT', default=8000, cast=int),
     'asyncore_use_poll': True,
+    'ident': None,
     'threads': config('WAITRESS_THREADS', default=16, cast=int),
     'channel_timeout': config('WAITRESS_CHANNEL_TIMEOUT', default=60, cast=int),
-    'connection_limit': config('WAITRESS_CONNECTION_LIMIT', default=100, cast=int)
+    'connection_limit': config('WAITRESS_CONNECTION_LIMIT', default=100, cast=int),
+    'trusted_proxy': '*',
+    'trusted_proxy_count': 1,
+    'trusted_proxy_headers': ['x-forwarded-for', 'x-forwarded-proto'],
+    'clear_untrusted_proxy_headers': True
 }
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

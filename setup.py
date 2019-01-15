@@ -67,7 +67,6 @@ setup(
             'ddtrace',
             'django-redis',
             'django-storages',
-            'django-xff',
             'waitress',
             'whitenoise',
             'raven',
