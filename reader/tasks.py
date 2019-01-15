@@ -19,7 +19,9 @@ from spinach import Tasks, Batch
 
 from um import background_messages
 
-from . import models, html_processing, image_processing, http_fetcher, caching
+from . import (
+    models, html_processing, image_processing, http_fetcher, caching, utils
+)
 
 
 tasks = Tasks()
@@ -86,10 +88,11 @@ def synchronize_feed(feed_id: int, force=False):
         feed.save()
         return
 
-    if feed.name != parsed_feed.title:
+    parsed_feed_title = utils.shrink_str(parsed_feed.title)
+    if feed.name != parsed_feed_title:
         logger.info('Renaming feed %d from "%s" to "%s"', feed_id, feed.name,
-                    parsed_feed.title)
-        feed.name = parsed_feed.title
+                    parsed_feed_title)
+        feed.name = parsed_feed_title
 
     synchronize_parsed_feed(feed, parsed_feed)
 
@@ -341,7 +344,8 @@ def _fetch_and_create_feed(uri: str, process_html: bool=True
         )
 
     feed, created = models.Feed.objects.update_or_create(
-        defaults={'name': parsed_feed.title[:100]}, uri=feed_request.final_url
+        defaults={'name': utils.shrink_str(parsed_feed.title)},
+        uri=feed_request.final_url
     )
     if created:
         logger.info('Created feed %s', feed)
