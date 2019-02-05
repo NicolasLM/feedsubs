@@ -21,7 +21,7 @@ oauthlib==3.0.1
 Pillow==5.4.1
 psycopg2==2.7.7
 python3-openid==3.1.0
-python-dateutil==2.7.5
+python-dateutil==2.8.0
 python-decouple==3.1
 pytz==2018.9
 raven==6.10.0
