@@ -126,7 +126,7 @@ def synchronize_parsed_feed(feed: models.Feed, parsed_feed: ParsedFeed):
     articles_to_uncache = list()
     existing_articles = (
         models.Article.objects.filter(feed=feed)
-        .filter(id_in_feed__in={a.id for a in parsed_feed.articles})
+        .filter(id_in_feed__in={a.id[:400] for a in parsed_feed.articles})
         .select_related('feed')
         .prefetch_related('attachment_set')
     )
@@ -136,7 +136,7 @@ def synchronize_parsed_feed(feed: models.Feed, parsed_feed: ParsedFeed):
         article, created, modified = create_or_update_if_needed(
             models.Article,
             existing_articles,
-            id_in_feed=parsed_article.id,
+            id_in_feed=parsed_article.id[:400],
             feed=feed,
             defaults={
                 'uri': parsed_article.link or '',
