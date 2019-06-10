@@ -69,7 +69,7 @@ setup(
             'django-storages',
             'waitress',
             'whitenoise',
-            'raven',
+            'sentry-sdk',
         ],
         'dev': [
             'django-debug-toolbar',

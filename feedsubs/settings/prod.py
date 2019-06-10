@@ -15,15 +15,13 @@ from .base import *
 # - Add all standard security headers to responses
 
 INSTALLED_APPS += [
-    'raven.contrib.django',
     'ddtrace.contrib.django',
     'waitressd.apps.WaitressdConfig'
 ]
 MIDDLEWARE = (
     ['waitressd.middleware.access_log'] +
     ['whitenoise.middleware.WhiteNoiseMiddleware'] +
-    MIDDLEWARE +
-    ['raven.contrib.django.middleware.SentryResponseErrorIdMiddleware']
+    MIDDLEWARE
 )
 
 STATIC_ROOT = '/opt/static'
@@ -47,11 +45,6 @@ EMAIL_HOST_USER = 'info@feedsubs.com'
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 EMAIL_TIMEOUT = 120
-
-RAVEN_CONFIG = {
-    'dsn': config('SENTRY_DSN'),
-    'release': pkg_resources.require("feedsubs")[0].version,
-}
 
 CACHES = {
     'default': {
@@ -97,3 +90,19 @@ DATADOG_TRACE = {
     'AGENT_HOSTNAME': config('DD_AGENT_HOSTNAME', default='localhost'),
     'AGENT_PORT': config('DD_AGENT_PORT', 8126, cast=int),
 }
+
+
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+from spinach.contrib.sentry_sdk_spinach import SpinachIntegration
+
+sentry_sdk.init(
+    dsn=config('SENTRY_DSN'),
+    environment='prod',
+    release=pkg_resources.require("feedsubs")[0].version,
+    send_default_pii=True,
+    integrations=[
+        DjangoIntegration(),
+        SpinachIntegration()
+    ]
+)
