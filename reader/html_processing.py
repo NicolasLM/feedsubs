@@ -61,7 +61,10 @@ def rewrite_relative_links(soup: bs4.BeautifulSoup, base_url: str):
     """
     for tag_name, attrib in URL_REWRITE_PAIRS:
         for tag in soup.find_all(tag_name, attrs={attrib: True}):
-            tag[attrib] = urllib.parse.urljoin(base_url, tag[attrib])
+            try:
+                tag[attrib] = urllib.parse.urljoin(base_url, tag[attrib])
+            except ValueError as e:
+                logger.info('Could not rewrite link: %s', e)
 
 
 def unify_style(soup: bs4.BeautifulSoup):
