@@ -124,14 +124,22 @@ def synchronize_parsed_feed(feed: models.Feed, parsed_feed: ParsedFeed):
     """Synchronize articles, attachments and images from a parsed feed."""
     images_uris = set()
     articles_to_uncache = list()
+    parsed_articles = list()
+
+    for parsed_article in parsed_feed.articles:
+        if parsed_article.id is not None:
+            parsed_articles.append(parsed_article)
+        else:
+            logger.info('Parsed article has no ID, skipping %s', parsed_article)
+
     existing_articles = (
         models.Article.objects.filter(feed=feed)
-        .filter(id_in_feed__in={a.id[:400] for a in parsed_feed.articles})
+        .filter(id_in_feed__in={a.id[:400] for a in parsed_articles})
         .select_related('feed')
         .prefetch_related('attachment_set')
     )
 
-    for parsed_article in reversed(parsed_feed.articles):
+    for parsed_article in reversed(parsed_articles):
 
         article, created, modified = create_or_update_if_needed(
             models.Article,
