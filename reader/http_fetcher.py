@@ -77,7 +77,7 @@ def _check_content_length(r: requests.Response):
     """Ensure that response Content-Length is below the threshold."""
     content_length = r.headers.get('Content-Length')
     if content_length is None:
-        logger.info('Cannot check length before downloading file')
+        logger.debug('Cannot check length before downloading file')
         return
 
     if int(content_length) > MAX_DOWNLOAD_BYTES:
