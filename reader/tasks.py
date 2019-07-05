@@ -231,7 +231,10 @@ def cache_images(images_uris):
                     http_fetcher.FetchFileTooBigError,
                     image_processing.ImageProcessingError) as e:
                 failure_reason = str(e)
-                logger.warning('Failed to cache image: %s', failure_reason)
+                if failure_reason == 'Tracking pixel':
+                    logger.info('Detected tracking pixel')
+                else:
+                    logger.warning('Failed to cache image: %s', failure_reason)
                 _create_cached_image_object(
                     uri=image_uri,
                     failure_reason=failure_reason[:99]

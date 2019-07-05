@@ -169,11 +169,17 @@ loggers = {
     '': {
         'handlers': ['console'],
         'level': 'DEBUG',
+    },
+    'django.request': {
+        # Disable this logger because it doesn't provide any information that
+        # is not already logged by `django.server` in development
+        # or `waitress.access` in production.
+        'level': 'CRITICAL',
     }
 }
 info_loggers = (
     'django', 'spinach', 'PIL', 'botocore', 'boto3', 's3transfer', 'reader',
-    'ddtrace'
+    'ddtrace', 'urllib3'
 )
 for logger_name in info_loggers:
     if logger_name not in loggers:
