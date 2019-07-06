@@ -44,7 +44,7 @@ class Feed(models.Model):
         return domain
 
     def __str__(self):
-        return 'Feed {}: {}'.format(self.name, self.uri)
+        return 'Feed {} {}: {}'.format(self.pk, self.name, self.uri)
 
 
 class Article(models.Model):
@@ -63,7 +63,7 @@ class Article(models.Model):
         unique_together = (('feed', 'id_in_feed'),)
 
     def __str__(self):
-        return 'Article {}: {}'.format(self.title, self.feed.name)
+        return 'Article {} {}: {}'.format(self.pk, self.title, self.feed.name)
 
 
 class Attachment(models.Model):
@@ -83,7 +83,7 @@ class Attachment(models.Model):
         return self.mime_type.split('/')[0]
 
     def __str__(self):
-        rv = self.title
+        rv = 'Attachment {} {}'.format(self.pk, self.title)
         if self.size_in_bytes:
             rv += ' - {}'.format(filesizeformat(self.size_in_bytes))
         if self.duration:
