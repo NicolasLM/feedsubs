@@ -306,6 +306,8 @@ def create_feed(user_id: int, uri: str):
 
     if parsed_feed is not None:
         synchronize_parsed_feed(feed, parsed_feed)
+        feed.frequency_per_year = calculate_frequency_per_year(feed)
+        feed.save(update_fields=['frequency_per_year'])
 
 
 def _subscribe_user(user, feed):
