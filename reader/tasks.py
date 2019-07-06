@@ -50,10 +50,19 @@ def synchronize_all_feeds():
 def synchronize_feed(feed_id: int, force=False):
     task_start_date = now()
 
-    # Fetch the feed from db as well as its subscribers count in a single query,
-    # this approach may give incorrect results if other annotations are added
-    # in the future. See https://code.djangoproject.com/ticket/10060
-    feed = models.Feed.objects.annotate(Count('subscribers')).get(pk=feed_id)
+    try:
+        # Fetch the feed from db as well as its subscribers count in a single
+        # query, this approach may give incorrect results if other annotations
+        # are added in the future.
+        # See https://code.djangoproject.com/ticket/10060
+        feed = (
+            models.Feed.objects.annotate(Count('subscribers')).get(pk=feed_id)
+        )
+    except ObjectDoesNotExist:
+        logger.info('Not synchronizing feed %d, does not exist', feed_id)
+        return
+    else:
+        logger.info('Starting synchronization of %s', feed)
 
     try:
         feed_request = http_fetcher.fetch_feed(
