@@ -61,6 +61,10 @@ class Article(models.Model):
     class Meta:
         ordering = ('-published_at', '-created_at')
         unique_together = (('feed', 'id_in_feed'),)
+        indexes = [
+            # Index to speed up calculating frequency per year
+            models.Index(fields=['feed', 'published_at']),
+        ]
 
     def __str__(self):
         return 'Article {} {}: {}'.format(self.pk, self.title, self.feed.name)

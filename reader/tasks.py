@@ -379,15 +379,16 @@ def _fetch_and_create_feed(uri: str, process_html: bool=True
 
 def calculate_frequency_per_year(feed: models.Feed) -> Optional[int]:
     last_year = now() - timedelta(days=365)
-    num_articles_over_year = (
-        feed.article_set.filter(published_at__gt=last_year).count()
-    )
     oldest_article = (
         feed.article_set.filter(published_at__gt=last_year)
-        .order_by('published_at').first()
+        .order_by('published_at').only('published_at', 'feed_id').first()
     )
     if oldest_article is None:
         return None
+
+    num_articles_over_year = (
+        feed.article_set.filter(published_at__gt=last_year).count()
+    )
 
     try:
         yearly_ratio = 365 / (now() - oldest_article.published_at).days
