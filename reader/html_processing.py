@@ -8,7 +8,8 @@ import bs4
 from . import models
 
 ALLOWED_TAGS = bleach.ALLOWED_TAGS + ['p', 'pre', 'img', 'br', 'h1', 'h2',
-                                      'h3', 'h4', 'h5', 'h6']
+                                      'h3', 'h4', 'h5', 'h6', 'table', 'tr',
+                                      'td', 'th', 'caption', 'span']
 ALLOWED_ATTRIBUTES = {'img': ['src', 'title', 'alt']}
 ALLOWED_ATTRIBUTES.update(bleach.ALLOWED_ATTRIBUTES)
 URL_REWRITE_PAIRS = (
