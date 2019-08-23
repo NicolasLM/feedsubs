@@ -278,7 +278,7 @@ msgstr ""
 "Commencez à l'utiliser en <a href=\"%(signup_url)s\">créant un compte</a>."
 
 #: reader/templates/reader/home_new_user.html:10
-msgid "Welcome, start be adding feeds to read"
+msgid "Welcome, start by adding feeds to read"
 msgstr "Bienvenue, commencez par ajouter des flux à lire"
 
 #: reader/templates/reader/home_new_user.html:20
