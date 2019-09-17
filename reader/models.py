@@ -74,7 +74,7 @@ class Attachment(models.Model):
     uri = models.URLField(max_length=URI_MAX_LENGTH)
     title = models.TextField(blank=True, null=False)
     mime_type = models.CharField(max_length=100, blank=True, null=False)
-    size_in_bytes = models.PositiveIntegerField(blank=True, null=True)
+    size_in_bytes = models.BigIntegerField(blank=True, null=True)
     duration = models.DurationField(blank=True, null=True)
 
     article = models.ForeignKey(Article, models.CASCADE)
