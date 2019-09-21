@@ -1,4 +1,4 @@
-FROM python:3.7-stretch
+FROM python:3.7-buster
 
 ENTRYPOINT ["manage.py"]
 ENV DJANGO_SETTINGS_MODULE=feedsubs.settings.prod

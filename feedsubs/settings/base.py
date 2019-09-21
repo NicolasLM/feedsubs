@@ -175,12 +175,6 @@ loggers = {
         # is not already logged by `django.server` in development
         # or `waitress.access` in production.
         'level': 'CRITICAL',
-    },
-    'urllib3.connection': {
-        # Disable this logger until the fix of
-        # https://github.com/urllib3/urllib3/issues/1650
-        # is released
-        'level': 'CRITICAL',
     }
 }
 info_loggers = (
