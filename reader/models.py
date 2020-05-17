@@ -30,6 +30,7 @@ class Feed(models.Model):
     last_hash = models.BinaryField(max_length=20, null=True, blank=True)
     last_failure = models.TextField(blank=True, null=False)
     frequency_per_year = models.IntegerField(null=True, blank=True)
+    is_sync_enabled = models.BooleanField(null=False, default=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

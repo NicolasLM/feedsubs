@@ -6,6 +6,7 @@ from typing import Optional, Tuple
 from atoma.exceptions import FeedDocumentError
 from atoma.simple import simple_parse_bytes, Feed as ParsedFeed
 from django.contrib.auth import get_user_model
+from django.conf import settings
 from django.core.files.base import File
 from django.core.files.storage import default_storage
 from django.db.models import Count, ObjectDoesNotExist
@@ -30,18 +31,28 @@ logger = getLogger(__name__)
 
 @tasks.task(name='synchronize_all_feeds', periodicity=timedelta(minutes=30))
 def synchronize_all_feeds():
-    """Synchronize all feeds every 30 minutes.
+    """Synchronize feeds every 30 minutes.
 
     To avoid a spike of load, the synchronization is spread over the whole
     period.
+
+    Feeds that have their sync explicitly disabled or that have no active
+    subscribers are not synchronized.
     """
     current_date = now()
+    inactive_user_threshold = current_date - (timedelta(seconds=settings.SESSION_COOKIE_AGE) * 2)
+    feeds_to_sync = models.Feed.objects.filter(
+        is_sync_enabled=True,
+        subscribers__user__is_active=True,
+        subscribers__user__last_login__gte=inactive_user_threshold
+    )
+
     ats = list()
     for i in range(0, 29):
         ats.append(current_date + timedelta(minutes=i))
 
     batch = Batch()
-    for feed_id in models.Feed.objects.values_list('id', flat=True):
+    for feed_id in feeds_to_sync.values_list('id', flat=True):
         batch.schedule_at('synchronize_feed', random.choice(ats), feed_id)
     tasks.schedule_batch(batch)
 
@@ -61,9 +72,12 @@ def synchronize_feed(feed_id: int, force=False):
     except ObjectDoesNotExist:
         logger.info('Not synchronizing feed %d, does not exist', feed_id)
         return
-    else:
-        logger.info('Starting synchronization of %s', feed)
 
+    if feed.is_sync_enabled is False:
+        logger.info('Not synchronizing feed %d, sync is disabled', feed_id)
+        return
+
+    logger.info('Starting synchronization of %s', feed)
     try:
         feed_request = http_fetcher.fetch_feed(
             feed.uri,

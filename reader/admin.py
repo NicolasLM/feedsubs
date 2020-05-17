@@ -8,7 +8,7 @@ from .tasks import tasks
 @admin.register(models.Feed)
 class FeedAdmin(admin.ModelAdmin):
 
-    list_display = ('name', 'domain', 'last_fetched_at', 'last_failure')
+    list_display = ('name', 'domain', 'last_fetched_at', 'last_failure', 'is_sync_enabled')
     actions = ['sync']
 
     def sync(self, request, queryset):
