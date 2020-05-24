@@ -23,7 +23,7 @@ from um import background_messages
 from . import (
     models, html_processing, image_processing, http_fetcher, caching, utils
 )
-from .settings import READER_CACHE_IMAGES
+from .settings import READER_CACHE_IMAGES, READER_FEED_ARTICLE_THRESHOLD
 
 tasks = Tasks()
 logger = getLogger(__name__)
@@ -464,3 +464,21 @@ def create_or_update_if_needed(model: ModelBase,
     else:
         logger.info('Updated %s', obj)
         return obj, False, True
+
+
+@tasks.task(name='trim_long_feeds', periodicity=timedelta(weeks=1))
+def trim_long_feeds():
+    """Remove old articles on feeds that have a large number of articles."""
+    long_feeds = (
+        models.Feed.objects.annotate(num_articles=Count('article')).
+        filter(num_articles__gt=READER_FEED_ARTICLE_THRESHOLD).
+        all()
+    )
+    for feed in long_feeds:
+        num_articles_to_delete = feed.num_articles - READER_FEED_ARTICLE_THRESHOLD
+        articles_id_to_delete = (
+            feed.article_set.filter(stared_by__isnull=True).
+            reverse()[:num_articles_to_delete].values_list('id', flat=True)
+        )
+        models.Article.objects.filter(pk__in=articles_id_to_delete).delete()
+        logger.info('Deleted %d oldest articles from %s', num_articles_to_delete, feed)
