@@ -474,11 +474,19 @@ def trim_long_feeds():
         filter(num_articles__gt=READER_FEED_ARTICLE_THRESHOLD).
         all()
     )
+
+    def chunker(seq, size):
+        return (seq[pos:pos + size] for pos in range(0, len(seq), size))
+
     for feed in long_feeds:
         num_articles_to_delete = feed.num_articles - READER_FEED_ARTICLE_THRESHOLD
         articles_id_to_delete = (
             feed.article_set.filter(stared_by__isnull=True).
             reverse()[:num_articles_to_delete].values_list('id', flat=True)
         )
-        models.Article.objects.filter(pk__in=articles_id_to_delete).delete()
+
+        # Delete articles in chunks of 10k to avoid large memory consumption
+        for chunk_to_delete in chunker(articles_id_to_delete, 10_000):
+            models.Article.objects.filter(pk__in=chunk_to_delete).delete()
+
         logger.info('Deleted %d oldest articles from %s', num_articles_to_delete, feed)
