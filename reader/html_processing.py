@@ -6,6 +6,7 @@ import bleach
 import bs4
 
 from . import models
+from .settings import READER_CACHE_IMAGES
 
 ALLOWED_TAGS = bleach.ALLOWED_TAGS + ['p', 'pre', 'img', 'br', 'h1', 'h2',
                                       'h3', 'h4', 'h5', 'h6', 'table', 'tr',
@@ -31,7 +32,7 @@ def clean_article(content: str, base_url: str=None,
     remove_unwanted_tags(soup)
     unify_style(soup)
     rewrite_relative_links(soup, base_url)
-    if replace_images:
+    if replace_images and READER_CACHE_IMAGES:
         rewrite_image_links(soup)
     content = soup.prettify()
 

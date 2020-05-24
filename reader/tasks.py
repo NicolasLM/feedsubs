@@ -23,7 +23,7 @@ from um import background_messages
 from . import (
     models, html_processing, image_processing, http_fetcher, caching, utils
 )
-
+from .settings import READER_CACHE_IMAGES
 
 tasks = Tasks()
 logger = getLogger(__name__)
@@ -222,7 +222,7 @@ def synchronize_parsed_feed(feed: models.Feed, parsed_feed: ParsedFeed):
                     len(articles_to_uncache))
         caching.remove_cleaned_articles(articles_to_uncache)
 
-    if not images_uris:
+    if not READER_CACHE_IMAGES or not images_uris:
         return
 
     number_of_images = len(images_uris)
@@ -235,6 +235,9 @@ def synchronize_parsed_feed(feed: models.Feed, parsed_feed: ParsedFeed):
 
 @tasks.task(name='cache_images')
 def cache_images(images_uris):
+    if not READER_CACHE_IMAGES:
+        return
+
     already_cached_uris = (
         models.CachedImage.objects
         .filter(uri__in=images_uris)
