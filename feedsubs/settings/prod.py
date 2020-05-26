@@ -15,7 +15,6 @@ from .base import *
 # - Add all standard security headers to responses
 
 INSTALLED_APPS += [
-    'ddtrace.contrib.django',
     'waitressd.apps.WaitressdConfig'
 ]
 MIDDLEWARE = (
@@ -83,13 +82,23 @@ AWS_STORAGE_BUCKET_NAME = 'feedsubs'
 AWS_DEFAULT_ACL = 'private'
 AWS_QUERYSTRING_EXPIRE = 7800  # 2h10, must be more than article cache
 
-DATADOG_TRACE = {
-    'DEFAULT_SERVICE': 'feedsubs',
-    'INSTRUMENT_CACHE': False,
-    'TAGS': {'env': 'prod'},
-    'AGENT_HOSTNAME': config('DD_AGENT_HOSTNAME', default='localhost'),
-    'AGENT_PORT': config('DD_AGENT_PORT', 8126, cast=int),
-}
+
+from ddtrace import config as dc, tracer, patch_all
+
+tracer.configure(
+    hostname=config('DD_AGENT_HOSTNAME', default='localhost'),
+    port=config('DD_AGENT_PORT', 8126, cast=int),
+    enabled=True
+)
+dc.django['service_name'] = 'feedsubs'
+dc.django['cache_service_name'] = 'feedsubs-cache'
+dc.django['database_service_name_prefix'] = 'feedsubs-'
+dc.django['instrument_databases'] = True
+dc.django['instrument_caches'] = True
+dc.django['trace_query_string'] = True
+dc.django['analytics_enabled'] = True
+tracer.set_tags({'env': 'prod'})
+patch_all()
 
 
 import sentry_sdk
