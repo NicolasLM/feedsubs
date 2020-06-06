@@ -9,7 +9,7 @@ certifi==2020.4.5.1
 chardet==3.0.4
 ddtrace==0.38.0
 defusedxml==0.6.0
-Django==2.2.12
+Django==2.2.13
 django-allauth==0.42.0
 django-bulma==0.6.0
 django-redis==4.11.0
