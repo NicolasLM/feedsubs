@@ -1,4 +1,4 @@
-FROM python:3.8-buster
+FROM python:3.9-buster
 
 ENTRYPOINT ["manage.py"]
 ENV DJANGO_SETTINGS_MODULE=feedsubs.settings.prod
