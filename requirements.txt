@@ -1,5 +1,5 @@
 atoma==0.0.17
-attrs==20.3.0
+attrs==21.1.0
 beautifulsoup4==4.9.3
 bleach==3.3.0
 blinker==1.4
@@ -9,9 +9,9 @@ certifi==2020.12.5
 cffi==1.14.5
 chardet==4.0.0
 cryptography==3.4.7
-ddtrace==0.47.0
+ddtrace==0.48.2
 defusedxml==0.7.1
-Django==2.2.19
+Django==2.2.21
 django-allauth==0.44.0
 django-bulma==0.6.0
 django-redis==4.12.1
@@ -21,11 +21,11 @@ intervaltree==3.1.0
 jmespath==0.10.0
 oauthlib==3.1.0
 packaging==20.9
-Pillow==8.1.2
-protobuf==3.15.6
+Pillow==8.2.0
+protobuf==3.15.8
 psycopg2==2.8.6
 pycparser==2.20
-PyJWT==2.0.1
+PyJWT==2.1.0
 pyparsing==2.4.7
 python-dateutil==2.8.1
 python-decouple==3.4
@@ -39,7 +39,7 @@ sentry-sdk==1.0.0
 six==1.15.0
 sortedcontainers==2.3.0
 soupsieve==2.2.1
-spinach==0.0.13
+spinach==0.0.14
 sqlparse==0.4.1
 tenacity==7.0.0
 urllib3==1.26.4
