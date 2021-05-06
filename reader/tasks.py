@@ -29,7 +29,8 @@ tasks = Tasks()
 logger = getLogger(__name__)
 
 
-@tasks.task(name='synchronize_all_feeds', periodicity=timedelta(minutes=30))
+@tasks.task(name='synchronize_all_feeds', periodicity=timedelta(minutes=30),
+            max_retries=2, max_concurrency=1)
 def synchronize_all_feeds():
     """Synchronize feeds every 30 minutes.
 
