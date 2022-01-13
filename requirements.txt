@@ -21,7 +21,7 @@ intervaltree==3.1.0
 jmespath==0.10.0
 oauthlib==3.1.0
 packaging==20.9
-Pillow==8.2.0
+Pillow==9.0.0
 protobuf==3.15.8
 psycopg2==2.8.6
 pycparser==2.20
