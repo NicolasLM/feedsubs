@@ -11,7 +11,7 @@ chardet==4.0.0
 cryptography==3.4.7
 ddtrace==0.48.2
 defusedxml==0.7.1
-Django==2.2.21
+Django==2.2.27
 django-allauth==0.44.0
 django-bulma==0.6.0
 django-redis==4.12.1
